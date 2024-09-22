@@ -1,0 +1,45 @@
+.invoice-generator {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.invoice-generator h1, .invoice-generator h2 {
+  text-align: center;
+}
+
+.invoice-generator div {
+  margin-bottom: 15px;
+}
+
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.item-row input {
+  width: 30%;
+}
+
+.item-row button {
+  margin-left: 10px;
+}
+
+button {
+  display: block;
+  margin: auto;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}

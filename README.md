@@ -1,4 +1,4 @@
-# CRM Pedilo
+# CRM soft
 
 CRM Pedilo es un sistema de gestión de relaciones con los clientes diseñado para ayudar a las empresas a administrar sus relaciones con los clientes de manera eficiente. Permite a las empresas gestionar clientes potenciales, seguimiento de ventas, atención al cliente y más, todo desde una sola plataforma.
 
@@ -20,7 +20,7 @@ CRM Pedilo es un sistema de gestión de relaciones con los clientes diseñado pa
 ## Instalación
 
 1. Clona este repositorio en tu máquina local.
-2. Navega hasta el directorio del proyecto: `cd crm-pedilo`.
+2. Navega hasta el directorio del proyecto: `cd crm-soft`.
 3. Instala las dependencias del servidor: `npm install`.
 4. Navega hasta el directorio del cliente: `cd client`.
 5. Instala las dependencias del cliente: `npm install`.
