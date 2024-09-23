@@ -17,7 +17,9 @@ import Buttons from './pages/UiElements/Buttons';
 import { Facturador } from './pages/Facturador/Facturador';
 import PrivateRoute from './routes/PrivateRoute';
 import { AuthProvider } from './context/AuthContext';
-
+import { Clientes } from './pages/Clientes/Clientes';
+import { Proveedores } from './pages/Proveedores/Proveedores';
+import { Usuarios } from './pages/Usuarios/Usuarios';
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const { pathname } = useLocation();
@@ -38,11 +40,13 @@ function App() {
         {/* Rutas públicas */}
         <Route path="/auth/signin" element={<SignIn />} />
         <Route path="/auth/signup" element={<SignUp />} />
-
         {/* Rutas protegidas */}
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<ECommerce />} />
           <Route path="/facturador" element={<Facturador />} />
+          <Route path="/clientes" element={<Clientes />} />
+          <Route path="/proveedores" element={<Proveedores />} />
+          <Route path="/usuarios" element={<Usuarios />} />
           <Route
             path="/calendar"
             element={
