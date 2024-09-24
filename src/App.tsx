@@ -20,6 +20,7 @@ import { AuthProvider } from './context/AuthContext';
 import { Clientes } from './pages/Clientes/Clientes';
 import { Proveedores } from './pages/Proveedores/Proveedores';
 import { Usuarios } from './pages/Usuarios/Usuarios';
+import { ClientesHome } from './pages/Clientes/ClientesHome';
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const { pathname } = useLocation();
@@ -44,7 +45,7 @@ function App() {
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<ECommerce />} />
           <Route path="/facturador" element={<Facturador />} />
-          <Route path="/clientes" element={<Clientes />} />
+          <Route path="/clientes" element={<ClientesHome />} />
           <Route path="/proveedores" element={<Proveedores />} />
           <Route path="/usuarios" element={<Usuarios />} />
           <Route

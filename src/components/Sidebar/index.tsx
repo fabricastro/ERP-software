@@ -141,10 +141,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                   >
-                    <rect x="2" y="2" width="14" height="14" stroke="currentColor" stroke-width="1.5" fill="none" />
-                    <line x1="4" y1="5" x2="14" y2="5" stroke="currentColor" stroke-width="1.5" />
-                    <line x1="4" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.5" />
-                    <line x1="4" y1="11" x2="10" y2="11" stroke="currentColor" stroke-width="1.5" />
+                    <rect x="2" y="2" width="14" height="14" stroke="currentColor" strokeWidth="1.5" fill="none" />
+                    <line x1="4" y1="5" x2="14" y2="5" stroke="currentColor" strokeWidth="1.5" />
+                    <line x1="4" y1="8" x2="14" y2="8" stroke="currentColor" strokeWidth="1.5" />
+                    <line x1="4" y1="11" x2="10" y2="11" stroke="currentColor" strokeWidth="1.5" />
                   </svg>
                   Facturador
                 </NavLink>
