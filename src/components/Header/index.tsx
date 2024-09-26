@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import DropdownUser from './DropdownUser';
 import LogoIcon from '../../images/logo/favicon.png';
 import DarkModeSwitcher from './DarkModeSwitcher';
+import { DropdownLenguage } from './DropdownLenguage';
 
 const Header = (props: {
   sidebarOpen: string | boolean | undefined;
@@ -102,7 +103,7 @@ const Header = (props: {
             {/* <!-- Dark Mode Toggler --> */}
             <DarkModeSwitcher />
             {/* <!-- Dark Mode Toggler --> */}
-
+            <DropdownLenguage/>
             {/* <!-- Notification Menu Area --> */}
             {/* <DropdownNotification /> */}
             {/* <!-- Notification Menu Area --> */}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import jsPDF from 'jspdf';
 import { OutputType } from 'jspdf-invoice-template';
 import jsPDFInvoiceTemplate from 'jspdf-invoice-template';
+import { useTranslation } from 'react-i18next';
 
 
 const InvoiceGenerator: React.FC = () => {
@@ -66,8 +67,7 @@ const InvoiceGenerator: React.FC = () => {
                 name: "Daes Ingeniería",
                 address: "LEMOS E/ 5 Y 6 LOTE 34 ",
                 phone: "264-5591009",
-                email: "email@example.com",
-                email_1: "info@example.al",
+                email: "ehererra@daesingenieria.com",
                 website: "daesingenieria.com.ar",
             },
             contact: {
@@ -107,7 +107,7 @@ const InvoiceGenerator: React.FC = () => {
                         style: { fontSize: 14 }
                     }
                 ],
-                invDescLabel: "Invoice Note",
+                invDescLabel: "Nota",
                 invDesc: "Gracias por su compra. Este documento es una representación de su transacción.",
             },
             footer: {
@@ -119,10 +119,10 @@ const InvoiceGenerator: React.FC = () => {
 
         jsPDFInvoiceTemplate(props);
     };
-
+    const { t, i18n } = useTranslation();
     return (
         <div className="flex flex-col gap-5.5 p-6.5">
-            <h1>Generar Presupuesto</h1>
+            <h1>{t('billGen')}</h1>
             <div>
                 <label className='mb-3 block text-black dark:text-white'>Nº de Presupuesto:</label>
                 <input
