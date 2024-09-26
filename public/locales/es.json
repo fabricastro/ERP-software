@@ -1,0 +1,13 @@
+{
+    "bill": "Factura",
+    "billGen": "Generar Factura",
+    "routes": {
+      "dashboard": "Tablero",
+      "customer": "Clientes",
+      "add_customer": "Agregar Cliente",
+      "provider": "Proveedores",
+      "add_provider": "Agregar Proveedor",
+      "article": "Articulos",
+      "add_article": "Agregar Articulo"
+    }
+}

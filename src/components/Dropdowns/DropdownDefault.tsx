@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next"; // Importa el hook de i18next
+import { useTranslation } from "react-i18next";
 import { PiTranslateFill } from "react-icons/pi";
 
 interface DropdownProps {
-  languages: { code: string; name: string }[]; // Lista de idiomas
+  languages: { code: string; name: string }[]; 
 }
 
 const DropdownDefault: React.FC<DropdownProps> = ({ languages }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { i18n } = useTranslation(); // Utiliza el hook para cambiar el idioma
+  const { i18n } = useTranslation(); 
 
   const trigger = useRef<any>(null);
   const dropdown = useRef<any>(null);
@@ -39,7 +39,7 @@ const DropdownDefault: React.FC<DropdownProps> = ({ languages }) => {
 
   const handleLanguageChange = (code: string) => {
     i18n.changeLanguage(code);
-    setDropdownOpen(false); // Cierra el dropdown después de cambiar el idioma
+    setDropdownOpen(false); 
   };
 
   return (
@@ -49,7 +49,7 @@ const DropdownDefault: React.FC<DropdownProps> = ({ languages }) => {
         ref={trigger}
         onClick={() => setDropdownOpen(!dropdownOpen)}
       >
-        {/* Icono del Dropdown */}
+       
         <PiTranslateFill className="h-10 w-10"/>
       </button>
 
@@ -61,7 +61,7 @@ const DropdownDefault: React.FC<DropdownProps> = ({ languages }) => {
           dropdownOpen ? "block" : "hidden"
         }`}
       >
-        {/* Renderiza los idiomas como opciones del dropdown */}
+        
         {languages.map((lang) => (
           <button
             key={lang.code}

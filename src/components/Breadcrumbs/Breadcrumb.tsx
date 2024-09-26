@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 interface BreadcrumbProps {
   pageName: string;
@@ -6,8 +7,9 @@ interface BreadcrumbProps {
 
 const Breadcrumb = ({ pageName }: BreadcrumbProps) => {
   const location = useLocation();
-  
-  // Divide la ruta actual en segmentos
+  const { t } = useTranslation();
+
+ 
   const pathnames = location.pathname.split('/').filter((x) => x);
 
   return (
@@ -20,25 +22,26 @@ const Breadcrumb = ({ pageName }: BreadcrumbProps) => {
         <ol className="flex items-center gap-2">
           <li>
             <Link className="font-medium" to="/">
-              Dashboard /
+              {t('routes.dashboard')} /
             </Link>
           </li>
 
-          {/* Mapeo de rutas anteriores */}
+          
           {pathnames.map((value, index) => {
             const to = `/${pathnames.slice(0, index + 1).join('/')}`;
+
+            
+            const translatedValue = t(`routes.${value}`, value);
 
             return (
               <li key={to}>
                 <Link className="font-medium" to={to}>
-                  {value.charAt(0).toUpperCase() + value.slice(1)} {index < pathnames.length - 1 ? '/' : ''}
+                  {translatedValue} {index < pathnames.length - 1 ? '/' : ''}
                 </Link>
               </li>
             );
           })}
 
-          {/* Página actual */}
-          {/* <li className="font-medium text-primary">{pageName}</li> */}
         </ol>
       </nav>
     </div>

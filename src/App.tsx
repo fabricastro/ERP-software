@@ -49,12 +49,12 @@ function App() {
           <Route path="/" element={<ECommerce />} />
           <Route path="/facturador" element={<Facturador />} />
           <Route path="/customer" element={<Customer />} />
-          <Route path="/customer/add" element={<CustomerAdd />} />
+          <Route path="/customer/add_customer" element={<CustomerAdd />} />
           <Route path="/provider" element={<Provider />} />
-          <Route path="/provider/add" element={<ProviderAdd />} />
+          <Route path="/provider/add_provider" element={<ProviderAdd />} />
           <Route path="/user" element={<User />} />
           <Route path="/article" element={<Article />} />
-          <Route path='/article/add' element={<ArticleAdd />} />
+          <Route path='/article/add_article' element={<ArticleAdd />} />
           <Route
             path="/calendar"
             element={

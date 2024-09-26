@@ -1,0 +1,14 @@
+{
+    "bill": "Bill",
+    "billGen": "Generate Bill",
+    "routes": {
+      "dashboard": "Dashboard",
+      "customer": "Customers",
+      "add_customer": "Add Customer",
+      "provider": "Providers",
+      "add_provider": "Add Provider",
+      "article": "Articles",
+      "add_article": "Add Articles"
+    }
+}
+  

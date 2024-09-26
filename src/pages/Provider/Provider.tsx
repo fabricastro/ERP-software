@@ -7,7 +7,7 @@ export const Provider = () => {
         <DefaultLayout>
             <Breadcrumb pageName="Proveedores" />
             <div className="flex flex-row gap-10">
-                <Buttons title={'Agregar Proveedor'} to={'/provider/add'} />
+                <Buttons title={'Agregar Proveedor'} to={'/provider/add_provider'} />
             </div>
             <div className="py-10 flex flex-col gap-5">
                 <h3>Listado de Proveedores</h3>
