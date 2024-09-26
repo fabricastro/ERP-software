@@ -1,6 +1,6 @@
 import DefaultLayout from "../../layout/DefaultLayout"
 
-export const Proveedores = () => {
+export const Provider = () => {
     return (
         <DefaultLayout>
             <div>

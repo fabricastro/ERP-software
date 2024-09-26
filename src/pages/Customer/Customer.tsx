@@ -1,3 +1,4 @@
+import Breadcrumb from "../../components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "../../layout/DefaultLayout"
 import { useState } from "react";
 interface Cliente {
@@ -7,7 +8,7 @@ interface Cliente {
     telefono: string;
     direccion: string;
 }
-export const Clientes = () => {
+export const Customer = () => {
     const [nombre, setNombre] = useState('');
     const [email, setEmail] = useState('');
     const [telefono, setTelefono] = useState('');
@@ -24,16 +25,16 @@ export const Clientes = () => {
             direccion,
         };
 
-        // Obtener los clientes existentes en el LocalStorage
+       
         const clientesGuardados = JSON.parse(localStorage.getItem('clientes') || '[]');
 
-        // Agregar el nuevo cliente a la lista
+       
         const nuevosClientes = [...clientesGuardados, nuevoCliente];
 
-        // Guardar la lista actualizada en el LocalStorage
+      
         localStorage.setItem('clientes', JSON.stringify(nuevosClientes));
 
-        // Limpiar los campos
+        
         setNombre('');
         setEmail('');
         setTelefono('');
@@ -43,8 +44,8 @@ export const Clientes = () => {
     };
     return (
         <DefaultLayout>
+            <Breadcrumb pageName="Agregar Cliente" />
             <div className="flex flex-col gap-5.5 p-6.5">
-                <h2>Agregar Cliente</h2>
                 <form onSubmit={agregarCliente}>
                     <div>
                         <label className='mb-3 block text-black dark:text-white'>Nombre:</label>

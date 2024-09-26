@@ -2,6 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import SidebarLinkGroup from './SidebarLinkGroup';
 import Logo from '../../images/logo/logo.png';
+import { FaShoppingCart } from "react-icons/fa";
+import { FaUsers } from "react-icons/fa";
+
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -153,29 +156,35 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Item Clientes --> */}
               <li>
                 <NavLink
-                  to="/clientes"
+                  to="/customer"
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                     pathname.includes('clientes') &&
                     'bg-graydark dark:bg-meta-4'
                   }`}
                 >
-                  <svg
-                    className="fill-current"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path d="M12 12C14.7 12 17 9.7 17 7C17 4.3 14.7 2 12 2C9.3 2 7 4.3 7 7C7 9.7 9.3 12 12 12ZM12 14C9 14 3 15.5 3 18.5V20H21V18.5C21 15.5 15 14 12 14Z" />
-                  </svg>
+                 <FaUsers />
                   Clientes
+                </NavLink>
+              </li>
+
+              {/* <!-- Menu Item Productos --> */}
+              <li>
+                <NavLink
+                  to="/product"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes('proveedores') &&
+                    'bg-graydark dark:bg-meta-4'
+                  }`}
+                >
+                 <FaShoppingCart />
+                  Artículos
                 </NavLink>
               </li>
 
               {/* <!-- Menu Item Proveedores --> */}
               <li>
                 <NavLink
-                  to="/proveedores"
+                  to="/provider"
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                     pathname.includes('proveedores') &&
                     'bg-graydark dark:bg-meta-4'
@@ -197,7 +206,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Item Usuarios --> */}
               <li>
                 <NavLink
-                  to="/usuarios"
+                  to="/user"
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                     pathname.includes('usuarios') &&
                     'bg-graydark dark:bg-meta-4'

@@ -1,5 +1,5 @@
 import DefaultLayout from "../../layout/DefaultLayout"
-export const Usuarios = () => {
+export const User = () => {
     return (
         <DefaultLayout>
             <div>
