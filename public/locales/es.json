@@ -1,7 +1,14 @@
 {
     "bill": "Factura",
     "billGen": "Generar Factura",
+    "customer":{
+      "list":"Lista de clientes"
+    },
+    "salesdocs":{
+      "title":"Presupuestos"
+    },
     "routes": {
+      "salesdocs":"Presupuestos",
       "dashboard": "Tablero",
       "customer": "Clientes",
       "add_customer": "Agregar Cliente",

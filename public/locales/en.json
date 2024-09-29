@@ -1,7 +1,14 @@
 {
     "bill": "Bill",
     "billGen": "Generate Bill",
+    "customer":{
+      "list":"Customer list"
+    },
+    "salesdocs":{
+      "title":"Salesdocs"
+    },
     "routes": {
+      "salesdocs":"Salesdocs",
       "dashboard": "Dashboard",
       "customer": "Customers",
       "add_customer": "Add Customer",

@@ -14,7 +14,7 @@ import Settings from './pages/Settings';
 import Tables from './pages/Tables';
 import Alerts from './pages/UiElements/Alerts';
 import Buttons from './pages/UiElements/Buttons';
-import { Facturador } from './pages/Facturador/Facturador';
+import { Salesdocs } from './pages/Salesdocs/Salesdocs';
 import PrivateRoute from './routes/PrivateRoute';
 import { AuthProvider } from './context/AuthContext';
 import { CustomerAdd } from './pages/Customer/CustomerAdd';
@@ -47,7 +47,7 @@ function App() {
         {/* Rutas protegidas */}
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<ECommerce />} />
-          <Route path="/facturador" element={<Facturador />} />
+          <Route path="/salesdocs" element={<Salesdocs />} />
           <Route path="/customer" element={<Customer />} />
           <Route path="/customer/add_customer" element={<CustomerAdd />} />
           <Route path="/provider" element={<Provider />} />
