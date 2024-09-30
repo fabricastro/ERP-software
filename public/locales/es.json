@@ -1,5 +1,6 @@
 {
-    "bill": "Factura",
+    "main": "Principal",
+    "bill": "Facturas",
     "billGen": "Generar Factura",
     "customer":{
       "list":"Lista de clientes"
@@ -8,7 +9,9 @@
       "title":"Presupuestos"
     },
     "routes": {
+      "bill":"Facturas",
       "salesdocs":"Presupuestos",
+      "add_salesdocs": "Agregar Presupuesto",
       "dashboard": "Tablero",
       "customer": "Clientes",
       "add_customer": "Agregar Cliente",

@@ -19,11 +19,12 @@ import PrivateRoute from './routes/PrivateRoute';
 import { AuthProvider } from './context/AuthContext';
 import { CustomerAdd } from './pages/Customer/CustomerAdd';
 import { Provider } from './pages/Provider/Provider';
-import { User } from './pages/User/User';
+import { Bill } from './pages/Bill/Bill';
 import { Customer } from './pages/Customer/Customer';
 import { Article } from './pages/Article/Article';
 import { ArticleAdd } from './pages/Article/ArticleAdd';
 import { ProviderAdd } from './pages/Provider/ProviderAdd';
+import { SalesdocsAdd } from './pages/Salesdocs/SalesdocsAdd';
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const { pathname } = useLocation();
@@ -48,11 +49,12 @@ function App() {
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<ECommerce />} />
           <Route path="/salesdocs" element={<Salesdocs />} />
+          <Route path='/salesdocs/add_salesdocs' element={<SalesdocsAdd />}/>
           <Route path="/customer" element={<Customer />} />
           <Route path="/customer/add_customer" element={<CustomerAdd />} />
           <Route path="/provider" element={<Provider />} />
           <Route path="/provider/add_provider" element={<ProviderAdd />} />
-          <Route path="/user" element={<User />} />
+          <Route path="/bill" element={<Bill />} />
           <Route path="/article" element={<Article />} />
           <Route path='/article/add_article' element={<ArticleAdd />} />
           <Route

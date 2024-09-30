@@ -17,6 +17,7 @@
     "@jsverse/transloco": "^7.5.0",
     "@ngneat/transloco": "^6.0.4",
     "apexcharts": "^3.41.0",
+    "axios": "^1.7.7",
     "flatpickr": "^4.6.13",
     "headlessui": "^0.0.0",
     "i18next": "^23.15.1",
