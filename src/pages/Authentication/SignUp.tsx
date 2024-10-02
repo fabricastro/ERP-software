@@ -29,7 +29,7 @@ const SignUp: React.FC = () => {
         username, 
         email, 
         password, 
-        role: 'owner',
+        role: 'OWNER',
       });
       setSuccessMessage(message);
       setError(null);
