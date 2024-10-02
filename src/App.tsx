@@ -25,6 +25,8 @@ import { Article } from './pages/Article/Article';
 import { ArticleAdd } from './pages/Article/ArticleAdd';
 import { ProviderAdd } from './pages/Provider/ProviderAdd';
 import { SalesdocsAdd } from './pages/Salesdocs/SalesdocsAdd';
+import { Confirm } from './pages/Authentication/Confirm';
+import { ConfirmEmail } from './pages/Authentication/ConfirmEmail';
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const { pathname } = useLocation();
@@ -45,9 +47,11 @@ function App() {
         {/* Rutas públicas */}
         <Route path="/auth/signin" element={<SignIn />} />
         <Route path="/auth/signup" element={<SignUp />} />
+        <Route path="/confirm" element={<Confirm />} />
+        <Route path="/auth/confirmemail" element={<ConfirmEmail />} />
         {/* Rutas protegidas */}
         <Route element={<PrivateRoute />}>
-          <Route path="/" element={<ECommerce />} />
+          <Route path="/dashboard" element={<ECommerce />} />
           <Route path="/salesdocs" element={<Salesdocs />} />
           <Route path='/salesdocs/add_salesdocs' element={<SalesdocsAdd />}/>
           <Route path="/customer" element={<Customer />} />

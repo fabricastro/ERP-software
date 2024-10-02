@@ -1,43 +1,28 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import LogoDark from '../../images/logo/logo-dark.png';
 import Logo from '../../images/logo/logo.svg';
-import { useAuth } from '../../hooks/useAuth'; // Importa el hook de autenticación
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 
 const SignUp: React.FC = () => {
-  const [username, setUsername] = useState('');
+  const [bussinessName, setBussinessName] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState(''); // Confirmación de contraseña
+  const [phone, setPhone] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const { register } = useAuth(); // Usa el hook de autenticación
+  const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden');
-      return;
-    }
-
     try {
-      const message = await register({ 
-        username, 
-        email, 
-        password, 
-        role: 'OWNER',
-      });
+      const message = await register({ bussinessName, email, phone });
       setSuccessMessage(message);
       setError(null);
-
-      // Redirigir al login tras el registro exitoso
-      navigate('/login');
+      navigate('/auth/confirmemail');
     } catch (error: any) {
-      setError(error.message || 'Error en el registro');
+      setError(error.message);
       setSuccessMessage(null);
     }
   };
@@ -60,23 +45,18 @@ const SignUp: React.FC = () => {
             <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
               <span className="mb-1.5 block font-medium">Empieza ya</span>
               <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
-                Regístrate Ahora
+                Registrate Ahora
               </h2>
-
-              {error && <p className="text-red-500">{error}</p>}
-              {successMessage && <p className="text-green-500">{successMessage}</p>}
 
               <form onSubmit={handleSubmit}>
                 <div className="mb-4">
-                  <label className="mb-2.5 block font-medium text-black dark:text-white">
-                    Nombre
-                  </label>
+                  <label className="mb-2.5 block font-medium text-black dark:text-white">Nombre o Razón Social</label>
                   <div className="relative">
                     <input
                       type="text"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      placeholder="Ingresa tu nombre completo"
+                      value={bussinessName}
+                      onChange={(e) => setBussinessName(e.target.value)}
+                      placeholder="Ingresa tu nombre completo o razón social"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                       required
                     />
@@ -84,15 +64,13 @@ const SignUp: React.FC = () => {
                 </div>
 
                 <div className="mb-4">
-                  <label className="mb-2.5 block font-medium text-black dark:text-white">
-                    Correo Electrónico
-                  </label>
+                  <label className="mb-2.5 block font-medium text-black dark:text-white">Correo Electrónico</label>
                   <div className="relative">
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Ingresa tu correo electrónico"
+                      placeholder="Ingresa tu correo electronico"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                       required
                     />
@@ -100,36 +78,21 @@ const SignUp: React.FC = () => {
                 </div>
 
                 <div className="mb-4">
-                  <label className="mb-2.5 block font-medium text-black dark:text-white">
-                    Contraseña
-                  </label>
+                  <label className="mb-2.5 block font-medium text-black dark:text-white">Teléfono</label>
                   <div className="relative">
                     <input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Ingresa tu contraseña"
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="Ingresa tu número de teléfono"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                       required
                     />
                   </div>
                 </div>
 
-                <div className="mb-4">
-                  <label className="mb-2.5 block font-medium text-black dark:text-white">
-                    Repite tu contraseña
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="Reingresa tu contraseña"
-                      className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                      required
-                    />
-                  </div>
-                </div>
+                {error && <p className="text-red-500">{error}</p>}
+                {successMessage && <p className="text-green-500">{successMessage}</p>}
 
                 <div className="mb-5">
                   <input

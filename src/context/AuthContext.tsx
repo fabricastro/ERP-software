@@ -1,35 +1,14 @@
-// src/context/AuthContext.tsx
 import React, { createContext, useContext, useState } from 'react';
+import { loginService } from '../services/login';
+import { useNavigate } from 'react-router-dom';
 
-interface AuthContextType {
+interface AuthContextProps {
   isAuthenticated: boolean;
-  login: () => void;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export const AuthProvider: React.FC = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
-    () => localStorage.getItem('auth') === 'true' || false
-  );
-
-  const login = () => {
-    setIsAuthenticated(true);
-    localStorage.setItem('auth', 'true');
-  };
-
-  const logout = () => {
-    setIsAuthenticated(false);
-    localStorage.setItem('auth', 'false'); 
-  };
-
-  return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -37,4 +16,38 @@ export const useAuth = () => {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
+};
+
+export const AuthProvider: React.FC = ({ children }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    return !!localStorage.getItem('token'); 
+  });
+
+  const navigate = useNavigate();
+
+  const login = async (email: string, password: string) => {
+    try {
+      const { accessToken } = await loginService({ email, password });
+      
+      localStorage.setItem('token', accessToken);
+
+      setIsAuthenticated(true);
+      navigate('/dashboard');
+    } catch (error: any) {
+      console.error('Error:', error.message);
+      throw new Error('Credenciales incorrectas o error en la autenticación');
+    }
+  };
+
+  const logout = () => {
+    localStorage.removeItem('token'); 
+    setIsAuthenticated(false);
+    navigate('/auth/signin'); 
+  };
+
+  return (
+    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
