@@ -31,7 +31,7 @@ const Settings = () => {
             <div className="mx-auto max-w-270">
                 <Breadcrumb pageName="Configuración" />
 
-                <div className="grid grid-cols-5 gap-8">
+                <div className="grid grid-cols-3 gap-8">
                     <div className="col-span-5 xl:col-span-3">
                         <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                             <div className="border-b border-stroke py-4 px-7 dark:border-strokedark">
@@ -131,7 +131,7 @@ const Settings = () => {
                         </div>
                     </div>
 
-                    <div className="col-span-5 xl:col-span-2">
+                    {/* <div className="col-span-5 xl:col-span-2">
                         <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                             <div className="border-b border-stroke py-4 px-7 dark:border-strokedark">
                                 <h3 className="font-medium text-black dark:text-white">Imagen de Perfil</h3>
@@ -153,7 +153,7 @@ const Settings = () => {
                                 </form>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </DefaultLayout>
