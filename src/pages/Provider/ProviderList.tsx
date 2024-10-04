@@ -1,38 +1,60 @@
 import React, { useEffect, useState } from "react";
-import TableThree from "../../components/Tables/TableThree"; // Importa la tabla reutilizable
+import TableThree from "../../components/Tables/TableThree";
+import { providerService } from "../../services/ProviderService";
+import { MdEdit } from "react-icons/md";
+import { FaTrash } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 interface Proveedor {
   id: number;
-  nombre: string;
+  name: string;
   email: string;
-  telefono: string;
-  direccion: string;
+  phone: string;
+  fiscalAddress: string;
 }
 
 const ProviderList: React.FC = () => {
   const [proveedores, setProveedores] = useState<Proveedor[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-  // Cargar los proveedores desde el localStorage
+
   useEffect(() => {
-    const proveedoresGuardados = JSON.parse(localStorage.getItem("proveedores") || "[]");
-    setProveedores(proveedoresGuardados);
+    const fetchProviders = async () => {
+      try {
+        const response = await providerService.getAll();
+        setProveedores(response);
+        setLoading(false);
+      } catch (err: any) {
+        setError('Error al cargar los proveedores');
+        setLoading(false);
+      }
+    };
+
+    fetchProviders();
   }, []);
 
-  // Definir las columnas para la tabla reutilizable
+  // Columnas de la tabla
   const columns = [
-    { key: "nombre", label: "Nombre" },
+    { key: "name", label: "Nombre" },
     { key: "email", label: "Email" },
-    { key: "telefono", label: "Teléfono" },
-    { key: "direccion", label: "Dirección" },
+    { key: "phone", label: "Teléfono" },
+    { key: "fiscalAddress", label: "Dirección" },
   ];
-
-  // Opcional: Función para manejar acciones (editar, eliminar)
+  const handleEdit = (id: number) => {
+    navigate(`/provider/edit/${id}`);
+  };
   const handleActions = (proveedor: Proveedor) => (
     <>
-      <button className="hover:text-primary">Editar</button>
-      <button className="hover:text-danger">Eliminar</button>
+      <button onClick={() => handleEdit(proveedor.id)}
+        className="hover:text-primary text-[25px]"><MdEdit /></button>
+      <button className="hover:text-danger text-[20px]"><FaTrash /></button>
     </>
   );
+
+  if (loading) return <p>Cargando proveedores...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div>

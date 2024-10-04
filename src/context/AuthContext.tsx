@@ -62,7 +62,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     localStorage.removeItem('user');
     setUser(null);
     setIsAuthenticated(false);
-    navigate('/auth/signin');
+    navigate('/signin');
   };
 
   return (

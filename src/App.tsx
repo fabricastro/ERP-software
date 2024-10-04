@@ -12,7 +12,6 @@ import FormLayout from './pages/Form/FormLayout';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings/Settings';
 import Tables from './pages/Tables';
-import Alerts from './pages/UiElements/Alerts';
 import Buttons from './pages/UiElements/Buttons';
 import { Salesdocs } from './pages/Salesdocs/Salesdocs';
 import PrivateRoute from './routes/PrivateRoute';
@@ -27,6 +26,7 @@ import { ProviderAdd } from './pages/Provider/ProviderAdd';
 import { SalesdocsAdd } from './pages/Salesdocs/SalesdocsAdd';
 import { Confirm } from './pages/Authentication/Confirm';
 import { ConfirmEmail } from './pages/Authentication/ConfirmEmail';
+import ProviderEdit from './pages/Provider/ProviderEdit';
 function App() {
   const { user } = useAuth(); 
   const capitalizeWords = (text: string) => {
@@ -34,8 +34,10 @@ function App() {
   };
 
   useEffect(() => {
-    const companyName = `ERP - ${user.bussinessName}` || 'ERP - Daes Ingeniería';
-    document.title = capitalizeWords(companyName); // Capitalizamos la primera letra
+    if (user && user.bussinessName) {
+      const companyName = user.bussinessName || 'ERP by thdvs';
+      document.title = capitalizeWords(companyName);
+    }
   }, [user]);
 
   const [loading, setLoading] = useState<boolean>(true);
@@ -55,8 +57,8 @@ function App() {
     <AuthProvider>
       <Routes>
         {/* Rutas públicas */}
-        <Route path="/auth/signin" element={<SignIn />} />
-        <Route path="/auth/signup" element={<SignUp />} />
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
         <Route path="/confirm" element={<Confirm />} />
         <Route path="/auth/confirmemail" element={<ConfirmEmail />} />
         {/* Rutas protegidas */}
@@ -68,6 +70,7 @@ function App() {
           <Route path="/customer/add_customer" element={<CustomerAdd />} />
           <Route path="/provider" element={<Provider />} />
           <Route path="/provider/add_provider" element={<ProviderAdd />} />
+          <Route path="/provider/edit/:id" element={<ProviderEdit />} />
           <Route path="/bill" element={<Bill />} />
           <Route path="/article" element={<Article />} />
           <Route path='/article/add_article' element={<ArticleAdd />} />
@@ -132,15 +135,6 @@ function App() {
               <>
                 <PageTitle title="Basic Chart" />
                 <Chart />
-              </>
-            }
-          />
-          <Route
-            path="/ui/alerts"
-            element={
-              <>
-                <PageTitle title="Alerts" />
-                <Alerts />
               </>
             }
           />

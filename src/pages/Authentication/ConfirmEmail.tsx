@@ -7,7 +7,7 @@ export const ConfirmEmail = () => {
                 <h1 className="text-3xl  ">Gracias por registrarse</h1>
                 <p className="  pt-4 text-xl">Hemos enviado un correo electronico para confirmar tu cuenta</p>
                 <p className="  py-4 text-xl">Por favor revisa tu correo</p>
-                <Buttons title="Iniciar sesion" to="/auth/signin" />
+                <Buttons title="Iniciar sesion" to="/signin" />
             </div>
         </div>
     );

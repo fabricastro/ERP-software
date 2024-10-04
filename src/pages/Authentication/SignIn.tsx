@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import Loader from '../../common/Loader';
 
 const SignIn: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setLoading(true);
     // Validar campos antes de enviarlos
     if (!email || !password) {
       setError('El email y la contraseña son obligatorios');
@@ -21,10 +23,12 @@ const SignIn: React.FC = () => {
 
     try {
       await login(email, password);
-      setError(null);  // Limpiar errores previos
+      setLoading(false);
+      setError(null);
       navigate('/');
     } catch (err: any) {
-      setError(err.message);  // Mostrar mensaje de error
+      setError(err.message);  
+      setLoading(false);
     }
   };
 
@@ -36,9 +40,9 @@ const SignIn: React.FC = () => {
             Inicia sesión en tu cuenta
           </h2>
 
-          {error && <p className="text-red-500">{error}</p>}  {/* Mostrar el error */}
-
-          <form onSubmit={handleSubmit}>
+          {loading ? <Loader /> : (
+            <form onSubmit={handleSubmit}>
+            {error && <p className="text-red-500">{error}</p>}  {/* Mostrar el error */}
             <div className="mb-4">
               <label className="mb-2.5 block font-medium text-black dark:text-white">
                 Correo electrónico
@@ -75,11 +79,11 @@ const SignIn: React.FC = () => {
               />
             </div>
           </form>
-
+          )}
           <div className="mt-6 text-center">
             <p>
               ¿No tienes cuenta aún?{' '}
-              <Link to="/auth/signup" className="text-primary">
+              <Link to="/signup" className="text-primary">
                 Regístrate
               </Link>
             </p>

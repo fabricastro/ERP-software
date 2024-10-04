@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import LogoDark from '../../images/logo/logo-dark.png';
 import Logo from '../../images/logo/logo.svg';
 import { useAuth } from '../../hooks/useAuth';
+import Loader from '../../common/Loader';
 
 const SignUp: React.FC = () => {
   const [bussinessName, setBussinessName] = useState('');
@@ -10,19 +11,23 @@ const SignUp: React.FC = () => {
   const [phone, setPhone] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const message = await register({ bussinessName, email, phone });
+      setLoading(false);
       setSuccessMessage(message);
       setError(null);
       navigate('/auth/confirmemail');
     } catch (error: any) {
       setError(error.message);
+      setLoading(false);
       setSuccessMessage(null);
     }
   };
@@ -48,6 +53,7 @@ const SignUp: React.FC = () => {
                 Registrate Ahora
               </h2>
 
+              {loading ? <Loader /> : (
               <form onSubmit={handleSubmit}>
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">Nombre o Razón Social</label>
@@ -105,12 +111,13 @@ const SignUp: React.FC = () => {
                 <div className="mt-6 text-center">
                   <p>
                     ¿Ya tienes una cuenta?{' '}
-                    <Link to="/auth/signin" className="text-primary">
+                    <Link to="/signin" className="text-primary">
                       Iniciar Sesión
                     </Link>
                   </p>
                 </div>
               </form>
+              )}
             </div>
           </div>
         </div>

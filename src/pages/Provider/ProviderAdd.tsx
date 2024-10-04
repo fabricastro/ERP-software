@@ -1,67 +1,183 @@
 import Breadcrumb from "../../components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "../../layout/DefaultLayout";
 import { useState } from "react";
-
-interface Proveedor {
-    id: number;
-    nombre: string;
-    email: string;
-    telefono: string;
-    direccion: string;
-}
+import { providerService } from "../../services/ProviderService";
+import Alert from "../UiElements/Alerts";
 
 export const ProviderAdd = () => {
-    const [nombre, setNombre] = useState('');
+    const [type, setType] = useState('Persona Humana');
+    const [name, setName] = useState('');
+    const [cuit, setCuit] = useState('');
+    const [fiscalAddress, setFiscalAddress] = useState('');
+    const [postalCode, setPostalCode] = useState('');
+    const [community, setCommunity] = useState('');
+    const [province, setProvince] = useState('');
+    const [country, setCountry] = useState('Argentina');
+    const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
-    const [telefono, setTelefono] = useState('');
-    const [direccion, setDireccion] = useState('');
+    const [web, setWeb] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [alert, setAlert] = useState<{ type: 'success' | 'error', message: string } | null>(null); // Estado para manejar alertas
 
-    const agregarProveedor = (e: React.FormEvent) => {
+    
+    const agregarProveedor = async (e: React.FormEvent) => {
         e.preventDefault();
+        setLoading(true);
 
-        const nuevoProveedor: Proveedor = {
-            id: Date.now(),
-            nombre,
-            email,
-            telefono,
-            direccion,
-        };
+        try {
+            await providerService.addProvider({
+                type,
+                name,
+                cuit,
+                fiscalAddress,
+                postalCode,
+                community,
+                province,
+                country,
+                phone,
+                email,
+                web,
+            });
 
-        // Obtener los proveedores existentes en el LocalStorage
-        const proveedoresGuardados = JSON.parse(localStorage.getItem('proveedores') || '[]');
+            setAlert({ type: 'success', message: 'Proveedor agregado con éxito' });
+            setLoading(false);
 
-        // Agregar el nuevo proveedor a la lista
-        const nuevosProveedores = [...proveedoresGuardados, nuevoProveedor];
+            setType('Persona Humana');
+            setName('');
+            setCuit('');
+            setFiscalAddress('');
+            setPostalCode('');
+            setCommunity('');
+            setProvince('');
+            setCountry('Argentina');
+            setPhone('');
+            setEmail('');
+            setWeb('');
 
-        // Guardar la lista actualizada en el LocalStorage
-        localStorage.setItem('proveedores', JSON.stringify(nuevosProveedores));
-
-        // Limpiar los campos
-        setNombre('');
-        setEmail('');
-        setTelefono('');
-        setDireccion('');
-
-        alert('Proveedor agregado con éxito');
+        } catch (error: any) {
+            setLoading(false);
+            setAlert({ type: 'error', message: 'Hubo un error al agregar el proveedor. Por favor, inténtalo de nuevo.' });
+        }
     };
+
 
     return (
         <DefaultLayout>
             <Breadcrumb pageName="Agregar Proveedor" />
             <div className="flex flex-col gap-5.5 p-6.5">
+                {loading && <p>Cargando...</p>}
+                {alert && (
+                    <Alert
+                        type={alert.type}
+                        title={alert.type === 'success' ? 'Éxito' : 'Error'}
+                        message={alert.message}
+                        onClose={() => setAlert(null)} // Cerrar la alerta
+                    />
+                )}
                 <form onSubmit={agregarProveedor}>
+                    <div>
+                        <label className='mb-3 block text-black dark:text-white'>Tipo de Proveedor:</label>
+                        <select
+                            value={type}
+                            onChange={(e) => setType(e.target.value)}
+                            required
+                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        >
+                            <option value="Persona Humana">Persona Humana</option>
+                            <option value="Persona Jurídica">Persona Jurídica</option>
+                        </select>
+                    </div>
+
                     <div>
                         <label className='mb-3 block text-black dark:text-white'>Nombre:</label>
                         <input
                             type="text"
-                            value={nombre}
-                            onChange={(e) => setNombre(e.target.value)}
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
                             required
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
                     </div>
+
                     <div>
-                        <label className='mb-3 block text-black dark:text-white'>Email:</label>
+                        <label className='mb-3 block text-black dark:text-white'>CUIT:</label>
+                        <input
+                            type="text"
+                            value={cuit}
+                            onChange={(e) => setCuit(e.target.value)}
+                            required
+                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                    </div>
+
+                    <div>
+                        <label className='mb-3 block text-black dark:text-white'>Dirección Fiscal:</label>
+                        <input
+                            type="text"
+                            value={fiscalAddress}
+                            onChange={(e) => setFiscalAddress(e.target.value)}
+                            required
+                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                    </div>
+
+                    <div>
+                        <label className='mb-3 block text-black dark:text-white'>Código Postal:</label>
+                        <input
+                            type="text"
+                            value={postalCode}
+                            onChange={(e) => setPostalCode(e.target.value)}
+                            required
+                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                    </div>
+
+                    <div>
+                        <label className='mb-3 block text-black dark:text-white'>Localidad/Comunidad:</label>
+                        <input
+                            type="text"
+                            value={community}
+                            onChange={(e) => setCommunity(e.target.value)}
+                            required
+                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                    </div>
+
+                    <div>
+                        <label className='mb-3 block text-black dark:text-white'>Provincia:</label>
+                        <input
+                            type="text"
+                            value={province}
+                            onChange={(e) => setProvince(e.target.value)}
+                            required
+                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                    </div>
+
+                    <div>
+                        <label className='mb-3 block text-black dark:text-white'>País:</label>
+                        <input
+                            type="text"
+                            value={country}
+                            onChange={(e) => setCountry(e.target.value)}
+                            required
+                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                    </div>
+
+                    <div>
+                        <label className='mb-3 block text-black dark:text-white'>Teléfono:</label>
+                        <input
+                            type="text"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                            required
+                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                    </div>
+
+                    <div>
+                        <label className='mb-3 block text-black dark:text-white'>Correo Electrónico:</label>
                         <input
                             type="email"
                             value={email}
@@ -70,28 +186,19 @@ export const ProviderAdd = () => {
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
                     </div>
+
                     <div>
-                        <label className='mb-3 block text-black dark:text-white'>Teléfono:</label>
-                        <input
-                            type="tel"
-                            value={telefono}
-                            onChange={(e) => setTelefono(e.target.value)}
-                            required
-                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                    </div>
-                    <div>
-                        <label className='mb-3 block text-black dark:text-white'>Dirección:</label>
+                        <label className='mb-3 block text-black dark:text-white'>Página Web:</label>
                         <input
                             type="text"
-                            value={direccion}
-                            onChange={(e) => setDireccion(e.target.value)}
-                            required
+                            value={web}
+                            onChange={(e) => setWeb(e.target.value)}
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
                     </div>
-                    <button className='mt-10 inline-flex items-center justify-center rounded-full bg-meta-3 py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10' type="submit">
-                        Agregar Proveedor
+
+                    <button className='mt-10 inline-flex items-center justify-center rounded-full bg-meta-3 py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10' type="submit" disabled={loading}>
+                        {loading ? 'Cargando...' : 'Agregar Proveedor'}
                     </button>
                 </form>
             </div>

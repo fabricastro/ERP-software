@@ -213,3 +213,33 @@ span.flatpickr-weekday,
 [x-cloak] {
   display: none !important;
 }
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.alert-enter {
+  animation: slideInRight 0.5s ease forwards;
+}
+
+.alert-exit {
+  animation: slideOutRight 0.5s ease forwards;
+}
