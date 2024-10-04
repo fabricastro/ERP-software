@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useAuth } from "../../hooks/useAuth"; // Suponiendo que tienes un hook de autenticación
+import { useAuth } from "../../hooks/useAuth";
 
 export const Confirm = () => {
     const location = useLocation();
@@ -32,7 +32,7 @@ export const Confirm = () => {
                 // Si la confirmación es exitosa, iniciar sesión automáticamente
                 const { email } = response.data;
                 login(email); 
-                navigate("/dashboard");
+                navigate("/");
             } catch (error: any) {
                 setError(error.response?.data?.message || "Error al confirmar el correo.");
             } finally {

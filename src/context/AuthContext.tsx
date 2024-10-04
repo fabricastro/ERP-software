@@ -32,7 +32,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       localStorage.setItem('token', accessToken);
 
       setIsAuthenticated(true);
-      navigate('/dashboard');
+      navigate('/');
     } catch (error: any) {
       console.error('Error:', error.message);
       throw new Error('Credenciales incorrectas o error en la autenticación');

@@ -10,7 +10,7 @@ import ECommerce from './pages/Dashboard/ECommerce';
 import FormElements from './pages/Form/FormElements';
 import FormLayout from './pages/Form/FormLayout';
 import Profile from './pages/Profile';
-import Settings from './pages/Settings';
+import Settings from './pages/Settings/Settings';
 import Tables from './pages/Tables';
 import Alerts from './pages/UiElements/Alerts';
 import Buttons from './pages/UiElements/Buttons';
@@ -51,7 +51,7 @@ function App() {
         <Route path="/auth/confirmemail" element={<ConfirmEmail />} />
         {/* Rutas protegidas */}
         <Route element={<PrivateRoute />}>
-          <Route path="/dashboard" element={<ECommerce />} />
+          <Route path="/" element={<ECommerce />} />
           <Route path="/salesdocs" element={<Salesdocs />} />
           <Route path='/salesdocs/add_salesdocs' element={<SalesdocsAdd />}/>
           <Route path="/customer" element={<Customer />} />
@@ -61,6 +61,7 @@ function App() {
           <Route path="/bill" element={<Bill />} />
           <Route path="/article" element={<Article />} />
           <Route path='/article/add_article' element={<ArticleAdd />} />
+          <Route path='/settings' element={<Settings />} />
           <Route
             path="/calendar"
             element={

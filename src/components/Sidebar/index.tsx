@@ -6,6 +6,7 @@ import { FaShoppingCart } from "react-icons/fa";
 import { FaUsers } from "react-icons/fa";
 import { FaMoneyBillWave } from "react-icons/fa6";
 import { useTranslation } from 'react-i18next';
+import { IoSettings } from "react-icons/io5";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -108,7 +109,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Item Dashboard --> */}
               <li>
                 <NavLink
-                  to="/dashboard"
+                  to="/"
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname === '/' && 'bg-graydark dark:bg-meta-4'
                     }`}
                 >
@@ -211,6 +212,21 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                     <path d="M3 13H21V11H3V13ZM3 18H17V16H3V18ZM3 6V8H21V6H3Z" />
                   </svg>
                   {t('routes.provider')}
+                </NavLink>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <ul>
+            <li>
+                <NavLink
+                  to="/settings"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes('proveedores') &&
+                    'bg-graydark dark:bg-meta-4'
+                    }`}
+                >
+                  <IoSettings />
+                  Configuración
                 </NavLink>
               </li>
             </ul>

@@ -22,7 +22,7 @@ const SignIn: React.FC = () => {
     try {
       await login(email, password);
       setError(null);  // Limpiar errores previos
-      navigate('/dashboard');
+      navigate('/');
     } catch (err: any) {
       setError(err.message);  // Mostrar mensaje de error
     }
