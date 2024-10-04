@@ -2,14 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import UserOne from '../../images/user/user-01.png';
-
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const trigger = useRef<any>(null);
   const dropdown = useRef<any>(null);
 
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
 
   const handleLogout = () => {
     setDropdownOpen(false); // Cierra el dropdown al hacer logout
@@ -47,13 +46,13 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            User ejemplo
+          {user?.bussinessName || ''}
           </span>
         </span>
 
-        <span className="h-12 w-12 rounded-full">
+        {/* <span className="h-12 w-12 rounded-full">
           <img src={UserOne} alt="User" />
-        </span>
+        </span> */}
 
         <svg
           className="hidden fill-current sm:block"

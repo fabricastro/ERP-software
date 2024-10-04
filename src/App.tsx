@@ -16,7 +16,7 @@ import Alerts from './pages/UiElements/Alerts';
 import Buttons from './pages/UiElements/Buttons';
 import { Salesdocs } from './pages/Salesdocs/Salesdocs';
 import PrivateRoute from './routes/PrivateRoute';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { CustomerAdd } from './pages/Customer/CustomerAdd';
 import { Provider } from './pages/Provider/Provider';
 import { Bill } from './pages/Bill/Bill';
@@ -28,6 +28,16 @@ import { SalesdocsAdd } from './pages/Salesdocs/SalesdocsAdd';
 import { Confirm } from './pages/Authentication/Confirm';
 import { ConfirmEmail } from './pages/Authentication/ConfirmEmail';
 function App() {
+  const { user } = useAuth(); 
+  const capitalizeWords = (text: string) => {
+    return text.replace(/\b\w/g, (char) => char.toUpperCase());
+  };
+
+  useEffect(() => {
+    const companyName = `ERP - ${user.bussinessName}` || 'ERP - Daes Ingeniería';
+    document.title = capitalizeWords(companyName); // Capitalizamos la primera letra
+  }, [user]);
+
   const [loading, setLoading] = useState<boolean>(true);
   const { pathname } = useLocation();
 
