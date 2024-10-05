@@ -17,7 +17,7 @@ export const ProviderAdd = () => {
     const [email, setEmail] = useState('');
     const [web, setWeb] = useState('');
     const [loading, setLoading] = useState(false);
-    const [alert, setAlert] = useState<{ type: 'success' | 'error', message: string } | null>(null); // Estado para manejar alertas
+    const [alert, setAlert] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
     
     const agregarProveedor = async (e: React.FormEvent) => {

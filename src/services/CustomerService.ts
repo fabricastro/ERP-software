@@ -1,14 +1,14 @@
 import { BaseService } from './BaseService';
 
 // Clase específica para el módulo de proveedores
-class ProviderService extends BaseService {
+class CustomerService extends BaseService {
   
   constructor() {
     super(import.meta.env.VITE_API_URL); // URL base de la API
   }
 
   // Método para agregar un proveedor
-  async addProvider(data: {
+  async addCustomer(data: {
     type: string;
     name: string;
     cuit: string;
@@ -21,16 +21,16 @@ class ProviderService extends BaseService {
     email: string;
     web?: string;
   }) {
-    return this.post('/provider', data);
+    return this.post('/customer', data);
   }
 
   getAll() {
-    return this.get('/provider');
+    return this.get('/customer');
   }
   getById(id: number) {
-    return this.get(`/provider/${id}`);
+    return this.get(`/customer/${id}`);
   }
-  async updateProvider(id: number, data: {
+  async updateCustomer(id: number, data: {
     type?: string;
     name?: string;
     cuit?: string;
@@ -43,12 +43,12 @@ class ProviderService extends BaseService {
     email?: string;
     web?: string;
   }) {
-    return this.patch(`/provider/${id}`, data);
+    return this.patch(`/customer/${id}`, data);
   }
 
-  async deleteProvider(id: string) {
-    return this.delete(`/provider/${id}`);
+  async deleteCustomer(id: string) {
+    return this.delete(`/customer/${id}`);
   }
 }
 
-export const providerService = new ProviderService();
+export const customerService = new CustomerService();

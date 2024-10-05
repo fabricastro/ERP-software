@@ -29,6 +29,7 @@ import { ConfirmEmail } from './pages/Authentication/ConfirmEmail';
 import ProviderEdit from './pages/Provider/ProviderEdit';
 import Alert from './pages/UiElements/Alerts';
 import { providerService } from './services/ProviderService';
+import CustomerEdit from './pages/Customer/CustomerEdit';
 
 function App() {
   const { user } = useAuth(); 
@@ -90,6 +91,7 @@ function App() {
           <Route path="/salesdocs/add_salesdocs" element={<SalesdocsAdd />} />
           <Route path="/customer" element={<Customer />} />
           <Route path="/customer/add_customer" element={<CustomerAdd />} />
+          <Route path="/customer/edit/:id" element={<CustomerEdit />} />
           <Route path="/provider" element={<Provider />} />
           <Route path="/provider/add_provider" element={<ProviderAdd />} />
           <Route path="/provider/edit/:id" element={<ProviderEdit />} />

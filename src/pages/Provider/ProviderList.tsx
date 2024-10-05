@@ -4,6 +4,7 @@ import { providerService } from "../../services/ProviderService";
 import { MdEdit } from "react-icons/md";
 import { FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import Alert from '../../pages/UiElements/Alerts';
 
 interface Proveedor {
   id: number;
@@ -18,6 +19,8 @@ const ProviderList: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const [alert, setAlert] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
 
 
   useEffect(() => {
@@ -35,7 +38,19 @@ const ProviderList: React.FC = () => {
     fetchProviders();
   }, []);
 
-  // Columnas de la tabla
+  const handleDelete = async (id: string) => {
+    const confirmDelete = window.confirm('¿Estás seguro de que deseas eliminar este proveedor?');
+    if (confirmDelete) {
+      try {
+        await providerService.deleteProvider(id);
+        setAlert({ type: 'success', message: 'Proveedor eliminado con éxito' });
+        setProveedores((prev) => prev.filter((provider) => provider.id !== id));
+      } catch (error) {
+        setAlert({ type: 'error', message: 'Error al eliminar el proveedor' });
+      }
+    }
+  };
+
   const columns = [
     { key: "name", label: "Nombre" },
     { key: "email", label: "Email" },
@@ -49,7 +64,7 @@ const ProviderList: React.FC = () => {
     <>
       <button onClick={() => handleEdit(proveedor.id)}
         className="hover:text-primary text-[25px]"><MdEdit /></button>
-      <button className="hover:text-danger text-[20px]"><FaTrash /></button>
+      <button onClick={() => handleDelete(proveedor.id)} className="hover:text-danger text-[20px]"><FaTrash /></button>
     </>
   );
 
@@ -58,6 +73,7 @@ const ProviderList: React.FC = () => {
 
   return (
     <div>
+      {alert && <Alert type={alert.type} title={alert.type === 'success' ? 'Éxito' : 'Error'} message={alert.message} />}
       <TableThree data={proveedores} columns={columns} actions={handleActions} />
     </div>
   );

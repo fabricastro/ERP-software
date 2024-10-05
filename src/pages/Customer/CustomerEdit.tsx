@@ -1,38 +1,37 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { providerService } from '../../services/ProviderService';
+import { customerService } from '../../services/CustomerService';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../../layout/DefaultLayout';
 import Alert from '../../pages/UiElements/Alerts';
 import Loader from '../../common/Loader';
-
-const ProviderEdit = () => {
+const customerEdit = () => {
     const { id } = useParams(); 
     const navigate = useNavigate();
-    const [provider, setProvider] = useState<any | null>(null);
+    const [customer, setcustomer] = useState<any | null>(null);
     const [alert, setAlert] = useState<{ type: string; title: string; message: string } | null>(null);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const fetchProvider = async () => {
+        const fetchcustomer = async () => {
             try {
-                const data = await providerService.getById(id);
-                setProvider(data);
+                const data = await customerService.getById(id);
+                setcustomer(data);
             } catch (error) {
                 console.error('Error al obtener el proveedor:', error);
             }
         };
-        fetchProvider();
+        fetchcustomer();
     }, [id]);
 
     const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         try {
-            await providerService.updateProvider(id, provider);
+            await customerService.updateCustomer(id, customer);
             setAlert({ type: 'success', title: 'Éxito', message: 'Proveedor actualizado correctamente' });
             setTimeout(() => {
-                navigate('/provider');
+                navigate('/customer');
             }, 2000);
         } catch (error) {
             setAlert({ type: 'error', title: 'Error', message: 'No se pudo actualizar el proveedor' });
@@ -42,13 +41,13 @@ const ProviderEdit = () => {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setProvider((prevProvider: any) => ({
-            ...prevProvider,
+        setcustomer((prevcustomer: any) => ({
+            ...prevcustomer,
             [name]: value,
         }));
     };
 
-    if (!provider) {
+    if (!customer) {
         return <Loader />;
     }
 
@@ -62,7 +61,7 @@ const ProviderEdit = () => {
                         <label className="mb-3 block text-black dark:text-white">Tipo de Proveedor:</label>
                         <select
                             name="type"
-                            value={provider.type}
+                            value={customer.type}
                             onChange={handleChange}
                             required
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
@@ -77,7 +76,7 @@ const ProviderEdit = () => {
                         <input
                             type="text"
                             name="name"
-                            value={provider.name}
+                            value={customer.name}
                             onChange={handleChange}
                             required
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
@@ -89,7 +88,7 @@ const ProviderEdit = () => {
                         <input
                             type="text"
                             name="cuit"
-                            value={provider.cuit}
+                            value={customer.cuit}
                             onChange={handleChange}
                             required
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
@@ -101,7 +100,7 @@ const ProviderEdit = () => {
                         <input
                             type="text"
                             name="fiscalAddress"
-                            value={provider.fiscalAddress}
+                            value={customer.fiscalAddress}
                             onChange={handleChange}
                             required
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
@@ -113,7 +112,7 @@ const ProviderEdit = () => {
                         <input
                             type="text"
                             name="postalCode"
-                            value={provider.postalCode}
+                            value={customer.postalCode}
                             onChange={handleChange}
                             required
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
@@ -125,7 +124,7 @@ const ProviderEdit = () => {
                         <input
                             type="text"
                             name="community"
-                            value={provider.community}
+                            value={customer.community}
                             onChange={handleChange}
                             required
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
@@ -137,7 +136,7 @@ const ProviderEdit = () => {
                         <input
                             type="text"
                             name="province"
-                            value={provider.province}
+                            value={customer.province}
                             onChange={handleChange}
                             required
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
@@ -149,7 +148,7 @@ const ProviderEdit = () => {
                         <input
                             type="text"
                             name="country"
-                            value={provider.country}
+                            value={customer.country}
                             onChange={handleChange}
                             required
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
@@ -161,7 +160,7 @@ const ProviderEdit = () => {
                         <input
                             type="text"
                             name="phone"
-                            value={provider.phone}
+                            value={customer.phone}
                             onChange={handleChange}
                             required
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
@@ -173,7 +172,7 @@ const ProviderEdit = () => {
                         <input
                             type="email"
                             name="email"
-                            value={provider.email}
+                            value={customer.email}
                             onChange={handleChange}
                             required
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
@@ -185,7 +184,7 @@ const ProviderEdit = () => {
                         <input
                             type="text"
                             name="web"
-                            value={provider.web}
+                            value={customer.web}
                             onChange={handleChange}
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
                         />
@@ -200,4 +199,4 @@ const ProviderEdit = () => {
     );
 };
 
-export default ProviderEdit;
+export default customerEdit;

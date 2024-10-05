@@ -1,42 +1,80 @@
 import React, { useEffect, useState } from "react";
 import TableThree from "../../components/Tables/TableThree"; // Importa la tabla reutilizable
+import { customerService } from "../../services/CustomerService";
+import { MdEdit } from "react-icons/md";
+import { FaTrash } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import Alert from '../../pages/UiElements/Alerts';
 
-interface Cliente {
+interface Customer {
   id: number;
-  nombre: string;
+  name: string;
   email: string;
-  telefono: string;
-  direccion: string;
+  phone: string;
+  fiscalAddress: string;
 }
 
 const CustomerList: React.FC = () => {
-  const [clientes, setClientes] = useState<Cliente[]>([]);
+  const [customer, setCustomer] = useState<Customer[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const [alert, setAlert] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
-  // Cargar los clientes desde el localStorage
+
+
   useEffect(() => {
-    const clientesGuardados = JSON.parse(localStorage.getItem("clientes") || "[]");
-    setClientes(clientesGuardados);
+    const fetchcustomers = async () => {
+      try {
+        const response = await customerService.getAll();
+        setCustomer(response);
+        setLoading(false);
+      } catch (err: any) {
+        setError('Error al cargar los clientes');
+        setLoading(false);
+      }
+    };
+
+    fetchcustomers();
   }, []);
 
-  // Definir las columnas para la tabla reutilizable
-  const columns = [
-    { key: "nombre", label: "Nombre" },
-    { key: "email", label: "Email" },
-    { key: "telefono", label: "Teléfono" },
-    { key: "direccion", label: "Dirección" },
-  ];
+  const handleDelete = async (id: string) => {
+    const confirmDelete = window.confirm('¿Estás seguro de que deseas eliminar este cliente?');
+    if (confirmDelete) {
+      try {
+        await customerService.deleteCustomer(id);
+        setAlert({ type: 'success', message: 'Cliente eliminado con éxito' });
+        setCustomer((prev) => prev.filter((customer) => customer.id !== id));
+      } catch (error) {
+        setAlert({ type: 'error', message: 'Error al eliminar el cliente' });
+      }
+    }
+  };
 
-  // Opcional: Función para manejar acciones (editar, eliminar)
-  const handleActions = (cliente: Cliente) => (
+  const columns = [
+    { key: "name", label: "Nombre" },
+    { key: "email", label: "Email" },
+    { key: "phone", label: "Teléfono" },
+    { key: "fiscalAddress", label: "Dirección" },
+  ];
+  const handleEdit = (id: number) => {
+    navigate(`/customer/edit/${id}`);
+  };
+  const handleActions = (customer: Customer) => (
     <>
-      <button className="hover:text-primary">Editar</button>
-      <button className="hover:text-danger">Eliminar</button>
+      <button onClick={() => handleEdit(customer.id)}
+        className="hover:text-primary text-[25px]"><MdEdit /></button>
+      <button onClick={() => handleDelete(customer.id)} className="hover:text-danger text-[20px]"><FaTrash /></button>
     </>
   );
 
+  if (loading) return <p>Cargando clientes...</p>;
+  if (error) return <p>{error}</p>;
+
   return (
     <div>
-      <TableThree data={clientes} columns={columns} actions={handleActions} />
+      {alert && <Alert type={alert.type} title={alert.type === 'success' ? 'Éxito' : 'Error'} message={alert.message} />}
+      <TableThree data={customer} columns={columns} actions={handleActions} />
     </div>
   );
 };

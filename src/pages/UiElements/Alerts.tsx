@@ -8,7 +8,7 @@ interface AlertProps {
 }
 
 const Alert: React.FC<AlertProps> = ({ type, title, message, onClose }) => {
-  const [exit, setExit] = useState(false); // Estado para manejar la salida con animación
+  const [exit, setExit] = useState(false);
 
   const alertStyles = {
     success: {
@@ -35,15 +35,15 @@ const Alert: React.FC<AlertProps> = ({ type, title, message, onClose }) => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setExit(true); // Inicia la animación de salida
+      setExit(true); 
       setTimeout(() => {
         if (onClose) {
-          onClose(); // Cierra la alerta después de la animación de salida
+          onClose(); 
         }
-      }, 500); // Tiempo suficiente para que la animación termine
-    }, 3000); // Desaparece automáticamente después de 3 segundos
+      }, 500); 
+    }, 3000); 
 
-    return () => clearTimeout(timer); // Limpiar el temporizador al desmontar
+    return () => clearTimeout(timer); 
   }, [onClose]);
 
   return (
