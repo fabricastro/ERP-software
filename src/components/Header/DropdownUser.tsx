@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import UserOne from '../../images/user/user-01.png';
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -11,8 +10,8 @@ const DropdownUser = () => {
   const { logout, user } = useAuth();
 
   const handleLogout = () => {
-    setDropdownOpen(false); // Cierra el dropdown al hacer logout
-    logout(); // Llama al método de logout del contexto
+    setDropdownOpen(false); 
+    logout();
   };
 
   // close on click outside

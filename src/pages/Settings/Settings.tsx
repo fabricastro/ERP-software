@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
-import userThree from '../../images/user/user-03.png';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useAuth } from '../../context/AuthContext';
 import { updateUserService } from '../../services/user';

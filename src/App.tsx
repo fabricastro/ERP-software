@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import Loader from './common/Loader';
 import PageTitle from './components/PageTitle';
 import SignIn from './pages/Authentication/SignIn';
@@ -27,11 +27,25 @@ import { SalesdocsAdd } from './pages/Salesdocs/SalesdocsAdd';
 import { Confirm } from './pages/Authentication/Confirm';
 import { ConfirmEmail } from './pages/Authentication/ConfirmEmail';
 import ProviderEdit from './pages/Provider/ProviderEdit';
+import Alert from './pages/UiElements/Alerts';
+import { providerService } from './services/ProviderService';
+
 function App() {
   const { user } = useAuth(); 
   const capitalizeWords = (text: string) => {
     return text.replace(/\b\w/g, (char) => char.toUpperCase());
   };
+
+  const navigate = useNavigate();
+  const [alert, setAlert] = useState<{ type: 'success' | 'warning' | 'error'; title: string; message: string } | null>(null);
+
+  useEffect(() => {
+    providerService.setNavigate(navigate);
+
+    providerService.setAlertFunction((type, title, message) => {
+      setAlert({ type, title, message });
+    });
+  }, [navigate]);
 
   useEffect(() => {
     if (user && user.bussinessName) {
@@ -54,7 +68,15 @@ function App() {
   return loading ? (
     <Loader />
   ) : (
-    <AuthProvider>
+    <>
+      {alert && (
+        <Alert
+          type={alert.type}
+          title={alert.title}
+          message={alert.message}
+          onClose={() => setAlert(null)}
+        />
+      )}
       <Routes>
         {/* Rutas públicas */}
         <Route path="/signin" element={<SignIn />} />
@@ -65,7 +87,7 @@ function App() {
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<ECommerce />} />
           <Route path="/salesdocs" element={<Salesdocs />} />
-          <Route path='/salesdocs/add_salesdocs' element={<SalesdocsAdd />}/>
+          <Route path="/salesdocs/add_salesdocs" element={<SalesdocsAdd />} />
           <Route path="/customer" element={<Customer />} />
           <Route path="/customer/add_customer" element={<CustomerAdd />} />
           <Route path="/provider" element={<Provider />} />
@@ -73,84 +95,25 @@ function App() {
           <Route path="/provider/edit/:id" element={<ProviderEdit />} />
           <Route path="/bill" element={<Bill />} />
           <Route path="/article" element={<Article />} />
-          <Route path='/article/add_article' element={<ArticleAdd />} />
-          <Route path='/settings' element={<Settings />} />
-          <Route
-            path="/calendar"
-            element={
-              <>
-                <PageTitle title="Calendario" />
-                <Calendar />
-              </>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <>
-                <PageTitle title="Perfil" />
-                <Profile />
-              </>
-            }
-          />
-          <Route
-            path="/forms/form-elements"
-            element={
-              <>
-                <PageTitle title="Form Elements" />
-                <FormElements />
-              </>
-            }
-          />
-          <Route
-            path="/forms/form-layout"
-            element={
-              <>
-                <PageTitle title="Form Layout" />
-                <FormLayout />
-              </>
-            }
-          />
-          <Route
-            path="/tables"
-            element={
-              <>
-                <PageTitle title="Tables" />
-                <Tables />
-              </>
-            }
-          />
-          <Route
-            path="/settings"
-            element={
-              <>
-                <PageTitle title="Settings" />
-                <Settings />
-              </>
-            }
-          />
-          <Route
-            path="/chart"
-            element={
-              <>
-                <PageTitle title="Basic Chart" />
-                <Chart />
-              </>
-            }
-          />
-          <Route
-            path="/ui/buttons"
-            element={
-              <>
-                <PageTitle title="Buttons" />
-                <Buttons />
-              </>
-            }
-          />
+          <Route path="/article/add_article" element={<ArticleAdd />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/calendar" element={<Calendar />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/forms/form-elements" element={<FormElements />} />
+          <Route path="/forms/form-layout" element={<FormLayout />} />
+          <Route path="/tables" element={<Tables />} />
+          <Route path="/chart" element={<Chart />} />
+          <Route path="/ui/buttons" element={<Buttons />} />
         </Route>
       </Routes>
-    </AuthProvider>
+    </>
   );
 }
 
-export default App;
+export default function RootApp() {
+  return (
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  );
+}

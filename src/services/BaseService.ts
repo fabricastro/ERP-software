@@ -1,16 +1,55 @@
 import axios, { AxiosInstance } from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export class BaseService {
     protected api: AxiosInstance;
+    protected navigate: ReturnType<typeof useNavigate>;
+    protected setAlert: (type: 'success' | 'warning' | 'error', title: string, message: string) => void;
 
     constructor(baseURL: string) {
         this.api = axios.create({
             baseURL,
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`, // token de autenticación
             },
         });
+
+        this.api.interceptors.request.use(
+            (config) => {
+                const token = localStorage.getItem('token');
+                if (token) {
+                    config.headers['Authorization'] = `Bearer ${token}`;
+                }
+                return config;
+            },
+            (error) => Promise.reject(error)
+        );
+
+        this.api.interceptors.response.use(
+            (response) => response,
+            (error) => {
+                if (error.response && error.response.status === 401) {
+                    this.handleUnauthorizedError();
+                }
+                return Promise.reject(error);
+            }
+        );
+    }
+
+    setNavigate(navigate: ReturnType<typeof useNavigate>) {
+        this.navigate = navigate;
+    }
+
+    setAlertFunction(setAlert: (type: 'success' | 'warning' | 'error', title: string, message: string) => void) {
+        this.setAlert = setAlert;
+    }
+
+    handleUnauthorizedError() {
+        localStorage.removeItem('token');
+
+        this.setAlert('error', 'Sesión Expirada', 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+
+        this.navigate('/signin');
     }
 
     // Método para obtener datos (GET)

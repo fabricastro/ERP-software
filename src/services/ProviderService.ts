@@ -2,6 +2,7 @@ import { BaseService } from './BaseService';
 
 // Clase específica para el módulo de proveedores
 class ProviderService extends BaseService {
+  
   constructor() {
     super(import.meta.env.VITE_API_URL); // URL base de la API
   }
