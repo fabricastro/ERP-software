@@ -32,6 +32,8 @@ import { providerService } from './services/ProviderService';
 import CustomerEdit from './pages/Customer/CustomerEdit';
 import { Category } from './pages/Category/Category';
 import { CategoryAdd } from './pages/Category/CategoryAdd';
+import ArticleEdit from './pages/Article/ArticleEdit';
+import CategoryEdit from './pages/Category/CategoryEdit';
 
 function App() {
   const { user } = useAuth(); 
@@ -100,8 +102,10 @@ function App() {
           <Route path="/bill" element={<Bill />} />
           <Route path="/article" element={<Article />} />
           <Route path="/article/add_article" element={<ArticleAdd />} />
-          <Route path='/category' element={<Category />} />
-          <Route path='/category/add_category' element={<CategoryAdd />} />
+          <Route path="/article/edit/:id" element={<ArticleEdit />} />
+          <Route path='/article/category' element={<Category />} />
+          <Route path='/article/category/add_category' element={<CategoryAdd />} />
+          <Route path="/article/category/edit/:id" element={<CategoryEdit />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/profile" element={<Profile />} />

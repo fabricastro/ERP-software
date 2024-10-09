@@ -14,20 +14,23 @@ const Alert: React.FC<AlertProps> = ({ type, title, message, onClose }) => {
     success: {
       border: 'border-[#34D399]',
       background: 'bg-[#34D399]',
-      iconBackground: 'bg-[#7fffd0]',
+      iconBackground: 'bg-[#000]',
       textColor: 'text-black dark:text-[#34D399]',
+      messageColor: 'text-[#000]',
     },
     warning: {
       border: 'border-warning',
       background: 'bg-warning',
       iconBackground: 'bg-warning bg-opacity-30',
       textColor: 'text-[#9D5425]',
+      messageColor: 'text-[#000]',
     },
     error: {
       border: 'border-[#F87171]',
       background: 'bg-[#F87171]',
       iconBackground: 'bg-[#fc1e1e]',
       textColor: 'text-[#f7e4e4]',
+      messageColor: 'text-[#000]',
     },
   };
 
@@ -82,7 +85,7 @@ const Alert: React.FC<AlertProps> = ({ type, title, message, onClose }) => {
       </div>
       <div className="flex-1">
         <h5 className={`mb-2 text-lg font-semibold ${style.textColor}`}>{title}</h5>
-        <p className="text-sm text-[#f7e4e4]">{message}</p>
+        <p className={`text-sm ${style.messageColor}`}>{message}</p>
       </div>
       {onClose && (
         <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-lg font-bold">

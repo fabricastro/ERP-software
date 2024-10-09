@@ -75,6 +75,7 @@ export const ProviderAdd = () => {
                     />
                 )}
                 <form onSubmit={agregarProveedor}>
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <div>
                         <label className='mb-3 block text-black dark:text-white'>Tipo de Proveedor:</label>
                         <select
@@ -196,6 +197,8 @@ export const ProviderAdd = () => {
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
                     </div>
+                    </div>
+                    
 
                     <button className='mt-10 inline-flex items-center justify-center rounded-full bg-meta-3 py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10' type="submit" disabled={loading}>
                         {loading ? 'Cargando...' : 'Agregar Proveedor'}

@@ -13,6 +13,21 @@ class CategoryService extends BaseService {
   // Método para obtener todas las categorías
   async getAllCategories() {
     return this.get('/category');
+  
+  }
+  getById(id: number) {
+    return this.get(`/category/${id}`);
+  }
+
+  async updateCategory(id: number, data: {
+    name?: string;
+    color?: string;
+  }) {
+    return this.patch(`/category/${id}`, data);
+  }
+
+  async deleteCategory(id: string) {
+    return this.delete(`/category/${id}`);
   }
 }
 
