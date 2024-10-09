@@ -14,14 +14,14 @@ export const ArticleAdd = () => {
   const [description, setDescription] = useState('');
   const [sku, setSku] = useState('');
   const [barcode, setBarcode] = useState('');
-  const [internalCost, setInternalCost] = useState(0);
-  const [profitability, setProfitability] = useState(0);
-  const [unitPrice, setUnitPrice] = useState(0);
-  const [iva, setIva] = useState(21); 
-  const [providerId, setProviderId] = useState(1);
-  const [observations, setObservations] = useState('');
-  const [stock, setStock] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [internalCost, setInternalCost] = useState<string>("");
+  const [profitability, setProfitability] = useState<string>("");
+  const [unitPrice, setUnitPrice] = useState<number>(0);
+  const [iva, setIva] = useState<number>(21); 
+  const [providerId, setProviderId] = useState<number>(1);
+  const [observations, setObservations] = useState<string>('');
+  const [stock, setStock] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
   const [alert, setAlert] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
   useEffect(() => {
@@ -37,10 +37,34 @@ export const ArticleAdd = () => {
     fetchCategories();
   }, []);
 
-  // Calcula el precio unitario basado en costo interno y rentabilidad
-  const calcularPrecioUnitario = () => {
-    const precioUnitario = internalCost + (internalCost * (profitability / 100));
-    setUnitPrice(precioUnitario);
+  const handleCostChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const value = e.target.value;
+    const regex = /^[0-9]*[.,]?[0-9]*$/;
+
+    if (regex.test(value)) {
+      setInternalCost(value);
+      calcularPrecioUnitario(value, profitability);
+    }
+  };
+
+  const handleProfitabilityChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const value = e.target.value;
+    const regex = /^[0-9]*[.,]?[0-9]*$/;
+
+    if (regex.test(value)) {
+      setProfitability(value);
+      calcularPrecioUnitario(internalCost, value);
+    }
+  };
+
+  const calcularPrecioUnitario = (cost: string, profit: string) => {
+    const costNumber = parseFloat(cost.replace(',', '.'));
+    const profitNumber = parseFloat(profit.replace(',', '.'));
+
+    if (!isNaN(costNumber) && !isNaN(profitNumber)) {
+      const precioUnitario = costNumber + (costNumber * (profitNumber / 100));
+      setUnitPrice(precioUnitario);
+    }
   };
 
   const agregarArticulo = async (e: React.FormEvent) => {
@@ -56,8 +80,8 @@ export const ArticleAdd = () => {
         description,
         sku,
         barcode,
-        internalCost,
-        profitability,
+        internalCost: parseFloat(internalCost.replace(',', '.')),
+        profitability: parseFloat(profitability.replace(',', '.')),
         unitPrice,
         iva,
         providerId,
@@ -68,7 +92,6 @@ export const ArticleAdd = () => {
       setAlert({ type: 'success', message: 'Artículo agregado con éxito' });
       setLoading(false);
 
-      // Limpiar los campos después de agregar el artículo
       setType('Producto');
       setCategoryId(1);
       setName('');
@@ -76,8 +99,8 @@ export const ArticleAdd = () => {
       setDescription('');
       setSku('');
       setBarcode('');
-      setInternalCost(0);
-      setProfitability(0);
+      setInternalCost('');
+      setProfitability('');
       setUnitPrice(0);
       setIva(21);
       setProviderId(1);
@@ -192,9 +215,9 @@ export const ArticleAdd = () => {
           <div>
             <label className='mb-3 block text-black dark:text-white'>Costo Interno sin IVA:</label>
             <input
-              type="number"
+              type="text"
               value={internalCost}
-              onChange={(e) => setInternalCost(Number(e.target.value))}
+              onChange={handleCostChange}
               required
               className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
             />
@@ -203,12 +226,9 @@ export const ArticleAdd = () => {
           <div>
             <label className='mb-3 block text-black dark:text-white'>Rentabilidad (%):</label>
             <input
-              type="number"
+              type="text"
               value={profitability}
-              onChange={(e) => {
-                setProfitability(Number(e.target.value));
-                calcularPrecioUnitario();
-              }}
+              onChange={handleProfitabilityChange}
               required
               className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
             />

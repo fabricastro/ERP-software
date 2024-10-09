@@ -71,7 +71,7 @@ export const ProviderAdd = () => {
                         type={alert.type}
                         title={alert.type === 'success' ? 'Éxito' : 'Error'}
                         message={alert.message}
-                        onClose={() => setAlert(null)} // Cerrar la alerta
+                        onClose={() => setAlert(null)}
                     />
                 )}
                 <form onSubmit={agregarProveedor}>
