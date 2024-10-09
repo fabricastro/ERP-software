@@ -9,6 +9,7 @@ export const Article = () => {
             <Breadcrumb pageName="Artículos" />
             <div className="flex flex-row gap-10">
                 <Buttons title={'Agregar Artículo'} to={'/article/add_article'} />
+                <Buttons title={'Gestionar Cateogorias'} to={'/category'} bgColor="bg-[#4285F4]"/>
             </div>
             <div className="py-10 flex flex-col gap-5">
                 <h3>Listado de Clientes</h3>
