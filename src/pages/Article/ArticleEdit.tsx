@@ -8,7 +8,7 @@ import Alert from '../../pages/UiElements/Alerts';
 import Loader from '../../common/Loader';
 
 const ArticleEdit = () => {
-    const { id } = useParams(); 
+    const { id } = useParams();
     const navigate = useNavigate();
     const [article, setArticle] = useState<any | null>(null);
     const [categories, setCategories] = useState<any[]>([]);
@@ -74,152 +74,166 @@ const ArticleEdit = () => {
             <div className="flex flex-col gap-5.5 p-6.5">
                 {alert && <Alert type={alert.type} title={alert.title} message={alert.message} />}
                 <form onSubmit={handleUpdate}>
-                    <div>
-                        <label className="mb-3 block text-black dark:text-white">Tipo de Artículo:</label>
-                        <select
-                            name="type"
-                            value={article.type}
-                            onChange={handleChange}
-                            required
-                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
-                        >
-                            <option value="Producto">Producto</option>
-                            <option value="Servicio">Servicio</option>
-                            <option value="Combo">Combo</option>
-                        </select>
-                    </div>
+                    <div className='grid grid-cols-1 gap-15 md:grid-cols-3 mb-6'>
+                        <div>
+                            <label className="mb-3 block text-black dark:text-white">Título:</label>
+                            <input
+                                type="text"
+                                name="name"
+                                value={article.name}
+                                onChange={handleChange}
+                                required
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
+                            />
+                        </div>
 
-                    <div>
-                        <label className="mb-3 block text-black dark:text-white">Título:</label>
-                        <input
-                            type="text"
-                            name="name"
-                            value={article.name}
-                            onChange={handleChange}
-                            required
-                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
-                        />
-                    </div>
+                        <div>
+                            <label className="mb-3 block text-black dark:text-white">Tipo de Artículo:</label>
+                            <select
+                                name="type"
+                                value={article.type}
+                                onChange={handleChange}
+                                required
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
+                            >
+                                <option value="Producto">Producto</option>
+                                <option value="Servicio">Servicio</option>
+                                <option value="Combo">Combo</option>
+                            </select>
+                        </div>
 
-                    <div>
-                        <label className="mb-3 block text-black dark:text-white">Rubro o Categoría:</label>
-                        <select
-                            name="categoryId"
-                            value={article.categoryId}
-                            onChange={handleChange}
-                            required
-                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
-                        >
-                            {categories.map((category) => (
-                                <option key={category.id} value={category.id}>
-                                    {category.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                        <div>
+                            <label className="mb-3 block text-black dark:text-white">Stock:</label>
+                            <input
+                                type="number"
+                                name="stock"
+                                value={article.stock}
+                                onChange={handleChange}
+                                required
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
+                            />
+                        </div>
 
-                    <div>
-                        <label className="mb-3 block text-black dark:text-white">Estado:</label>
-                        <select
-                            name="status"
-                            value={article.status}
-                            onChange={handleChange}
-                            required
-                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
-                        >
-                            <option value="Activo">Activo</option>
-                            <option value="Inactivo">Inactivo</option>
-                        </select>
-                    </div>
+                        <div>
+                            <label className="mb-3 block text-black dark:text-white">Rubro o Categoría:</label>
+                            <select
+                                name="categoryId"
+                                value={article.categoryId}
+                                onChange={handleChange}
+                                required
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
+                            >
+                                {categories.map((category) => (
+                                    <option key={category.id} value={category.id}>
+                                        {category.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
 
+                        <div>
+                            <label className="mb-3 block text-black dark:text-white">Código SKU:</label>
+                            <input
+                                type="text"
+                                name="sku"
+                                value={article.sku}
+                                onChange={handleChange}
+                                required
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="mb-3 block text-black dark:text-white">Código de Barras:</label>
+                            <input
+                                type="text"
+                                name="barcode"
+                                value={article.barcode}
+                                onChange={handleChange}
+                                required
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="mb-3 block text-black dark:text-white">Costo Interno sin IVA:</label>
+                            <input
+                                type="number"
+                                name="internalCost"
+                                value={article.internalCost}
+                                onChange={handleChange}
+                                required
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="mb-3 block text-black dark:text-white">Rentabilidad (%):</label>
+                            <input
+                                type="number"
+                                name="profitability"
+                                value={article.profitability}
+                                onChange={handleChange}
+                                required
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="mb-3 block text-black dark:text-white">Precio Unitario sin IVA:</label>
+                            <input
+                                type="number"
+                                name="unitPrice"
+                                value={article.unitPrice}
+                                disabled
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="mb-3 block text-black dark:text-white">Estado:</label>
+                            <select
+                                name="status"
+                                value={article.status}
+                                onChange={handleChange}
+                                required
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
+                            >
+                                <option value="Activo">Activo</option>
+                                <option value="Inactivo">Inactivo</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className="mb-3 block text-black dark:text-white">Tipo de IVA:</label>
+                            <input
+                                type="number"
+                                name="iva"
+                                value={article.iva}
+                                onChange={handleChange}
+                                required
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="mb-3 block text-black dark:text-white">Proveedor:</label>
+                            <input
+                                type="number"
+                                name="providerId"
+                                value={article.providerId}
+                                onChange={handleChange}
+                                required
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
+                            />
+                        </div>
+                    </div>
+                    
                     <div>
                         <label className="mb-3 block text-black dark:text-white">Descripción:</label>
                         <textarea
                             name="description"
                             value={article.description}
-                            onChange={handleChange}
-                            required
-                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="mb-3 block text-black dark:text-white">Código SKU:</label>
-                        <input
-                            type="text"
-                            name="sku"
-                            value={article.sku}
-                            onChange={handleChange}
-                            required
-                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="mb-3 block text-black dark:text-white">Código de Barras:</label>
-                        <input
-                            type="text"
-                            name="barcode"
-                            value={article.barcode}
-                            onChange={handleChange}
-                            required
-                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="mb-3 block text-black dark:text-white">Costo Interno sin IVA:</label>
-                        <input
-                            type="number"
-                            name="internalCost"
-                            value={article.internalCost}
-                            onChange={handleChange}
-                            required
-                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="mb-3 block text-black dark:text-white">Rentabilidad (%):</label>
-                        <input
-                            type="number"
-                            name="profitability"
-                            value={article.profitability}
-                            onChange={handleChange}
-                            required
-                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="mb-3 block text-black dark:text-white">Precio Unitario sin IVA:</label>
-                        <input
-                            type="number"
-                            name="unitPrice"
-                            value={article.unitPrice}
-                            disabled
-                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="mb-3 block text-black dark:text-white">Tipo de IVA:</label>
-                        <input
-                            type="number"
-                            name="iva"
-                            value={article.iva}
-                            onChange={handleChange}
-                            required
-                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="mb-3 block text-black dark:text-white">Proveedor:</label>
-                        <input
-                            type="number"
-                            name="providerId"
-                            value={article.providerId}
                             onChange={handleChange}
                             required
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
@@ -236,19 +250,7 @@ const ArticleEdit = () => {
                         />
                     </div>
 
-                    <div>
-                        <label className="mb-3 block text-black dark:text-white">Stock:</label>
-                        <input
-                            type="number"
-                            name="stock"
-                            value={article.stock}
-                            onChange={handleChange}
-                            required
-                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
-                        />
-                    </div>
-
-                    <div className="flex justify-end gap-4.5">
+                    <div className="flex justify-end gap-4.5 mt-5">
                         <button
                             type="submit"
                             className="inline-flex items-center justify-center rounded-full bg-primary py-4 px-10 text-center font-medium text-white hover:bg-opacity-90"

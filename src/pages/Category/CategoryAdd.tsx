@@ -43,26 +43,29 @@ export const CategoryAdd = () => {
                     />
                 )}
                 <form onSubmit={agregarCategoria}>
-                    <div>
-                        <label className='mb-3 block text-black dark:text-white'>Nombre de la Categoría:</label>
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            required
-                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
-                        />
-                    </div>
+                    <div className='grid grid-cols-1 gap-15 md:grid-cols-3'>
+                        <div>
+                            <label className='mb-3 block text-black dark:text-white'>Nombre de la Categoría:</label>
+                            <input
+                                placeholder='Nombre de la Categoría'
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                required
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
+                            />
+                        </div>
 
-                    <div>
-                        <label className='mb-3 block text-black dark:text-white'>Color:</label>
-                        <input
-                            type="color"
-                            value={color}
-                            onChange={(e) => setColor(e.target.value)}
-                            required
-                            className="w-full h-10 p-1 rounded-lg border-[1.5px] border-stroke bg-transparent text-black outline-none transition focus:border-primary active:border-primary"
-                        />
+                        <div>
+                            <label className='mb-3 block text-black dark:text-white'>Color:</label>
+                            <input
+                                type="color"
+                                value={color}
+                                onChange={(e) => setColor(e.target.value)}
+                                required
+                                className=" h-12 p-1 rounded-lg border-[1.5px] border-stroke bg-transparent text-black outline-none transition focus:border-primary active:border-primary"
+                            />
+                        </div>
                     </div>
 
                     <button className='mt-10 inline-flex items-center justify-center rounded-full bg-meta-3 py-4 px-10 text-center font-medium text-white hover:bg-opacity-90' type="submit" disabled={loading}>
