@@ -29,6 +29,7 @@ import { ConfirmEmail } from './pages/Authentication/ConfirmEmail';
 import ProviderEdit from './pages/Provider/ProviderEdit';
 import Alert from './pages/UiElements/Alerts';
 import { providerService } from './services/ProviderService';
+import { BaseService } from './services/BaseService';
 import CustomerEdit from './pages/Customer/CustomerEdit';
 import { Category } from './pages/Category/Category';
 import { CategoryAdd } from './pages/Category/CategoryAdd';

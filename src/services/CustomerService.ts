@@ -1,13 +1,11 @@
 import { BaseService } from './BaseService';
 
-// Clase específica para el módulo de proveedores
 class CustomerService extends BaseService {
   
   constructor() {
-    super(import.meta.env.VITE_API_URL); // URL base de la API
+    super(import.meta.env.VITE_API_URL); 
   }
 
-  // Método para agregar un proveedor
   async addCustomer(data: {
     type: string;
     name: string;
