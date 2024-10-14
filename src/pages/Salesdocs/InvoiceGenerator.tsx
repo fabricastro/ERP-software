@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import jsPDFInvoiceTemplate, { OutputType } from 'jspdf-invoice-template';
 import { useTranslation } from 'react-i18next';
-import { salesDocsService } from '../../services/SalesDocsService'; // Importamos el servicio
-import { useBusiness } from '../../context/BusinessContext'; // Usamos el contexto de Business
+import { salesDocsService } from '../../services/SalesDocsService';
+import { customerService } from '../../services/CustomerService'; // Importar el servicio de clientes
+import { useBusiness } from '../../context/BusinessContext';
 import Alert from '../UiElements/Alerts';
 
 const InvoiceGenerator: React.FC = () => {
     const [invoiceNumber, setInvoiceNumber] = useState('');
+    const [state, setState] = useState('Borrador');
     const [invoiceDate, setInvoiceDate] = useState('');
     const [validityDate, setValidityDate] = useState('');
+    const [customerId, setCustomerId] = useState<number | null>(null);
     const [clientName, setClientName] = useState('');
     const [clientAddress, setClientAddress] = useState('');
     const [clientPhone, setClientPhone] = useState('');
@@ -19,9 +22,53 @@ const InvoiceGenerator: React.FC = () => {
     const [items, setItems] = useState([{ description: '', quantity: 1, unitPrice: 0 }]);
     const [alert, setAlert] = useState<{ type: 'success' | 'error', message: string } | null>(null);
     const [loading, setLoading] = useState(false);
+    const [customers, setCustomers] = useState<any[]>([]);
 
     const { t } = useTranslation();
     const business = useBusiness();
+
+    useEffect(() => {
+        const fetchCustomersAndInvoiceNumber = async () => {
+            try {
+                const customerData = await customerService.getAll(); // Obtener clientes
+                setCustomers(customerData);
+
+                // Obtener el último número de presupuesto del localStorage
+                const lastInvoiceNumber = localStorage.getItem('lastInvoiceNumber');
+                const nextInvoiceNumber = lastInvoiceNumber ? parseInt(lastInvoiceNumber, 10) + 1 : 1;
+                setInvoiceNumber(`AAA${nextInvoiceNumber}`); // Establecer el siguiente número de presupuesto
+            } catch (error) {
+                console.error('Error al cargar los datos:', error);
+            }
+        };
+        fetchCustomersAndInvoiceNumber();
+    }, []);
+
+    useEffect(() => {
+        const fetchCustomers = async () => {
+            try {
+                const data = await customerService.getAll();
+                setCustomers(data);
+            } catch (error) {
+                console.error('Error al cargar los clientes:', error);
+            }
+        };
+        fetchCustomers();
+    }, []);
+
+    const handleCustomerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedCustomerId = Number(e.target.value);
+        setCustomerId(selectedCustomerId);
+
+        const selectedCustomer = customers.find(customer => customer.id === selectedCustomerId);
+        if (selectedCustomer) {
+            setClientName(selectedCustomer.name);
+            setClientAddress(selectedCustomer.fiscalAddress);
+            setClientPhone(selectedCustomer.phone);
+            setClientCUIT(selectedCustomer.cuit);
+            setClientTaxStatus('Exento');
+        }
+    };
 
     const handleAddItem = () => {
         setItems([...items, { description: '', quantity: 1, unitPrice: 0 }]);
@@ -115,21 +162,20 @@ const InvoiceGenerator: React.FC = () => {
         try {
             await salesDocsService.addSalesDoc({
                 type: "presupuesto",
-                customerId: 1, // Dinámico, debes obtener este ID
-                state: "Borrador",
+                customerId: customerId || 1,
+                state: state,
                 paymentMethod: paymentCondition,
                 date: invoiceDate,
                 validityDate: validityDate,
                 number: invoiceNumber,
                 observations: observations,
                 net: items.reduce((acc, item) => acc + item.quantity * item.unitPrice, 0),
-                iva: calculateIVA(), // Cálculo del IVA como número
-                amount: calculateTotal(), // Cálculo del monto total como número
+                iva: calculateIVA(),
+                amount: calculateTotal(),
             });
             setAlert({ type: 'success', message: 'Factura guardada con éxito' });
             setLoading(false);
-
-            // Limpiar los campos después de guardar
+            setState('');
             setInvoiceNumber('');
             setInvoiceDate('');
             setClientName('');
@@ -143,8 +189,6 @@ const InvoiceGenerator: React.FC = () => {
 
         } catch (error: any) {
             setLoading(false);
-
-            // Mostrar alerta de error
             setAlert({ type: 'error', message: 'Hubo un error al guardar la factura. Por favor, inténtalo de nuevo.' });
         }
     };
@@ -162,13 +206,41 @@ const InvoiceGenerator: React.FC = () => {
                 />
             )}
             <div>
+                <label className='mb-3 block text-black dark:text-white'>Selecciona un cliente:</label>
+                <select
+                    value={customerId || ''}
+                    onChange={handleCustomerChange}
+                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
+                >
+                    <option value="">Seleccionar cliente</option>
+                    {customers.map((customer) => (
+                        <option key={customer.id} value={customer.id}>
+                            {customer.name}
+                        </option>
+                    ))}
+                </select>
+            </div>
+
+            <div>
                 <label className='mb-3 block text-black dark:text-white'>Nº de Presupuesto:</label>
                 <input
                     type="text"
                     value={invoiceNumber}
                     onChange={(e) => setInvoiceNumber(e.target.value)}
-                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
+                    disabled
                 />
+            </div>
+
+            <div>
+                <label className='mb-3 block text-black dark:text-white'>Estado</label>
+                <select className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black" value={state} onChange={(e) => setState(e.target.value)}>
+                    <option value="Borrador">Borrador</option>
+                    <option value="Enviado">Enviado</option>
+                    <option value="Aprobado">Aprobado</option>
+                    <option value="Rechazado">Rechazado</option>
+                    <option value="Facturado">Facturado</option>
+                </select>
             </div>
 
             <div>
@@ -177,7 +249,7 @@ const InvoiceGenerator: React.FC = () => {
                     type="date"
                     value={invoiceDate}
                     onChange={(e) => setInvoiceDate(e.target.value)}
-                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
                 />
             </div>
 
