@@ -165,7 +165,7 @@ const SalesDocEdit: React.FC = () => {
                         <input
                             type="date"
                             name="date"
-                            value={salesDoc.date || ''}
+                            value={salesDoc.date}
                             onChange={handleFieldChange}
                             className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
                         />

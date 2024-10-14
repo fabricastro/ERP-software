@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { loginService } from '../services/login';
 import { useNavigate } from 'react-router-dom';
+import { isTokenExpired } from '../utils/token';
 
 interface AuthContextProps {
   user: any;
@@ -39,6 +40,14 @@ export const AuthProvider: React.FC = ({ children }) => {
       setIsAuthenticated(true);
     }
   }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+
+    if (token && isTokenExpired(token)) {
+      logout();
+    }
+  }, [navigate]);
 
   const login = async (email: string, password: string) => {
     try {

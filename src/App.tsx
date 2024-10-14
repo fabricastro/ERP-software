@@ -35,24 +35,39 @@ import { Category } from './pages/Category/Category';
 import { CategoryAdd } from './pages/Category/CategoryAdd';
 import ArticleEdit from './pages/Article/ArticleEdit';
 import CategoryEdit from './pages/Category/CategoryEdit';
+import { isTokenExpired } from './utils/token';
+import SalesdocsEdit from './pages/Salesdocs/SalesdocsEdit';
 
 function App() {
-  const { user } = useAuth(); 
+  const { user, logout } = useAuth(); // Asegúrate de traer `logout` desde el contexto
+  const navigate = useNavigate();
+  const location = useLocation();  // Asegúrate de obtener `location` correctamente con `useLocation`
+  const [alert, setAlert] = useState<{ type: 'success' | 'warning' | 'error'; title: string; message: string } | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
   const capitalizeWords = (text: string) => {
     return text.replace(/\b\w/g, (char) => char.toUpperCase());
   };
 
-  const navigate = useNavigate();
-  const [alert, setAlert] = useState<{ type: 'success' | 'warning' | 'error'; title: string; message: string } | null>(null);
-
+  // Configurar navegación y alertas globales
   useEffect(() => {
     providerService.setNavigate(navigate);
-
     providerService.setAlertFunction((type, title, message) => {
       setAlert({ type, title, message });
     });
   }, [navigate]);
 
+  // Verificar si el token ha expirado
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token && isTokenExpired(token)) {
+      setAlert({ type: 'error', title: 'Sesión Expirada', message: 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.' });
+      logout();
+      navigate('/signin');
+    }
+  }, [location.pathname, logout, navigate]); // Cambié `pathname` a `location.pathname`
+
+  // Actualizar título de la página
   useEffect(() => {
     if (user && user.bussinessName) {
       const companyName = user.bussinessName || 'ERP by thdvs';
@@ -60,16 +75,15 @@ function App() {
     }
   }, [user]);
 
-  const [loading, setLoading] = useState<boolean>(true);
-  const { pathname } = useLocation();
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-
+  // Controlar el estado de carga
   useEffect(() => {
     setTimeout(() => setLoading(false), 1000);
   }, []);
+
+  // Hacer scroll al inicio cada vez que cambia la ruta
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   return loading ? (
     <Loader />
@@ -94,7 +108,7 @@ function App() {
           <Route path="/" element={<ECommerce />} />
           <Route path="/salesdocs" element={<Salesdocs />} />
           <Route path="/salesdocs/add_salesdocs" element={<SalesdocsAdd />} />
-          <Route path='/salesdocs/edit/:id' element={<SalesdocsAdd />} />
+          <Route path='/salesdocs/edit/:id' element={<SalesdocsEdit />} />
           <Route path="/customer" element={<Customer />} />
           <Route path="/customer/add_customer" element={<CustomerAdd />} />
           <Route path="/customer/edit/:id" element={<CustomerEdit />} />
