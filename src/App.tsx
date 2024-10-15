@@ -37,6 +37,7 @@ import ArticleEdit from './pages/Article/ArticleEdit';
 import CategoryEdit from './pages/Category/CategoryEdit';
 import { isTokenExpired } from './utils/token';
 import SalesdocsEdit from './pages/Salesdocs/SalesdocsEdit';
+import { BusinessProvider } from './context/BusinessContext';
 
 function App() {
   const { user, logout } = useAuth(); // Asegúrate de traer `logout` desde el contexto
@@ -139,7 +140,9 @@ function App() {
 export default function RootApp() {
   return (
     <AuthProvider>
-      <App />
+      <BusinessProvider>
+        <App />
+      </BusinessProvider>
     </AuthProvider>
   );
 }

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaPlusCircle } from "react-icons/fa";
 
 interface Item {
     description: string;
@@ -48,32 +49,44 @@ const ItemForm: React.FC<ItemFormProps> = ({ items, setItems }) => {
         <div>
             <h2 className='pb-4 tex-xl'>Agregar Item</h2>
             {/* Inputs controlados para el nuevo item */}
-            <div className='flex gap-3 pb-6'>
-                <input
-                    type="text"
-                    name="description"
-                    placeholder="Descripción"
-                    value={newItem.description}
-                    onChange={handleNewItemChange}
-                    className='w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black'
-                />
-                <input
-                    type="number"
-                    name="quantity"
-                    placeholder="Cantidad"
-                    value={newItem.quantity}
-                    onChange={handleNewItemChange}
-                    className='w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black'
-                />
-                <input
-                    type="number"
-                    name="unitPrice"
-                    placeholder="Precio Unitario"
-                    value={newItem.unitPrice}
-                    onChange={handleNewItemChange}
-                    className='w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black'
-                />
-                <button onClick={handleAddItem}>Agregar Item</button>
+            <div className='flex gap-3 pb-6 items-center'>
+                <div className='flex flex-col w-full'>
+                    <label className='text-black dark:text-white mb-3 '>Descripcion</label>
+                    <input
+                        type="text"
+                        name="description"
+                        placeholder="Descripción"
+                        value={newItem.description}
+                        onChange={handleNewItemChange}
+                        className='w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black'
+                    />
+                </div>
+                <div className='flex flex-col w-full'>
+                    <label className='text-black dark:text-white mb-3 '>Cantidad</label>
+                    <input
+                        type="number"
+                        name="quantity"
+                        placeholder="Cantidad"
+                        value={newItem.quantity}
+                        onChange={handleNewItemChange}
+                        className='w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black'
+                    />
+                </div>
+                <div className='flex flex-col w-full'>
+                    <label className='text-black dark:text-white mb-3 '>Precio Unitario</label>
+                    <input
+                        type="number"
+                        name="unitPrice"
+                        placeholder="Precio Unitario"
+                        value={newItem.unitPrice}
+                        onChange={handleNewItemChange}
+                        className='w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black'
+                    />
+                </div>
+                <div className='flex w-full pt-8 pl-4'>
+                    <button className='bg-primary flex items-center text-white p-2 rounded-lg' onClick={handleAddItem}><FaPlusCircle className='text-xl mr-1' />
+                        Agregar Item</button>
+                </div>
             </div>
 
             <h2 className='pb-4 tex-xl'>Items</h2>

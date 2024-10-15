@@ -21,20 +21,25 @@ export const BusinessProvider: React.FC = ({ children }) => {
   // Simulación de carga de datos de una API o localStorage
   useEffect(() => {
     const fetchBusinessData = async () => {
-      // Aquí podrías hacer una llamada a una API para obtener los datos
-      const businessData = {
-        name: "Daes Ingeniería",
-        address: "LEMOS E/ 5 Y 6 LOTE 34 ",
-        phone: "264-5591009",
-        email: "ehererra@daesingenieria.com",
-        website: "daesingenieria.com.ar",
-        logo: "http://localhost:5173/public/DAES_INGENIERIA.webp",
-      };
-      setBusiness(businessData);
+        try {
+            const businessData = {
+                name: "Daes Ingeniería",
+                address: "LEMOS E/ 5 Y 6 LOTE 34 ",
+                phone: "264-5591009",
+                email: "ehererra@daesingenieria.com",
+                website: "daesingenieria.com.ar",
+                logo: "http://localhost:5173/logo.png",
+            };
+            console.log('Datos del negocio cargados:', businessData);
+            setBusiness(businessData);
+        } catch (error) {
+            console.error('Error al cargar los datos del negocio:', error);
+        }
     };
 
     fetchBusinessData();
-  }, []);
+}, []);
+
 
   return (
     <BusinessContext.Provider value={business}>

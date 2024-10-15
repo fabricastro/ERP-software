@@ -29,6 +29,10 @@ const InvoiceGenerator: React.FC = () => {
     const business = useBusiness();
 
     useEffect(() => {
+        console.log("Datos de negocio recibidos en InvoiceGenerator:", business);
+    }, [business]);
+
+    useEffect(() => {
         const fetchCustomersAndInvoiceNumber = async () => {
             try {
                 const customerData = await customerService.getAll();
@@ -70,49 +74,76 @@ const InvoiceGenerator: React.FC = () => {
     };
 
     const generatePDF = () => {
-        if (!business) return;
-
+        if (!business || !business.logo) {
+            console.error("Faltan datos de negocio o logo.");
+            return;
+        }
+    
+        if (!clientName || !clientAddress || !clientPhone || !clientCUIT) {
+            console.error("Faltan datos del cliente.");
+            return;
+        }
+    
+        if (items.length === 0) {
+            console.error("No hay ítems en la factura.");
+            return;
+        }
+    
+        const tableHeaders = [
+            { title: "#", style: { width: 10 } }, 
+            { title: "Descripción", style: { width: 30 } }, 
+            { title: "Cantidad", style: { width: 20 } }, 
+            { title: "Precio unitario", style: { width: 20 } },
+            { title: "Total", style: { width: 20 } }
+        ];
+    
+        const tableRows = items.map((item, index) => [
+            String(index + 1),
+            String(item.description || 'Sin descripción'),
+            String(item.quantity || 0),
+            String(item.unitPrice || 0),
+            String((item.quantity * item.unitPrice).toFixed(2))
+        ]);
+    
         const props = {
-            outputType: OutputType.Save,
+            outputType: "save",
             returnJsPDFDocObject: true,
             fileName: "Invoice",
             orientationLandscape: false,
             compress: true,
             logo: {
-                src: business.logo,
+                src: business.logo, 
                 width: 53.33,
                 height: 26.66,
+                margin: { top: 0, left: 0 }
             },
             business: {
-                name: business.name,
-                address: business.address,
-                phone: business.phone,
-                email: business.email,
-                website: business.website,
+                name: business.name || 'N/A',
+                address: business.address || 'N/A',
+                phone: business.phone || 'N/A',
+                email: business.email || 'N/A',
+                website: business.website || 'N/A',
             },
             contact: {
                 label: "Factura emitida por:",
-                name: clientName,
-                address: clientAddress,
-                phone: clientPhone,
-                otherInfo: clientCUIT,
+                name: clientName || 'N/A',
+                address: clientAddress || 'N/A',
+                phone: clientPhone || 'N/A',
+                otherInfo: clientCUIT || 'N/A',
             },
             invoice: {
                 label: "Factura #: ",
-                num: invoiceNumber,
-                invDate: `Fecha: ${invoiceDate}`,
-                invGenDate: `Validez: ${validityDate}`,
-                table: items.map((item, index) => [
-                    index + 1,
-                    item.description,
-                    item.quantity,
-                    item.unitPrice,
-                    (item.quantity * item.unitPrice).toFixed(2)
-                ]),
+                num: invoiceNumber || 'N/A',  
+                invDate: `Fecha: ${invoiceDate || 'N/A'}`,
+                invGenDate: `Validez: ${validityDate || 'N/A'}`,
+                headerBorder: true,
+                tableBodyBorder: true,
+                header: tableHeaders,
+                table: tableRows,
                 additionalRows: [
                     {
                         col1: 'Importe Total:',
-                        col2: calculateTotal(),
+                        col2: calculateTotal().toFixed(2),
                         col3: '$',
                         style: { fontSize: 14 }
                     }
@@ -124,9 +155,17 @@ const InvoiceGenerator: React.FC = () => {
             pageEnable: true,
             pageLabel: "Page ",
         };
-
-        jsPDFInvoiceTemplate(props);
+    
+        try {
+            jsPDFInvoiceTemplate(props);
+            console.log("PDF generado correctamente");
+        } catch (error) {
+            console.error("Error al generar el PDF:", error);
+        }
     };
+    
+    
+    
 
     const guardarFactura = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -179,145 +218,157 @@ const InvoiceGenerator: React.FC = () => {
                     onClose={() => setAlert(null)}
                 />
             )}
-            <div className='grid grid-cols-2 gap-5'>
-                <div>
-                    <label className='mb-3 block text-black dark:text-white'>Selecciona un cliente:</label>
-                    <select
-                        value={customerId || ''}
-                        onChange={handleCustomerChange}
-                        className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
-                    >
-                        <option value="">Seleccionar cliente</option>
-                        {customers.map((customer) => (
-                            <option key={customer.id} value={customer.id}>
-                                {customer.name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+            {!business ? (
+                <p>Cargando datos de negocio...</p>
+            ) : (
+                <>
+                    <div className='grid grid-cols-2 gap-5'>
+                        <div>
+                            <label className='mb-3 block text-black dark:text-white'>Selecciona un cliente:</label>
+                            <select
+                                value={customerId || ''}
+                                onChange={handleCustomerChange}
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
+                            >
+                                <option value="">Seleccionar cliente</option>
+                                {customers.map((customer) => (
+                                    <option key={customer.id} value={customer.id}>
+                                        {customer.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
 
-                <div>
-                    <label className='mb-3 block text-black dark:text-white'>Nº de Presupuesto:</label>
-                    <input
-                        type="text"
-                        value={invoiceNumber}
-                        onChange={(e) => setInvoiceNumber(e.target.value)}
-                        className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
-                        disabled
-                    />
-                </div>
+                        <div>
+                            <label className='mb-3 block text-black dark:text-white'>Nº de Presupuesto:</label>
+                            <input
+                                type="text"
+                                value={invoiceNumber}
+                                onChange={(e) => setInvoiceNumber(e.target.value)}
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
+                                disabled
+                            />
+                        </div>
 
-                <div>
-                    <label className='mb-3 block text-black dark:text-white'>Estado</label>
-                    <select className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black" value={state} onChange={(e) => setState(e.target.value)}>
-                        <option value="Borrador">Borrador</option>
-                        <option value="Enviado">Enviado</option>
-                        <option value="Aprobado">Aprobado</option>
-                        <option value="Rechazado">Rechazado</option>
-                        <option value="Facturado">Facturado</option>
-                    </select>
-                </div>
+                        <div>
+                            <label className='mb-3 block text-black dark:text-white'>Estado</label>
+                            <select className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black" value={state} onChange={(e) => setState(e.target.value)}>
+                                <option value="Borrador">Borrador</option>
+                                <option value="Enviado">Enviado</option>
+                                <option value="Aprobado">Aprobado</option>
+                                <option value="Rechazado">Rechazado</option>
+                                <option value="Facturado">Facturado</option>
+                            </select>
+                        </div>
 
-                <div>
-                    <label className='mb-3 block text-black dark:text-white' >Fecha:</label>
-                    <input
-                        type="date"
-                        value={invoiceDate}
-                        onChange={(e) => setInvoiceDate(e.target.value)}
-                        className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
-                    />
-                </div>
+                        <div>
+                            <label className='mb-3 block text-black dark:text-white' >Fecha:</label>
+                            <input
+                                type="date"
+                                value={invoiceDate}
+                                onChange={(e) => setInvoiceDate(e.target.value)}
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
+                            />
+                        </div>
 
-                <div>
-                    <label className='mb-3 block text-black dark:text-white' >Validez:</label>
-                    <input
-                        type="date"
-                        value={validityDate}
-                        onChange={(e) => setValidityDate(e.target.value)}
-                        className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
-                    />
-                </div>
-            </div>
-            <h2>Cliente</h2>
-            <div className='grid grid-cols-2 gap-5'>
-                <div>
-                    <label className='mb-3 block text-black dark:text-white' >Razón Social:</label>
-                    <input
-                        type="text"
-                        value={clientName}
-                        onChange={(e) => setClientName(e.target.value)}
-                        className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
-                    />
-                </div>
+                        <div>
+                            <label className='mb-3 block text-black dark:text-white' >Validez:</label>
+                            <input
+                                type="date"
+                                value={validityDate}
+                                onChange={(e) => setValidityDate(e.target.value)}
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
+                            />
+                        </div>
+                    </div>
+                    <h2>Cliente</h2>
+                    <div className='grid grid-cols-2 gap-5'>
+                        <div>
+                            <label className='mb-3 block text-black dark:text-white' >Razón Social:</label>
+                            <input
+                                type="text"
+                                value={clientName}
+                                onChange={(e) => setClientName(e.target.value)}
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
+                            />
+                        </div>
 
-                <div>
-                    <label className='mb-3 block text-black dark:text-white' >Domicilio:</label>
-                    <input
-                        type="text"
-                        value={clientAddress}
-                        onChange={(e) => setClientAddress(e.target.value)}
-                        className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
-                    />
-                </div>
+                        <div>
+                            <label className='mb-3 block text-black dark:text-white' >Domicilio:</label>
+                            <input
+                                type="text"
+                                value={clientAddress}
+                                onChange={(e) => setClientAddress(e.target.value)}
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
+                            />
+                        </div>
 
-                <div>
-                    <label className='mb-3 block text-black dark:text-white' >Teléfono:</label>
-                    <input
-                        type="text"
-                        value={clientPhone}
-                        onChange={(e) => setClientPhone(e.target.value)}
-                        className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
-                    />
-                </div>
+                        <div>
+                            <label className='mb-3 block text-black dark:text-white' >Teléfono:</label>
+                            <input
+                                type="text"
+                                value={clientPhone}
+                                onChange={(e) => setClientPhone(e.target.value)}
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
+                            />
+                        </div>
 
-                <div>
-                    <label className='mb-3 block text-black dark:text-white' >CUIT:</label>
-                    <input
-                        type="text"
-                        value={clientCUIT}
-                        onChange={(e) => setClientCUIT(e.target.value)}
-                        className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
-                    />
-                </div>
+                        <div>
+                            <label className='mb-3 block text-black dark:text-white' >CUIT:</label>
+                            <input
+                                type="text"
+                                value={clientCUIT}
+                                onChange={(e) => setClientCUIT(e.target.value)}
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
+                            />
+                        </div>
 
-                <div>
-                    <label className='mb-3 block text-black dark:text-white'>Condición de IVA:</label>
-                    <input
-                        type="text"
-                        value={clientTaxStatus}
-                        onChange={(e) => setClientTaxStatus(e.target.value)}
-                        className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
-                    />
-                </div>
+                        <div>
+                            <label className='mb-3 block text-black dark:text-white'>Condición de IVA:</label>
+                            <input
+                                type="text"
+                                value={clientTaxStatus}
+                                onChange={(e) => setClientTaxStatus(e.target.value)}
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
+                            />
+                        </div>
 
-                <div>
-                    <label className='mb-3 block text-black dark:text-white'>Condición de venta:</label>
-                    <input
-                        type="text"
-                        value={paymentCondition}
-                        onChange={(e) => setPaymentCondition(e.target.value)}
-                        className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
-                    />
-                </div>
-            </div>
+                        <div>
+                            <label className='mb-3 block text-black dark:text-white'>Condición de venta:</label>
+                            <input
+                                type="text"
+                                value={paymentCondition}
+                                onChange={(e) => setPaymentCondition(e.target.value)}
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
+                            />
+                        </div>
+                    </div>
 
-            {/* Componente de ítems */}
-            <ItemForm items={items} setItems={setItems} />
+                    {/* Componente de ítems */}
+                    <ItemForm items={items} setItems={setItems} />
 
-            {/* Total */}
-            <div className="mt-4 flex justify-end">
-                <h2 className='border p-4 mr-18'>Total: ${calculateTotal()}</h2>
-            </div>
+                    {/* Total */}
+                    <div className="mt-4 flex justify-start">
+                        <h2 className='border p-4 mr-18'>Total: ${calculateTotal()}</h2>
+                    </div>
 
-            {/* Botones para guardar y generar PDF */}
-            <div className="mt-4">
-                <button
-                    className="px-6 py-3 bg-green-500 text-white rounded"
-                    onClick={guardarFactura}
-                >
-                    Guardar Factura
-                </button>
-            </div>
+                    {/* Botones para guardar y generar PDF */}
+                    <div className="mt-4 flex justify-end gap-3">
+                        <button
+                            className="px-6 py-3 bg-blue-500 text-white rounded"
+                            onClick={generatePDF}
+                        >
+                            Generar PDF
+                        </button>
+                        <button
+                            className="px-6 py-3 bg-green-500 text-white rounded"
+                            onClick={guardarFactura}
+                        >
+                            Guardar Factura
+                        </button>
+                    </div>
+                </>
+            )}
         </div>
     );
 };
