@@ -23,12 +23,12 @@ export const BusinessProvider: React.FC = ({ children }) => {
     const fetchBusinessData = async () => {
         try {
             const businessData = {
-                name: "Daes Ingeniería",
-                address: "LEMOS E/ 5 Y 6 LOTE 34 ",
-                phone: "264-5591009",
-                email: "ehererra@daesingenieria.com",
-                website: "daesingenieria.com.ar",
-                logo: "http://localhost:5173/logo.png",
+                name: "Agencia Technodevs",
+                address: "Jorge Bergallo",
+                phone: "264-4412511",
+                email: "fcastro@technodevs.com",
+                website: "technodevs.com.ar",
+                logo: "http://localhost:5173/logohorizontal.png",
             };
             console.log('Datos del negocio cargados:', businessData);
             setBusiness(businessData);

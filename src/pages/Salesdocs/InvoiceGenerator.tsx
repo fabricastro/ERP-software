@@ -91,10 +91,10 @@ const InvoiceGenerator: React.FC = () => {
     
         const tableHeaders = [
             { title: "#", style: { width: 10 } }, 
-            { title: "Descripción", style: { width: 30 } }, 
-            { title: "Cantidad", style: { width: 20 } }, 
-            { title: "Precio unitario", style: { width: 20 } },
-            { title: "Total", style: { width: 20 } }
+            { title: "Descripción", style: { width: 70 } }, 
+            { title: "Cantidad", style: { width: 30 } }, 
+            { title: "Precio unitario", style: { width: 40 } },
+            { title: "Total", style: { width: 40 } }
         ];
     
         const tableRows = items.map((item, index) => [
@@ -108,13 +108,13 @@ const InvoiceGenerator: React.FC = () => {
         const props = {
             outputType: "save",
             returnJsPDFDocObject: true,
-            fileName: "Invoice",
+            fileName: "Presupuesto",
             orientationLandscape: false,
             compress: true,
             logo: {
                 src: business.logo, 
-                width: 53.33,
-                height: 26.66,
+                width: 60,
+                height: 20,
                 margin: { top: 0, left: 0 }
             },
             business: {
