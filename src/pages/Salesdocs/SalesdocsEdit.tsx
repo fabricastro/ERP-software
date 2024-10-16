@@ -1,11 +1,14 @@
+
 import React, { useEffect, useState } from 'react';
 import jsPDFInvoiceTemplate, { OutputType } from 'jspdf-invoice-template';
 import { useParams, useNavigate } from 'react-router-dom';
 import { salesDocsService } from '../../services/SalesDocsService';
+import { customerService } from '../../services/CustomerService';
 import { useBusiness } from '../../context/BusinessContext';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../../layout/DefaultLayout';
 import Alert from '../UiElements/Alerts';
+import ItemForm from './ItemForm';  
 import Loader from '../../common/Loader';
 
 const SalesDocEdit: React.FC = () => {
@@ -17,11 +20,26 @@ const SalesDocEdit: React.FC = () => {
     const [items, setItems] = useState([{ description: '', quantity: 1, unitPrice: 0 }]);
     const [alert, setAlert] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
     const [loading, setLoading] = useState(false);
+    const [customers, setCustomers] = useState<any[]>([]);
+
+    // Cargar los clientes
+    useEffect(() => {
+        const fetchCustomers = async () => {
+            try {
+                const customerData = await customerService.getAll();
+                setCustomers(customerData);
+            } catch (error) {
+                console.error('Error al cargar los clientes:', error);
+            }
+        };
+        fetchCustomers();
+    }, []);
 
     useEffect(() => {
         const fetchSalesDoc = async () => {
             try {
                 const data = await salesDocsService.getById(Number(id));
+                console.log('Data del presupuesto:', data); 
                 setSalesDoc(data);
                 setItems(data.items || []);
             } catch (error) {
@@ -30,6 +48,8 @@ const SalesDocEdit: React.FC = () => {
         };
         fetchSalesDoc();
     }, [id]);
+    
+    
 
     const calculateIVA = () => {
         const net = items.reduce((acc, item) => acc + item.quantity * item.unitPrice, 0);
@@ -41,20 +61,20 @@ const SalesDocEdit: React.FC = () => {
         return Math.round(net * 100) / 100;
     };
 
-    const handleInputChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
-        const updatedItems = [...items];
-        const parsedValue = name === 'quantity' || name === 'unitPrice' ? parseFloat(value) || 0 : value;
-        updatedItems[index] = { ...updatedItems[index], [name]: parsedValue };
-        setItems(updatedItems);
-    };
-
     const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setSalesDoc((prevSalesDoc: any) => ({
             ...prevSalesDoc,
             [name]: value,
         }));
+    };
+
+    const handleInputChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event.target;
+        const updatedItems = [...items];
+        const parsedValue = name === 'quantity' || name === 'unitPrice' ? parseFloat(value) || 0 : value;
+        updatedItems[index] = { ...updatedItems[index], [name]: parsedValue };
+        setItems(updatedItems);
     };
 
     const generatePDF = () => {
@@ -149,69 +169,82 @@ const SalesDocEdit: React.FC = () => {
             <div className="flex flex-col gap-5.5 p-6.5">
                 {alert && <Alert type={alert.type} title={alert.type === 'success' ? 'Éxito' : 'Error'} message={alert.message} />}
                 <form onSubmit={handleUpdate}>
-                    <div>
-                        <label className="mb-3 block text-black dark:text-white">Nº de Documento:</label>
-                        <input
-                            type="text"
-                            name="number"
-                            value={salesDoc.number}
-                            onChange={handleFieldChange}
-                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="mb-3 block text-black dark:text-white">Fecha del Documento:</label>
-                        <input
-                            type="date"
-                            name="date"
-                            value={salesDoc.date}
-                            onChange={handleFieldChange}
-                            className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
-                        />
-                    </div>
-
-                    <h2>Items</h2>
-                    {items.map((item, index) => (
-                        <div key={index} className="flex gap-4 items-center">
-                            <div>
-                                <label className="mb-3 block text-black dark:text-white">Descripción</label>
-                                <input
-                                    type="text"
-                                    name="description"
-                                    value={item.description}
-                                    onChange={(e) => handleInputChange(index, e)}
-                                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
-                                />
-                            </div>
-                            <div>
-                                <label className="mb-3 block text-black dark:text-white">Cantidad</label>
-                                <input
-                                    type="number"
-                                    name="quantity"
-                                    value={item.quantity}
-                                    onChange={(e) => handleInputChange(index, e)}
-                                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
-                                />
-                            </div>
-                            <div>
-                                <label className="mb-3 block text-black dark:text-white">Precio unitario</label>
-                                <input
-                                    type="number"
-                                    name="unitPrice"
-                                    value={item.unitPrice}
-                                    onChange={(e) => handleInputChange(index, e)}
-                                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
-                                />
-                            </div>
+                    <div className="grid grid-cols-2 gap-5">
+                        <div>
+                            <label className="mb-3 block text-black dark:text-white">Nº de Documento:</label>
+                            <input
+                                type="text"
+                                name="number"
+                                value={salesDoc.number}
+                                onChange={handleFieldChange}
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
+                            />
                         </div>
-                    ))}
+
+                        <div>
+                            <label className="mb-3 block text-black dark:text-white">Fecha del Documento:</label>
+                            <input
+                                type="date"
+                                name="date"
+                                value={salesDoc.date}
+                                onChange={handleFieldChange}
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="mb-3 block text-black dark:text-white">Validez:</label>
+                            <input
+                                type="date"
+                                name="validityDate"
+                                value={salesDoc.validityDate}
+                                onChange={handleFieldChange}
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="mb-3 block text-black dark:text-white">Estado:</label>
+                            <select
+                                name="state"
+                                value={salesDoc.state}
+                                onChange={handleFieldChange}
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
+                            >
+                                <option value="Borrador">Borrador</option>
+                                <option value="Enviado">Enviado</option>
+                                <option value="Aprobado">Aprobado</option>
+                                <option value="Rechazado">Rechazado</option>
+                                <option value="Facturado">Facturado</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className="mb-3 block text-black dark:text-white">Cliente:</label>
+                            <select
+                                name="customerId"
+                                value={salesDoc.customerId}
+                                onChange={handleFieldChange}
+                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
+                            >
+                                <option value="">Seleccionar cliente</option>
+                                {customers.map((customer) => (
+                                    <option key={customer.id} value={customer.id}>
+                                        {customer.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+
+                    <h2>Ítems</h2>
+                    <ItemForm items={items} setItems={setItems} />
 
                     <button type="submit" className="mt-10 inline-flex items-center justify-center rounded-full bg-primary py-4 px-10 text-center font-medium text-white">
                         Guardar Cambios
                     </button>
 
-                    <button type="button" onClick={generatePDF} className="mt-4 inline-flex items-center justify-center rounded-full bg-secondary py-4 px-10 text-center font-medium text-white">
+                    <button type="button" onClick={generatePDF} className="mt-4 ml-4 inline-flex items-center justify-center rounded-full bg-secondary py-4 px-10 text-center font-medium text-white">
                         Generar PDF
                     </button>
                 </form>

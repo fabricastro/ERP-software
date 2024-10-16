@@ -30,7 +30,7 @@ export const BusinessProvider: React.FC = ({ children }) => {
                 website: "technodevs.com.ar",
                 logo: "http://localhost:5173/logohorizontal.png",
             };
-            console.log('Datos del negocio cargados:', businessData);
+            // console.log('Datos del negocio cargados:', businessData);
             setBusiness(businessData);
         } catch (error) {
             console.error('Error al cargar los datos del negocio:', error);

@@ -6,6 +6,7 @@ import { customerService } from '../../services/CustomerService'; // Importar el
 import { useBusiness } from '../../context/BusinessContext';
 import Alert from '../UiElements/Alerts';
 import ItemForm from './ItemForm';
+import Label from '../../components/Label/Label';
 
 const InvoiceGenerator: React.FC = () => {
     const [invoiceNumber, setInvoiceNumber] = useState('');
@@ -29,16 +30,11 @@ const InvoiceGenerator: React.FC = () => {
     const business = useBusiness();
 
     useEffect(() => {
-        console.log("Datos de negocio recibidos en InvoiceGenerator:", business);
-    }, [business]);
-
-    useEffect(() => {
         const fetchCustomersAndInvoiceNumber = async () => {
             try {
                 const customerData = await customerService.getAll();
                 setCustomers(customerData);
 
-                // Obtener el último número de presupuesto del localStorage
                 const lastInvoiceNumber = localStorage.getItem('lastInvoiceNumber');
                 const nextInvoiceNumber = lastInvoiceNumber ? parseInt(lastInvoiceNumber, 10) + 1 : 1;
                 setInvoiceNumber(`AAA${nextInvoiceNumber}`);
@@ -188,7 +184,6 @@ const InvoiceGenerator: React.FC = () => {
             setAlert({ type: 'success', message: 'Factura guardada con éxito' });
             setLoading(false);
 
-            // Limpiar campos
             setState('');
             setInvoiceNumber('');
             setInvoiceDate('');
@@ -199,7 +194,7 @@ const InvoiceGenerator: React.FC = () => {
             setClientTaxStatus('Exento');
             setPaymentCondition('Efectivo');
             setObservations('');
-            setItems([]); // Limpiar los items
+            setItems([]);
         } catch (error: any) {
             setLoading(false);
             setAlert({ type: 'error', message: 'Hubo un error al guardar la factura. Por favor, inténtalo de nuevo.' });
@@ -224,7 +219,7 @@ const InvoiceGenerator: React.FC = () => {
                 <>
                     <div className='grid grid-cols-2 gap-5'>
                         <div>
-                            <label className='mb-3 block text-black dark:text-white'>Selecciona un cliente:</label>
+                            <Label htmlFor='customer' required={true}>Selecciona un cliente:</Label>
                             <select
                                 value={customerId || ''}
                                 onChange={handleCustomerChange}
@@ -240,29 +235,18 @@ const InvoiceGenerator: React.FC = () => {
                         </div>
 
                         <div>
-                            <label className='mb-3 block text-black dark:text-white'>Nº de Presupuesto:</label>
+                            <Label htmlFor='invoiceNumber' required={true}>Nº de Presupuesto:</Label>
                             <input
                                 type="text"
                                 value={invoiceNumber}
                                 onChange={(e) => setInvoiceNumber(e.target.value)}
                                 className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
-                                disabled
                             />
                         </div>
 
-                        <div>
-                            <label className='mb-3 block text-black dark:text-white'>Estado</label>
-                            <select className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black" value={state} onChange={(e) => setState(e.target.value)}>
-                                <option value="Borrador">Borrador</option>
-                                <option value="Enviado">Enviado</option>
-                                <option value="Aprobado">Aprobado</option>
-                                <option value="Rechazado">Rechazado</option>
-                                <option value="Facturado">Facturado</option>
-                            </select>
-                        </div>
 
                         <div>
-                            <label className='mb-3 block text-black dark:text-white' >Fecha:</label>
+                            <Label htmlFor='invoiceDate' required={true} >Fecha:</Label>
                             <input
                                 type="date"
                                 value={invoiceDate}
@@ -272,7 +256,7 @@ const InvoiceGenerator: React.FC = () => {
                         </div>
 
                         <div>
-                            <label className='mb-3 block text-black dark:text-white' >Validez:</label>
+                            <Label htmlFor='validityDate' required={true} >Validez:</Label>
                             <input
                                 type="date"
                                 value={validityDate}
@@ -280,11 +264,22 @@ const InvoiceGenerator: React.FC = () => {
                                 className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
                             />
                         </div>
+                        
+                        <div>
+                            <Label htmlFor='state' required={true}>Estado</Label>
+                            <select className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black" value={state} onChange={(e) => setState(e.target.value)}>
+                                <option value="Borrador">Borrador</option>
+                                <option value="Enviado">Enviado</option>
+                                <option value="Aprobado">Aprobado</option>
+                                <option value="Rechazado">Rechazado</option>
+                                <option value="Facturado">Facturado</option>
+                            </select>
+                        </div>
                     </div>
                     <h2>Cliente</h2>
                     <div className='grid grid-cols-2 gap-5'>
                         <div>
-                            <label className='mb-3 block text-black dark:text-white' >Razón Social:</label>
+                            <Label htmlFor='clientName' required={true} >Razón Social:</Label>
                             <input
                                 type="text"
                                 value={clientName}
@@ -294,7 +289,7 @@ const InvoiceGenerator: React.FC = () => {
                         </div>
 
                         <div>
-                            <label className='mb-3 block text-black dark:text-white' >Domicilio:</label>
+                            <Label htmlFor='clientAddress' required={true} >Domicilio:</Label>
                             <input
                                 type="text"
                                 value={clientAddress}
@@ -304,7 +299,7 @@ const InvoiceGenerator: React.FC = () => {
                         </div>
 
                         <div>
-                            <label className='mb-3 block text-black dark:text-white' >Teléfono:</label>
+                            <Label htmlFor='clientPhone' required={true} >Teléfono:</Label>
                             <input
                                 type="text"
                                 value={clientPhone}
@@ -314,7 +309,7 @@ const InvoiceGenerator: React.FC = () => {
                         </div>
 
                         <div>
-                            <label className='mb-3 block text-black dark:text-white' >CUIT:</label>
+                            <Label htmlFor='clientCUIT' required={true} >CUIT:</Label>
                             <input
                                 type="text"
                                 value={clientCUIT}
@@ -324,7 +319,7 @@ const InvoiceGenerator: React.FC = () => {
                         </div>
 
                         <div>
-                            <label className='mb-3 block text-black dark:text-white'>Condición de IVA:</label>
+                            <Label htmlFor='clientTaxStatus' required={true}>Condición de IVA:</Label>
                             <input
                                 type="text"
                                 value={clientTaxStatus}
@@ -334,13 +329,12 @@ const InvoiceGenerator: React.FC = () => {
                         </div>
 
                         <div>
-                            <label className='mb-3 block text-black dark:text-white'>Condición de venta:</label>
-                            <input
-                                type="text"
-                                value={paymentCondition}
-                                onChange={(e) => setPaymentCondition(e.target.value)}
-                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
-                            />
+                            <Label htmlFor='paymentCondition' required={true}>Condición de venta:</Label>
+                            <select className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black" value={paymentCondition} onChange={(e) => setState(e.target.value)}>
+                                <option value="Contado">Efectivo</option>
+                                <option value="Credito">Credito</option>
+                                <option value="Ambos">Ambos</option>
+                            </select>
                         </div>
                     </div>
 
