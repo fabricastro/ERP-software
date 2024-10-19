@@ -22,21 +22,45 @@ const ArticleList: React.FC = () => {
   const navigate = useNavigate();
   const [alert, setAlert] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
+  // Estados para paginación y orden
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(100); // Fijamos el límite a 100 como en el ejemplo
+  const [order, setOrder] = useState<{ column: string; typeOrder: 'ASC' | 'DESC' }>({
+    column: 'name',
+    typeOrder: 'ASC',
+  });
+
   // Cargar los artículos
   useEffect(() => {
     const fetchArticles = async () => {
+      setLoading(true);
       try {
-        const response = await articleService.getAll();
-        setArticles(response);
+        // Llama al método findArticles del servicio y recibe la respuesta
+        const response = await articleService.findArticles(page, limit);
+  
+        // Imprime la respuesta completa para verificar su estructura
+        console.log('Respuesta completa de la API:', response);
+  
+        // Verificar si la respuesta tiene una propiedad `items` que contenga los artículos
+        if (response && response.items) {
+          setArticles(response.items);
+        } else {
+          throw new Error('Estructura de respuesta inesperada');
+        }
+  
         setLoading(false);
       } catch (err: any) {
+        console.error('Error en la solicitud:', err); // Registro de error para depuración
         setError('Error al cargar los artículos');
         setLoading(false);
       }
     };
-
+  
     fetchArticles();
-  }, []);
+  }, [page, limit]);
+  
+
+
 
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm('¿Estás seguro de que deseas eliminar este artículo?');

@@ -20,6 +20,7 @@ class SalesDocsService extends BaseService {
     net: number;
     iva: number;
     amount: number;
+    articles: any[];
   }) {
     return this.post('/salesDocs', data);
   }
