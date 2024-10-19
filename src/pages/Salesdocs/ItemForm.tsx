@@ -9,7 +9,7 @@ interface Item {
 }
 
 interface ItemFormProps {
-    items: Item[]; // Los ítems que se pasan desde el componente padre
+    items: Item[];
     setItems: (items: Item[]) => void;
 }
 
@@ -28,7 +28,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ items, setItems }) => {
                 const articlesData = await articleService.getAll();
                 setArticles(articlesData);
             } catch (error) {
-                console.error('Error al cargar los articulos:', error);
+                console.error('Error al cargar los artículos:', error);
             }
         };
         fetchArticles();
@@ -58,7 +58,15 @@ const ItemForm: React.FC<ItemFormProps> = ({ items, setItems }) => {
     };
 
     const handleAddItem = () => {
-        setItems([...items, newItem]); 
+        // Verifica si el ítem tiene una descripción válida
+        if (!newItem.description.trim() || newItem.quantity <= 0 || newItem.unitPrice <= 0) {
+            return; // No agregar si falta información clave
+        }
+
+        // Agregar el nuevo ítem a la lista de ítems
+        setItems([...items, newItem]);
+        
+        // Reiniciar el estado de nuevo ítem
         setNewItem({
             description: '',
             quantity: 1,
@@ -140,16 +148,22 @@ const ItemForm: React.FC<ItemFormProps> = ({ items, setItems }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {items.map((item, index) => (
-                        <tr key={index} className='hover:bg-gray-100'>
-                            <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{item.description}</td>
-                            <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{item.quantity}</td>
-                            <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{item.unitPrice}</td>
-                            <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                                <button onClick={() => handleRemoveItem(index)}>Eliminar</button>
-                            </td>
+                    {Array.isArray(items) && items.length > 0 ? (
+                        items.map((item, index) => (
+                            <tr key={index} className='hover:bg-gray-100'>
+                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{item.description}</td>
+                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{item.quantity}</td>
+                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{item.unitPrice}</td>
+                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                                    <button onClick={() => handleRemoveItem(index)}>Eliminar</button>
+                                </td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan={4} className="text-center py-5">No hay ítems agregados.</td>
                         </tr>
-                    ))}
+                    )}
                 </tbody>
             </table>
         </div>

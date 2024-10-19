@@ -36,6 +36,16 @@ class ArticleService extends BaseService {
     return this.get(`/article/${id}`);
   }
 
+  // Método para filtrar artículos con `findIn`
+   findArticles(
+    filter: Record<string, any>,
+    page: number = 1,
+    limit: number = 10,
+    order: { column: string; typeOrder: 'ASC' | 'DESC' } = { column: 'name', typeOrder: 'ASC' }
+  ) {
+    return this.findIn('article', filter, page, limit, order);
+  }
+  
   // Método para actualizar un artículo
   async updateArticle(id: number, data: {
     type?: string;

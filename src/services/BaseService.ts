@@ -51,6 +51,29 @@ export class BaseService {
 
         this.navigate('/signin');
     }
+    // Método para ordenar listados
+    async findIn<T>(
+        resource: string,
+        page: number = 1,
+        limit: number = 100
+      ): Promise<T> {
+        try {
+          // Construcción de la URL con los valores codificados de forma estática
+          const orderParam = "%7B%22column%22%3A%22name%22%2C%22typeOrder%22%3A%22ASC%22%7D";
+          const filterParam = "%7B%22isForSalesDocs%22%3Afalse%7D";
+      
+          // Construcción de la URL con valores hardcodeados
+          const url = `/${resource}/findIn/${page}/${limit}?order=${orderParam}&filter=${filterParam}`;
+      
+          console.log(`URL generada: ${url}`); // Imprimir la URL para ver cómo se genera
+      
+          const response = await this.api.get<T>(url);
+          return response.data;
+        } catch (error: any) {
+          throw new Error(error.response?.data?.message || 'Error en la solicitud');
+        }
+      }
+      
 
     // Método para obtener datos (GET)
     async get<T>(url: string, params?: any): Promise<T> {
