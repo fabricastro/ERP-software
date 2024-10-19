@@ -243,3 +243,13 @@ span.flatpickr-weekday,
 .alert-exit {
   animation: slideOutRight 0.5s ease forwards;
 }
+
+
+.tab-settings {
+  @apply cursor-pointer px-3 py-2 rounded-md;
+}
+
+.tab-settings:hover, 
+.tab-settings.active {
+  @apply bg-primary text-white;
+}

@@ -3,7 +3,7 @@ import jsPDFInvoiceTemplate, { OutputType } from 'jspdf-invoice-template';
 import { useTranslation } from 'react-i18next';
 import { salesDocsService } from '../../services/SalesDocsService';
 import { customerService } from '../../services/CustomerService'; // Importar el servicio de clientes
-import { useBusiness } from '../../context/BusinessContext';
+import { useSettings } from '../../context/SettingsContext';
 import Alert from '../UiElements/Alerts';
 import ItemForm from './ItemForm';
 import Label from '../../components/Label/Label';
@@ -27,7 +27,7 @@ const InvoiceGenerator: React.FC = () => {
     const [items, setItems] = useState<any[]>([]);
 
     const { t } = useTranslation();
-    const business = useBusiness();
+    const business = useSettings();
 
     useEffect(() => {
         const fetchCustomersAndInvoiceNumber = async () => {

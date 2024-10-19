@@ -29,7 +29,6 @@ import { ConfirmEmail } from './pages/Authentication/ConfirmEmail';
 import ProviderEdit from './pages/Provider/ProviderEdit';
 import Alert from './pages/UiElements/Alerts';
 import { providerService } from './services/ProviderService';
-import { BaseService } from './services/BaseService';
 import CustomerEdit from './pages/Customer/CustomerEdit';
 import { Category } from './pages/Category/Category';
 import { CategoryAdd } from './pages/Category/CategoryAdd';
@@ -37,7 +36,7 @@ import ArticleEdit from './pages/Article/ArticleEdit';
 import CategoryEdit from './pages/Category/CategoryEdit';
 import { isTokenExpired } from './utils/token';
 import SalesdocsEdit from './pages/Salesdocs/SalesdocsEdit';
-import { BusinessProvider } from './context/BusinessContext';
+import { SettingsProvider } from './context/SettingsContext';
 
 function App() {
   const { user, logout } = useAuth(); // Asegúrate de traer `logout` desde el contexto
@@ -140,9 +139,9 @@ function App() {
 export default function RootApp() {
   return (
     <AuthProvider>
-      <BusinessProvider>
+      <SettingsProvider>
         <App />
-      </BusinessProvider>
+      </SettingsProvider>
     </AuthProvider>
   );
 }

@@ -11,7 +11,6 @@ interface UpdateUserParams {
 
 export const updateUserService = async (id: number, userData: UpdateUserParams): Promise<any> => {
   try {
-    console.log(userData);
     const token = localStorage.getItem('token');
 
     if (!token) {
@@ -23,7 +22,8 @@ export const updateUserService = async (id: number, userData: UpdateUserParams):
         Authorization: `Bearer ${token}`, 
       },
     });
-    const user = { ...JSON.parse(localStorage.getItem('user') || '{}'), ...userData };
+    const user = { ...JSON.parse(localStorage.getItem('user') || '{}'), ...response.data };
+    
     localStorage.setItem('user', JSON.stringify(user));
     
     return response.data;

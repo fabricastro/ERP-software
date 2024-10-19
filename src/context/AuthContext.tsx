@@ -6,6 +6,7 @@ import { isTokenExpired } from '../utils/token';
 interface AuthContextProps {
   user: any;
   isAuthenticated: boolean;
+  setUser: (user: any) => void;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }

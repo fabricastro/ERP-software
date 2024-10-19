@@ -4,7 +4,7 @@ import jsPDFInvoiceTemplate, { OutputType } from 'jspdf-invoice-template';
 import { useParams, useNavigate } from 'react-router-dom';
 import { salesDocsService } from '../../services/SalesDocsService';
 import { customerService } from '../../services/CustomerService';
-import { useBusiness } from '../../context/BusinessContext';
+import { useSettings } from '../../context/SettingsContext';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../../layout/DefaultLayout';
 import Alert from '../UiElements/Alerts';
@@ -14,7 +14,7 @@ import Loader from '../../common/Loader';
 const SalesDocEdit: React.FC = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const business = useBusiness();
+    const business = useSettings();
 
     const [salesDoc, setSalesDoc] = useState<any | null>(null);
     const [items, setItems] = useState([{ description: '', quantity: 1, unitPrice: 0 }]);

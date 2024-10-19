@@ -1,162 +1,278 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useAuth } from '../../context/AuthContext';
 import { updateUserService } from '../../services/user';
+import { updateSettingsService } from '../../services/Settings';
+import Alert from '../UiElements/Alerts';
+import FormInput from '../../components/Input/input';
+import { Buttons } from '../../components/Buttons/Buttons';
+import { useSettings } from '../../context/SettingsContext';
 
 const Settings = () => {
-    const { user } = useAuth();
-    const [bussinessName, setBussinessName] = useState(user?.bussinessName || '');
-    const [email, setEmail] = useState(user?.email || '');
-    const [phone, setPhone] = useState(user?.phone || '');
-    const [password, setPassword] = useState(''); 
-    const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState<string | null>(null);
+  /* Set User Data */
+  const { user, setUser } = useAuth();
+  const [bussinessName, setBussinessName] = useState(user?.bussinessName || '');
+  const [activeTab, setActiveTab] = useState('cliente');
+  const [email, setEmail] = useState(user?.email || '');
+  const [phone, setPhone] = useState(user?.phone || '');
+  const [password, setPassword] = useState('');
+  
+  /* Set User Data */
+  const { settings, setSettings } = useSettings();
+  const [address, setAddress] = useState(settings?.address || '');
+  const [phoneSettings, setPhoneSettings] = useState(settings?.phone || '');
+  const [emailSettings, setEmailSettings] = useState(settings?.email || '');
+  const [website, setWebsite] = useState(settings?.website || '');
+  const [logo, setLogo] = useState(settings?.logo || '');
+  const [numberAccount, setNumberAccount] = useState(settings?.numberAccount || '');
+  const [nextBillId, setNextBillId] = useState(settings?.nextBillId ?? 1);
+  const [nextBudgetId, setNextBudgetId] = useState(settings?.nextBudgetId ?? 1);
+  
+  
+  const [alert, setAlert] = useState<{
+    type: 'success' | 'error';
+    message: string;
+  } | null>(null);
+  
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [isFormSettingsValid, setIsFormSettingsValid] = useState(false);
+  
+  const validateForm = () => {
+    const isEmailValid = email.trim() !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const isBusinessNameValid = bussinessName.trim() !== '';
+    const isPhoneValid = phone.trim() !== '';
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            await updateUserService(user.id, { bussinessName, email, phone, password });
-            setSuccess('Datos actualizados correctamente');
-            setError(null);
-        } catch (error: any) {
-            setError(error.message);
-            setSuccess(null);
-        }
-    };
-
-    return (
-        <DefaultLayout>
-            <div className="mx-auto max-w-270">
-                <Breadcrumb pageName="Configuración" />
-
-                <div className="grid grid-cols-3 gap-8">
-                    <div className="col-span-5 xl:col-span-3">
-                        <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-                            <div className="border-b border-stroke py-4 px-7 dark:border-strokedark">
-                                <h3 className="font-medium text-black dark:text-white">Información</h3>
-                            </div>
-                            <div className="p-7">
-                                <form onSubmit={handleSubmit}>
-                                    {error && <p className="text-red-500">{error}</p>}
-                                    {success && <p className="text-green-500">{success}</p>}
-
-                                    <div className="mb-5.5">
-                                        <label
-                                            className="mb-3 block text-sm font-medium text-black dark:text-white"
-                                            htmlFor="bussinessName"
-                                        >
-                                            Nombre de Empresa
-                                        </label>
-                                        <input
-                                            className="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                                            type="text"
-                                            id="bussinessName"
-                                            value={bussinessName}
-                                            onChange={(e) => setBussinessName(e.target.value)}
-                                        />
-                                    </div>
-
-                                    <div className="mb-5.5">
-                                        <label
-                                            className="mb-3 block text-sm font-medium text-black dark:text-white"
-                                            htmlFor="emailAddress"
-                                        >
-                                            Correo Electrónico
-                                        </label>
-                                        <div className="relative">
-                                            <input
-                                                className="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                                                type="email"
-                                                id="emailAddress"
-                                                value={email}
-                                                onChange={(e) => setEmail(e.target.value)}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
-                                        <div className="w-full">
-                                            <label
-                                                className="mb-3 block text-sm font-medium text-black dark:text-white"
-                                                htmlFor="phoneNumber"
-                                            >
-                                                Número de Teléfono
-                                            </label>
-                                            <input
-                                                className="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                                                type="text"
-                                                id="phoneNumber"
-                                                value={phone}
-                                                onChange={(e) => setPhone(e.target.value)}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    {/* Campo de cambio de contraseña */}
-                                    <div className="mb-5.5">
-                                        <label
-                                            className="mb-3 block text-sm font-medium text-black dark:text-white"
-                                            htmlFor="password"
-                                        >
-                                            Cambiar Contraseña
-                                        </label>
-                                        <input
-                                            className="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                                            type="password"
-                                            id="password"
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            placeholder="Ingresa una nueva contraseña (opcional)"
-                                        />
-                                    </div>
-
-                                    <div className="flex justify-end gap-4.5">
-                                        <button
-                                            className="flex justify-center rounded border border-stroke py-2 px-6 font-medium text-black hover:shadow-1 dark:border-strokedark dark:text-white"
-                                            type="button"
-                                        >
-                                            Cancelar
-                                        </button>
-                                        <button
-                                            className="flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:bg-opacity-90"
-                                            type="submit"
-                                        >
-                                            Guardar
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* <div className="col-span-5 xl:col-span-2">
-                        <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-                            <div className="border-b border-stroke py-4 px-7 dark:border-strokedark">
-                                <h3 className="font-medium text-black dark:text-white">Imagen de Perfil</h3>
-                            </div>
-                            <div className="p-7">
-                                <form action="#">
-                                    <div className="mb-4 flex items-center gap-3">
-                                        <div className="h-14 w-14 rounded-full">
-                                            <img src={userThree} alt="User" />
-                                        </div>
-                                        <div>
-                                            <span className="mb-1.5 text-black dark:text-white">Edita tu imagen</span>
-                                            <span className="flex gap-2.5">
-                                                <button className="text-sm hover:text-primary">Borrar</button>
-                                                <button className="text-sm hover:text-primary">Actualizar</button>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div> */}
-                </div>
-            </div>
-        </DefaultLayout>
+    setIsFormValid(isEmailValid && isBusinessNameValid && isPhoneValid);
+  };
+  
+  useEffect(() => {
+    validateForm();
+  }, [email, bussinessName, phone]);
+  
+  const validateSettingsForm = () => {
+    const isAddressValid = address.trim() !== '';
+    const isPhoneSettingsValid = phoneSettings.trim() !== '' && /^\d+$/.test(phoneSettings);
+    const isEmailSettingsValid = emailSettings.trim() !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailSettings);
+    const isNumberAccountValid = numberAccount.trim() !== '';
+    const isNextBillIdValid = nextBillId > 0;
+    const isNextBudgetIdValid = nextBudgetId > 0;
+  
+    setIsFormSettingsValid(
+      isAddressValid &&
+      isPhoneSettingsValid &&
+      isEmailSettingsValid &&
+      isNumberAccountValid &&
+      isNextBillIdValid &&
+      isNextBudgetIdValid
     );
+  };
+  
+  useEffect(() => {
+    validateSettingsForm();
+  }, [address, phoneSettings, emailSettings, numberAccount, nextBillId, nextBudgetId]);  
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();    
+    try {
+      const updatedUser = await updateUserService(user.id, { bussinessName, email, phone, password });
+      setUser(updatedUser);
+      setAlert({
+        type: 'success',
+        message: 'Información actualizada con éxito',
+      });
+    } catch (error: any) {
+      setAlert({ type: 'error', message: 'Error al actualizar el documento' });
+    }
+  };
+
+  const handleSettingsSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const updatedSettings = await updateSettingsService({
+        address,
+        phone: phoneSettings,
+        email: emailSettings,
+        website,
+        logo,
+        numberAccount,
+        nextBillId,
+        nextBudgetId,
+        
+      });
+      setSettings(updatedSettings);
+      setAlert({
+        type: 'success',
+        message: 'Información de la empresa actualizada con éxito',
+      });
+    } catch (error: any) {
+      setAlert({ type: 'error', message: 'Error al actualizar el documento' });
+    }
+  };
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+  };
+
+  return (
+    <DefaultLayout>
+    <div className="mx-auto max-w-270">
+  <Breadcrumb pageName="Configuración" />
+  {alert && (
+    <Alert
+      type={alert.type}
+      title={alert.type === 'success' ? 'Éxito' : 'Error'}
+      message={alert.message}
+      onClose={() => setAlert(null)} // Cerrar la alerta
+    />
+  )}
+
+  <div className="grid grid-cols-3 gap-8">
+    <div className="col-span-5 xl:col-span-3">
+      <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+        <div className="flex gap-4 border-b border-stroke py-4 px-7 dark:border-strokedark">
+          <h3
+            className={`tab-settings font-medium text-black dark:text-white ${activeTab === 'cliente' ? 'active' : ''}`}
+            onClick={() => handleTabChange('cliente')}
+          >
+            Información básica
+          </h3>
+          <h3
+            className={`tab-settings font-medium text-black dark:text-white ${activeTab === 'empresa' ? 'active' : ''}`}
+            onClick={() => handleTabChange('empresa')}
+          >
+            Información empresa
+          </h3>
+        </div>
+
+        {/* Información Cliente */}
+        {activeTab === 'cliente' && (
+          <div className="p-7">
+            <form onSubmit={handleSubmit}>
+              <div className="grid grid-cols-2 gap-4">
+                <FormInput
+                  label="Correo Electrónico"
+                  type="email"
+                  id="emailAddress"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+                <FormInput
+                  label="Nombre de Empresa"
+                  type="text"
+                  id="bussinessName"
+                  value={bussinessName}
+                  onChange={(e) => setBussinessName(e.target.value)}
+                  required
+                />
+                <FormInput
+                  label="Número de Teléfono"
+                  type="text"
+                  id="phoneNumber"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  required
+                />
+                <FormInput
+                  label="Cambiar Contraseña"
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Ingresa una nueva contraseña (opcional)"
+                />
+              </div>
+
+              <div className="flex justify-end mt-4">
+                <Buttons title="Guardar" type="submit" bgColor="bg-primary" textColor="text-gray" disabled={!isFormValid} />
+              </div>
+            </form>
+          </div>
+        )}
+
+        {/* Información Empresarial */}
+        {activeTab === 'empresa' && (
+          <div className="p-7">
+            <form onSubmit={handleSettingsSubmit}>
+              <div className="grid grid-cols-3 gap-4">
+                <FormInput
+                  label="Dirección de empresa"
+                  type="text"
+                  id="address"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  required
+                />
+                <FormInput
+                  label="Teléfono"
+                  type="text"
+                  id="phoneSettings"
+                  value={phoneSettings}
+                  onChange={(e) => setPhoneSettings(e.target.value)}
+                  required
+                />
+                <FormInput
+                  label="Correo Electrónico"
+                  type="email"
+                  id="emailSettings"
+                  value={emailSettings}
+                  onChange={(e) => setEmailSettings(e.target.value)}
+                  required
+                />
+                <FormInput
+                  label="Sitio Web"
+                  type="text"
+                  id="website"
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                />
+                <FormInput
+                  label="Logotipo"
+                  type="text"
+                  id="logo"
+                  value={logo}
+                  onChange={(e) => setLogo(e.target.value)}
+                />
+                <FormInput
+                  label="Número de Cuenta"
+                  type="text"
+                  id="numberAccount"
+                  value={numberAccount}
+                  onChange={(e) => setNumberAccount(e.target.value)}
+                  required
+                />
+                <FormInput
+                  label="Próxima Factura ID"
+                  type="number"
+                  id="nextBillId"
+                  value={nextBillId}
+                  onChange={(e) => setNextBillId(e.target.value ? parseInt(e.target.value, 10) : 0)}
+                  required
+                />
+                <FormInput
+                  label="Próximo Presupuesto ID"
+                  type="number"
+                  id="nextBudgetId"
+                  value={nextBudgetId}
+                  onChange={(e) => setNextBudgetId(e.target.value ? parseInt(e.target.value, 10) : 0)}
+                  required
+                />
+              </div>
+
+              <div className="flex justify-end mt-4 gap-4">
+              <Buttons title="Guardar" type="submit" bgColor="bg-primary" textColor="text-gray" disabled={!isFormSettingsValid} />
+              </div>
+            </form>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</div>
+
+    </DefaultLayout>
+  );
 };
 
 export default Settings;

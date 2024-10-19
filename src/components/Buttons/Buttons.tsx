@@ -1,13 +1,14 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface ButtonProps {
     title: string;
-    to?: string;  
+    to?: string;
     bgColor?: string;
     textColor?: string;
     customStyles?: string;
     type?: 'button' | 'submit' | 'reset';
+    disabled?: boolean; // Nueva prop para deshabilitar el botón
 }
 
 export const Buttons: FC<ButtonProps> = ({
@@ -17,12 +18,13 @@ export const Buttons: FC<ButtonProps> = ({
     textColor = 'text-white',
     customStyles = '',
     type = 'button',
+    disabled = false, // Valor por defecto para la prop `disabled`
 }) => {
     const navigate = useNavigate();
 
     const handleClick = () => {
-        if (to) {
-            navigate(to);  
+        if (to && !disabled) {
+            navigate(to);
         }
     };
 
@@ -31,7 +33,10 @@ export const Buttons: FC<ButtonProps> = ({
             <button
                 type={type}
                 onClick={handleClick}
-                className={`inline-flex items-center justify-center rounded-full ${bgColor} py-4 px-10 text-center font-medium ${textColor} hover:bg-opacity-90 lg:px-8 xl:px-10 ${customStyles}`}
+                disabled={disabled}
+                className={`inline-flex items-center justify-center rounded-full ${
+                    disabled ? 'bg-gray-3 cursor-not-allowed' : `${bgColor} ${textColor} hover:bg-opacity-90`
+                } py-3 px-6 text-center font-medium lg:px-8 xl:px-6 ${customStyles}` }
             >
                 {title}
             </button>

@@ -18,6 +18,7 @@
       "provider": "Proveedores",
       "add_provider": "Agregar Proveedor",
       "article": "Articulos",
-      "add_article": "Agregar Articulo"
+      "add_article": "Agregar Articulo",
+      "settings": "Configuración"
     }
 }
