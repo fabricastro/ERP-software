@@ -12,16 +12,18 @@ import { useSettings } from '../../context/SettingsContext';
 const Settings = () => {
   /* Set User Data */
   const { user, setUser } = useAuth();
-  const [bussinessName, setBussinessName] = useState(user?.bussinessName || '');
+  const [name, setName] = useState(user?.name || '');
   const [activeTab, setActiveTab] = useState('cliente');
   const [email, setEmail] = useState(user?.email || '');
   const [phone, setPhone] = useState(user?.phone || '');
   const [password, setPassword] = useState('');
   
-  /* Set User Data */
+  /* Set Settings Data */
   const { settings, setSettings } = useSettings();
+  const [bussinessName, setBussinessName] = useState(settings?.bussinessName || '');
   const [address, setAddress] = useState(settings?.address || '');
   const [phoneSettings, setPhoneSettings] = useState(settings?.phone || '');
+  const [cuit, setCuit] = useState(settings?.cuit || '');
   const [emailSettings, setEmailSettings] = useState(settings?.email || '');
   const [website, setWebsite] = useState(settings?.website || '');
   const [logo, setLogo] = useState(settings?.logo || '');
@@ -40,7 +42,7 @@ const Settings = () => {
   
   const validateForm = () => {
     const isEmailValid = email.trim() !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    const isBusinessNameValid = bussinessName.trim() !== '';
+    const isBusinessNameValid = name.trim() !== '';
     const isPhoneValid = phone.trim() !== '';
 
     setIsFormValid(isEmailValid && isBusinessNameValid && isPhoneValid);
@@ -48,10 +50,12 @@ const Settings = () => {
   
   useEffect(() => {
     validateForm();
-  }, [email, bussinessName, phone]);
+  }, [email, name, phone]);
   
   const validateSettingsForm = () => {
+    const isBussinessNameValid = bussinessName.trim() !== '';
     const isAddressValid = address.trim() !== '';
+    const isCuitValid = cuit.trim() !== '';
     const isPhoneSettingsValid = phoneSettings.trim() !== '' && /^\d+$/.test(phoneSettings);
     const isEmailSettingsValid = emailSettings.trim() !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailSettings);
     const isNumberAccountValid = numberAccount.trim() !== '';
@@ -60,6 +64,8 @@ const Settings = () => {
   
     setIsFormSettingsValid(
       isAddressValid &&
+      isBussinessNameValid &&
+      isCuitValid &&
       isPhoneSettingsValid &&
       isEmailSettingsValid &&
       isNumberAccountValid &&
@@ -70,12 +76,12 @@ const Settings = () => {
   
   useEffect(() => {
     validateSettingsForm();
-  }, [address, phoneSettings, emailSettings, numberAccount, nextBillId, nextBudgetId]);  
+  }, [bussinessName, address, cuit, phoneSettings, emailSettings, numberAccount, nextBillId, nextBudgetId]);  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();    
     try {
-      const updatedUser = await updateUserService(user.id, { bussinessName, email, phone, password });
+      const updatedUser = await updateUserService(user.id, { name, email, phone, password });
       setUser(updatedUser);
       setAlert({
         type: 'success',
@@ -90,7 +96,9 @@ const Settings = () => {
     e.preventDefault();
     try {
       const updatedSettings = await updateSettingsService({
+        bussinessName,
         address,
+        cuit,
         phone: phoneSettings,
         email: emailSettings,
         website,
@@ -159,11 +167,11 @@ const Settings = () => {
                   required
                 />
                 <FormInput
-                  label="Nombre de Empresa"
+                  label="Nombre y Apellido"
                   type="text"
-                  id="bussinessName"
-                  value={bussinessName}
-                  onChange={(e) => setBussinessName(e.target.value)}
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   required
                 />
                 <FormInput
@@ -197,11 +205,27 @@ const Settings = () => {
             <form onSubmit={handleSettingsSubmit}>
               <div className="grid grid-cols-3 gap-4">
                 <FormInput
+                  label="Nombre de la empresa"
+                  type="text"
+                  id="bussinessName"
+                  value={bussinessName}
+                  onChange={(e) => setBussinessName(e.target.value)}
+                  required
+                />
+                <FormInput
                   label="Dirección de empresa"
                   type="text"
                   id="address"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
+                  required
+                />
+                <FormInput
+                  label="CUIT"
+                  type="text"
+                  id="cuit"
+                  value={cuit}
+                  onChange={(e) => setCuit(e.target.value)}
                   required
                 />
                 <FormInput

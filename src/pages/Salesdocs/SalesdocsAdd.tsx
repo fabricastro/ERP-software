@@ -156,7 +156,7 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
                 margin: { top: 0, left: 0 }
             },
             settings: {
-                name: settings.legalName || 'N/A',
+                name: settings.bussinessName || 'N/A',
                 address: settings.address || 'N/A',
                 phone: settings.phone || 'N/A',
                 email: settings.email || 'N/A',

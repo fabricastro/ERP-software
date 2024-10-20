@@ -4,8 +4,9 @@ const URL_API = import.meta.env.VITE_API_URL;
 
 // Definimos la estructura de los datos del negocio
 interface Settings {
-  legalName: string;
+  bussinessName: string;
   address: string;
+  cuit: string;
   phone: string;
   email: string;
   website: string;

@@ -57,8 +57,8 @@ function App() {
   }, [location.pathname, logout, navigate]);
 
   useEffect(() => {
-    if (user && user.bussinessName) {
-      const companyName = user.bussinessName || 'ERP by thdvs';
+    if (user && user.name) {
+      const companyName = user.name || 'ERP by thdvs';
       document.title = capitalizeWords(companyName);
     }
   }, [user]);

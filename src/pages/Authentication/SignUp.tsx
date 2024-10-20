@@ -6,7 +6,7 @@ import { useAuth } from '../../hooks/useAuth';
 import Loader from '../../common/Loader';
 
 const SignUp: React.FC = () => {
-  const [bussinessName, setBussinessName] = useState('');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -20,7 +20,7 @@ const SignUp: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const message = await register({ bussinessName, email, phone });
+      const message = await register({ name, email, phone });
       setLoading(false);
       setSuccessMessage(message);
       setError(null);
@@ -60,8 +60,8 @@ const SignUp: React.FC = () => {
                   <div className="relative">
                     <input
                       type="text"
-                      value={bussinessName}
-                      onChange={(e) => setBussinessName(e.target.value)}
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                       placeholder="Ingresa tu nombre completo o razón social"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                       required

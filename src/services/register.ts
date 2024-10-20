@@ -3,15 +3,15 @@ import axios from 'axios';
 const URL_API = import.meta.env.VITE_API_URL;
 
 interface RegisterParams {
-  bussinessName: string;
+  name: string;
   email: string;
   phone: string;
 }
 
-export const registerService = async ({ bussinessName, email, phone }: RegisterParams): Promise<any> => {
+export const registerService = async ({ name, email, phone }: RegisterParams): Promise<any> => {
   try {
     const response = await axios.post(`${URL_API}/auth/signup`, {
-      bussinessName,
+      name,
       email,
       phone,
     });

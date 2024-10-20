@@ -3,7 +3,7 @@ import axios from 'axios';
 const URL_API = import.meta.env.VITE_API_URL;
 
 interface UpdateUserParams {
-  bussinessName: string;
+  name: string;
   email: string;
   phone: string;
   password?: string;

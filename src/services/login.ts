@@ -13,7 +13,7 @@ interface LoginResponse {
   user: {
     id: string;
     email: string;
-    bussinessName: string;
+    name: string;
     phone: string;
   };
 }

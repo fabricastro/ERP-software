@@ -3,7 +3,7 @@ import { loginService } from '../services/login';
 import { useState, useEffect } from 'react';
 
 interface RegisterParams {
-    bussinessName: string;
+    name: string;
     email: string;
     phone: string;
 }
@@ -15,9 +15,9 @@ interface LoginParams {
 
 export const useAuth = () => {
     // Registro
-    const handleRegister = async ({ bussinessName, email, phone }: RegisterParams): Promise<string> => {
+    const handleRegister = async ({ name, email, phone }: RegisterParams): Promise<string> => {
         try {
-            const message = await registerService({ bussinessName, email, phone });
+            const message = await registerService({ name, email, phone });
             return message;
         } catch (error: any) {
             throw new Error(error.message || 'Registration failed');
