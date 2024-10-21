@@ -3,7 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { FaUsers, FaMoneyBillWave, FaUserPlus } from "react-icons/fa";
 import { IoSettings } from "react-icons/io5";
 import { useTranslation } from 'react-i18next';
-import FaviconWhiteIcon from '../../../public/favicon-white.png';
+import FaviconWhiteIcon from '/favicon-white.png';
 import { FaBoxArchive } from "react-icons/fa6";
 import { MdSpaceDashboard } from "react-icons/md";
 
@@ -20,7 +20,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const sidebar = useRef<HTMLDivElement | null>(null);
 
   const storedSidebarExpanded = localStorage.getItem('sidebar-expanded');
-  const [sidebarExpanded, setSidebarExpanded] = useState(
+  const [sidebarExpanded] = useState(
     storedSidebarExpanded === 'true'
   );
 
@@ -63,7 +63,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   return (
 <aside
   ref={sidebar}
-  className={` absolute left-0 top-0 z-9999 h-screen w-30 sm:w-40 overflow-y-hidden bg-black duration-300 ease-linear ${
+  className={`absolute xl:relative left-0 top-0 z-9999 h-screen w-30 sm:w-40 overflow-y-hidden bg-black duration-300 ease-linear ${
     sidebarOpen ? 'translate-x-0' : '-translate-x-full'
   } lg:translate-x-0`}
 >

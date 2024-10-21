@@ -124,7 +124,6 @@ const Settings = () => {
 
   return (
     <DefaultLayout>
-    <div className="mx-auto max-w-270">
   <Breadcrumb pageName="Configuración" />
   {alert && (
     <Alert
@@ -157,7 +156,7 @@ const Settings = () => {
         {activeTab === 'cliente' && (
           <div className="p-7">
             <form onSubmit={handleSubmit}>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid sm:grid-cols-2 gap-4">
                 <FormInput
                   label="Correo Electrónico"
                   type="email"
@@ -203,7 +202,7 @@ const Settings = () => {
         {activeTab === 'empresa' && (
           <div className="p-7">
             <form onSubmit={handleSettingsSubmit}>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid sm:grid-cols-3 gap-4">
                 <FormInput
                   label="Nombre de la empresa"
                   type="text"
@@ -293,8 +292,6 @@ const Settings = () => {
       </div>
     </div>
   </div>
-</div>
-
     </DefaultLayout>
   );
 };
