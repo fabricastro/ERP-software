@@ -10,6 +10,8 @@ interface FormInputProps {
   placeholder?: string;
   additionalClasses?: string;
   required?: boolean;
+  disabled?: boolean;
+  options?: string[];
 }
 
 const FormInput: React.FC<FormInputProps> = ({
@@ -21,6 +23,8 @@ const FormInput: React.FC<FormInputProps> = ({
   placeholder = "",
   additionalClasses = "",
   required = false,
+  disabled = false,
+  options = [], 
 }) => {
   // Estado para manejar el error
   const [error, setError] = useState<string | null>(null);
@@ -70,23 +74,52 @@ const FormInput: React.FC<FormInputProps> = ({
         {required && <span className="text-red-500 ml-1">*</span>}
       </label>
       <div className="relative h-16">
-        <input
-          className="w-full rounded border border-stroke py-3 px-4.5 text-black focus:border-primary 
-          focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-          type={type}
-          id={id}
-          value={value}
-          onChange={(e) => {
-            onChange(e);
-            setError(null); // Limpiar el error al cambiar el valor
-          }}
-          placeholder={placeholder}
-          onBlur={() => {
-            setTouched(true); // Marca el input como tocado al perder el foco
-            validate();
-          }}
-          onFocus={() => setTouched(true)} // Marca el input como tocado al obtener el foco
-        />
+        {/* Verificamos si es un select o input */}
+        {options.length > 0 ? (
+          <select
+          className={`w-full rounded border border-stroke py-3 px-4.5 text-black focus:border-primary 
+          focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary 
+          ${disabled ? 'bg-[#f0f3f6] dark:bg-[#313d4a] text-white' : 'bg-white dark:bg-meta-4'}`}
+            id={id}
+            value={value}
+            onChange={(e) => {
+              onChange(e);
+              setError(null); // Limpiar el error al cambiar el valor
+            }}
+            disabled={disabled} // Permitir deshabilitar select
+            onBlur={() => {
+              setTouched(true); // Marca el input como tocado al perder el foco
+              validate();
+            }}
+          >
+            {options.map((option, idx) => (
+              <option key={idx} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <input
+            className="w-full rounded border border-stroke py-3 px-4.5 text-black focus:border-primary 
+            focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+            type={type}
+            id={id}
+            value={value}
+            onChange={(e) => {
+              onChange(e);
+              setError(null); // Limpiar el error al cambiar el valor
+            }}
+            placeholder={placeholder}
+            disabled={disabled} // Permitir deshabilitar input
+            onBlur={() => {
+              setTouched(true); // Marca el input como tocado al perder el foco
+              validate();
+            }}
+            onFocus={() => setTouched(true)} // Marca el input como tocado al obtener el foco
+          />
+        )}
+
+        {/* Mensaje de error */}
         <span
           className={`text-red-500 text-sm transition-opacity duration-300 ${
             error ? "opacity-100 visible" : "opacity-0 invisible"

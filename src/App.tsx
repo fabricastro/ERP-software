@@ -21,11 +21,9 @@ import { Bill } from './pages/Bill/Bill';
 import { Customer } from './pages/Customer/Customer';
 import { Article } from './pages/Article/Article';
 import { ArticleAdd } from './pages/Article/ArticleAdd';
-import { ProviderAdd } from './pages/Provider/ProviderAdd';
 import  SalesdocsAdd  from './pages/Salesdocs/SalesdocsAdd';
 import { Confirm } from './pages/Authentication/Confirm';
 import { ConfirmEmail } from './pages/Authentication/ConfirmEmail';
-import ProviderEdit from './pages/Provider/ProviderEdit';
 import Alert from './pages/UiElements/Alerts';
 import CustomerEdit from './pages/Customer/CustomerEdit';
 import { Category } from './pages/Category/Category';
@@ -34,6 +32,7 @@ import ArticleEdit from './pages/Article/ArticleEdit';
 import CategoryEdit from './pages/Category/CategoryEdit';
 import { isTokenExpired } from './utils/token';
 import { SettingsProvider } from './context/SettingsContext';
+import { ProviderForm } from './pages/Provider/ProviderForm';
 
 
 function App() {
@@ -42,10 +41,6 @@ function App() {
   const location = useLocation();
   const [alert, setAlert] = useState<{ type: 'success' | 'warning' | 'error'; title: string; message: string } | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-
-  const capitalizeWords = (text: string) => {
-    return text.replace(/\b\w/g, (char) => char.toUpperCase());
-  };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -59,7 +54,7 @@ function App() {
   useEffect(() => {
     if (user && user.name) {
       const companyName = user.name || 'ERP by thdvs';
-      document.title = capitalizeWords(companyName);
+      document.title = `${companyName} - Sistema de Gestión`;
     }
   }, [user]);
 
@@ -99,8 +94,9 @@ function App() {
           <Route path="/customer/add_customer" element={<CustomerAdd />} />
           <Route path="/customer/edit/:id" element={<CustomerEdit />} />
           <Route path="/provider" element={<Provider />} />
-          <Route path="/provider/add_provider" element={<ProviderAdd />} />
-          <Route path="/provider/edit/:id" element={<ProviderEdit />} />
+          <Route path="/provider/add" element={<ProviderForm viewType='add' />} />
+          <Route path="/provider/view/:id" element={<ProviderForm viewType='view' />} />
+          <Route path="/provider/edit/:id" element={<ProviderForm viewType='edit' />} />
           <Route path="/bill" element={<Bill />} />
           <Route path="/article" element={<Article />} />
           <Route path="/article/add_article" element={<ArticleAdd />} />

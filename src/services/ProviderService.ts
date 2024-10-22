@@ -1,3 +1,4 @@
+import { Provider } from '../interfaces/provider';
 import { BaseService } from './BaseService';
 
 class ProviderService extends BaseService {
@@ -22,13 +23,14 @@ class ProviderService extends BaseService {
     return this.post('/provider', data);
   }
 
-  getAll() {
+  getAll(): Promise<Provider> {
     return this.get('/provider');
   }
-  getById(id: number) {
+  getById(id: any): Promise<Provider> {
     return this.get(`/provider/${id}`);
   }
-  async updateProvider(id: number, data: {
+
+  async updateProvider(id: any, data: {
     type?: string;
     name?: string;
     cuit?: string;
@@ -41,7 +43,7 @@ class ProviderService extends BaseService {
     email?: string;
     web?: string;
   }) {
-    return this.patch(`/provider/${id}`, data);
+    return this.patch(`/provider/${Number(id)}`, data);
   }
 
   async deleteProvider(id: string) {

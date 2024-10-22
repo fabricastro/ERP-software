@@ -12,13 +12,16 @@
       "bill":"Facturas",
       "salesdocs":"Presupuestos",
       "add_salesdocs": "Agregar Presupuesto",
-      "dashboard": "Tablero",
+      "dashboard": "Principal",
       "customer": "Clientes",
       "add_customer": "Agregar Cliente",
       "provider": "Proveedores",
       "add_provider": "Agregar Proveedor",
       "article": "Articulos",
       "add_article": "Agregar Articulo",
-      "settings": "Configuración"
+      "settings": "Configuración",
+      "edit": "Editar",
+      "add": "Agregar",
+      "view": "Ver"
     }
 }
