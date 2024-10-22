@@ -79,7 +79,7 @@ const FormInput: React.FC<FormInputProps> = ({
           <select
           className={`w-full rounded border border-stroke py-3 px-4.5 text-black focus:border-primary 
           focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary 
-          ${disabled ? 'bg-[#f0f3f6] dark:bg-[#313d4a] text-white' : 'bg-white dark:bg-meta-4'}`}
+          ${disabled ? 'bg-[#f0f3f6] dark:bg-[#313d4a] dark:text-white' : 'bg-white dark:bg-meta-4'}`}
             id={id}
             value={value}
             onChange={(e) => {

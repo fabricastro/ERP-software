@@ -33,6 +33,7 @@ import CategoryEdit from './pages/Category/CategoryEdit';
 import { isTokenExpired } from './utils/token';
 import { SettingsProvider } from './context/SettingsContext';
 import { ProviderForm } from './pages/Provider/ProviderForm';
+import { CustomerForm } from './pages/Customer/CustomerForm';
 
 
 function App() {
@@ -91,8 +92,9 @@ function App() {
           <Route path="/salesdocs/add_salesdocs" element={<SalesdocsAdd mode='add' />} />
           <Route path='/salesdocs/edit/:id' element={<SalesdocsAdd mode='edit' />} />
           <Route path="/customer" element={<Customer />} />
-          <Route path="/customer/add_customer" element={<CustomerAdd />} />
-          <Route path="/customer/edit/:id" element={<CustomerEdit />} />
+          <Route path="/customer/add" element={<CustomerForm viewType='add' />} />
+          <Route path="/customer/view/:id" element={<CustomerForm viewType='view' />} />
+          <Route path="/customer/edit/:id" element={<CustomerForm viewType='edit' />} />
           <Route path="/provider" element={<Provider />} />
           <Route path="/provider/add" element={<ProviderForm viewType='add' />} />
           <Route path="/provider/view/:id" element={<ProviderForm viewType='view' />} />

@@ -1,19 +1,19 @@
 import Breadcrumb from "../../components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "../../layout/DefaultLayout";
 import { useState, useEffect } from "react";
-import { providerService } from "../../services/ProviderService";
+import { customerService } from "../../services/CustomerService";
 import Alert from "../UiElements/Alerts";
 import FormInput from "../../components/Input/input";
-import { Provider } from "../../interfaces/provider";
+import { Customer } from "../../interfaces/customer";
 import { useNavigate, useParams } from "react-router-dom";
 import { Buttons } from '../../components/Buttons/Buttons';
 import { provinces } from "../../utils/provinces";
 
-interface ProviderFormProps {
+interface CustomerFormProps {
   viewType: 'add' | 'edit' | 'view';
 }
 
-export const ProviderForm: React.FC<ProviderFormProps> = ({ viewType }) => {
+export const CustomerForm: React.FC<CustomerFormProps> = ({ viewType }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [type, setType] = useState('Persona Humana');
@@ -61,18 +61,18 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({ viewType }) => {
 
   useEffect(() => {
     if (viewType === 'edit' || viewType === 'view') {
-      providerService.getById(id).then((providerData: Provider) => {
-        setType(providerData.type);
-        setName(providerData.name);
-        setCuit(providerData.cuit);
-        setFiscalAddress(providerData.fiscalAddress);
-        setPostalCode(providerData.postalCode);
-        setCommunity(providerData.community);
-        setProvince(providerData.province);
-        setCountry(providerData.country);
-        setPhone(providerData.phone);
-        setEmail(providerData.email);
-        setWeb(providerData.web);
+      customerService.getById(id).then((customerData: Customer) => {
+        setType(customerData.type);
+        setName(customerData.name);
+        setCuit(customerData.cuit);
+        setFiscalAddress(customerData.fiscalAddress);
+        setPostalCode(customerData.postalCode);
+        setCommunity(customerData.community);
+        setProvince(customerData.province);
+        setCountry(customerData.country);
+        setPhone(customerData.phone);
+        setEmail(customerData.email);
+        setWeb(customerData.web);
       }).catch(() => {
         setAlert({ type: 'error', message: 'Hubo un error al procesar la solicitud. Por favor, inténtalo de nuevo.' });
       });
@@ -84,7 +84,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({ viewType }) => {
 
     try {
       if (viewType === 'add') {
-        await providerService.addProvider({
+        await customerService.addCustomer({
           type,
           name,
           cuit,
@@ -97,12 +97,12 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({ viewType }) => {
           email,
           web,
         });
-        setAlert({ type: 'success', message: 'Proveedor agregado con éxito' });
+        setAlert({ type: 'success', message: 'Cliente agregado con éxito' });
         setTimeout(() => {
-          navigate('/provider');
+          navigate('/customer');
         }, 2000);
       } else if (viewType === 'edit') {
-        await providerService.updateProvider(id, {
+        await customerService.updateCustomer(id, {
           type,
           name,
           cuit,
@@ -115,7 +115,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({ viewType }) => {
           email,
           web,
         });
-        setAlert({ type: 'success', message: 'Proveedor actualizado con éxito' });
+        setAlert({ type: 'success', message: 'Cliente actualizado con éxito' });
       }
     } catch (error) {
       setAlert({ type: 'error', message: 'Hubo un error al procesar la solicitud. Por favor, inténtalo de nuevo.' });
@@ -124,7 +124,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({ viewType }) => {
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName={viewType === 'add' ? "Agregar Proveedor" : viewType === 'edit' ? "Editar Proveedor" : "Ver Proveedor"} />
+      <Breadcrumb pageName={viewType === 'add' ? "Agregar Cliente" : viewType === 'edit' ? "Editar Cliente" : "Ver Cliente"} />
       
       <div className="relative flex flex-col pt-5">
         {alert && (
@@ -139,7 +139,7 @@ export const ProviderForm: React.FC<ProviderFormProps> = ({ viewType }) => {
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <FormInput
-              label="Tipo de Proveedor"
+              label="Tipo de Cliente"
               type="select"
               id="type"
               value={type}

@@ -2,9 +2,6 @@
     "main": "Principal",
     "bill": "Facturas",
     "billGen": "Generar Factura",
-    "customer":{
-      "list":"Lista de clientes"
-    },
     "salesdocs":{
       "title":"Presupuestos"
     },

@@ -1,3 +1,4 @@
+import { Customer } from '../interfaces/customer';
 import { BaseService } from './BaseService';
 
 class CustomerService extends BaseService {
@@ -22,13 +23,13 @@ class CustomerService extends BaseService {
     return this.post('/customer', data);
   }
 
-  getAll() {
+  getAll(): Promise<Customer[]> {
     return this.get('/customer');
   }
-  getById(id: number) {
+  getById(id: any): Promise<Customer> {
     return this.get(`/customer/${id}`);
   }
-  async updateCustomer(id: number, data: {
+  async updateCustomer(id: any, data: {
     type?: string;
     name?: string;
     cuit?: string;
@@ -44,7 +45,7 @@ class CustomerService extends BaseService {
     return this.patch(`/customer/${id}`, data);
   }
 
-  async deleteCustomer(id: string) {
+  async deleteCustomer(id: any) {
     return this.delete(`/customer/${id}`);
   }
 }

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { IoCloseCircle } from "react-icons/io5";
 
 interface AlertProps {
   type: 'success' | 'warning' | 'error';
@@ -15,7 +16,7 @@ const Alert: React.FC<AlertProps> = ({ type, title, message, onClose }) => {
       border: 'border-[#34D399]',
       background: 'bg-[#34D399]',
       iconBackground: 'bg-[#000]',
-      textColor: 'text-black dark:text-[#34D399]',
+      textColor: 'text-black dark:text-white',
       messageColor: 'text-[#000]',
     },
     warning: {
@@ -88,8 +89,8 @@ const Alert: React.FC<AlertProps> = ({ type, title, message, onClose }) => {
         <p className={`text-sm ${style.messageColor}`}>{message}</p>
       </div>
       {onClose && (
-        <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-lg font-bold">
-          &times;
+        <button onClick={onClose} className="text-gray-500 hover:text-gray-700 dark:text-white text-2xl">
+          <IoCloseCircle />
         </button>
       )}
     </div>

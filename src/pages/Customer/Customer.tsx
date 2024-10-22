@@ -9,10 +9,9 @@ export const Customer = () => {
         <DefaultLayout>
             <Breadcrumb pageName={t('routes.customer')} />
         <div className="flex flex-row gap-10">
-            <Buttons title={'Agregar Cliente'} to={'/customer/add_customer'}/>
+            <Buttons title={'Agregar Cliente'} to={'/customer/add'}/>
         </div>
         <div className="py-10 flex flex-col gap-5">
-            <h3>{t('customer.list')}</h3>
             <CustomerList/>
         </div>
         </DefaultLayout>

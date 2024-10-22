@@ -23,7 +23,7 @@ class ProviderService extends BaseService {
     return this.post('/provider', data);
   }
 
-  getAll(): Promise<Provider> {
+  getAll(): Promise<Provider[]> {
     return this.get('/provider');
   }
   getById(id: any): Promise<Provider> {
@@ -46,7 +46,7 @@ class ProviderService extends BaseService {
     return this.patch(`/provider/${Number(id)}`, data);
   }
 
-  async deleteProvider(id: string) {
+  async deleteProvider(id: any) {
     return this.delete(`/provider/${id}`);
   }
 }
