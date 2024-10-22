@@ -15,7 +15,6 @@ import Buttons from './pages/UiElements/Buttons';
 import { Salesdocs } from './pages/Salesdocs/Salesdocs';
 import PrivateRoute from './routes/PrivateRoute';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import { CustomerAdd } from './pages/Customer/CustomerAdd';
 import { Provider } from './pages/Provider/Provider';
 import { Bill } from './pages/Bill/Bill';
 import { Customer } from './pages/Customer/Customer';
@@ -25,19 +24,19 @@ import  SalesdocsAdd  from './pages/Salesdocs/SalesdocsAdd';
 import { Confirm } from './pages/Authentication/Confirm';
 import { ConfirmEmail } from './pages/Authentication/ConfirmEmail';
 import Alert from './pages/UiElements/Alerts';
-import CustomerEdit from './pages/Customer/CustomerEdit';
 import { Category } from './pages/Category/Category';
 import { CategoryAdd } from './pages/Category/CategoryAdd';
 import ArticleEdit from './pages/Article/ArticleEdit';
 import CategoryEdit from './pages/Category/CategoryEdit';
 import { isTokenExpired } from './utils/token';
-import { SettingsProvider } from './context/SettingsContext';
+import { SettingsProvider, useSettings } from './context/SettingsContext';
 import { ProviderForm } from './pages/Provider/ProviderForm';
 import { CustomerForm } from './pages/Customer/CustomerForm';
 
 
 function App() {
   const { user, logout } = useAuth();
+  const {settings} = useSettings();
   const navigate = useNavigate();
   const location = useLocation();
   const [alert, setAlert] = useState<{ type: 'success' | 'warning' | 'error'; title: string; message: string } | null>(null);
@@ -53,11 +52,11 @@ function App() {
   }, [location.pathname, logout, navigate]);
 
   useEffect(() => {
-    if (user && user.name) {
-      const companyName = user.name || 'ERP by thdvs';
+    if (settings) {
+      const companyName = settings.bussinessName;
       document.title = `${companyName} - Sistema de Gestión`;
     }
-  }, [user]);
+  }, [settings]);
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 1000);

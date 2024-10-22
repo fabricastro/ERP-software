@@ -4,15 +4,14 @@ import { Link } from 'react-router-dom';
 import DropdownUser from './DropdownUser';
 import LogoIcon from '../../images/logo/favicon.png';
 import DarkModeSwitcher from './DarkModeSwitcher';
-import { DropdownLenguage } from './DropdownLenguage';
 import { useSettings } from '../../context/SettingsContext';
 const Header = (props: {
 
   sidebarOpen: string | boolean | undefined;
   setSidebarOpen: (arg0: boolean) => void;
 }) => {
-  const {settings} = useSettings()
-  const userAvatarUrl = `https://ui-avatars.com/api/?name=${settings.bussinessName}&background=random&background=3C50E0&color=fff&format=svg&bold=true`;
+  const {settings} = useSettings();
+  const userAvatarUrl = `https://ui-avatars.com/api/?name=${settings?.bussinessName ?? 'User'}&background=random&background=3C50E0&color=fff&format=svg&bold=true`;
 
   return (
     <header className="sticky top-0 z-999 flex w-full bg-white drop-shadow-1 dark:bg-boxdark dark:drop-shadow-none">
@@ -107,7 +106,7 @@ const Header = (props: {
             {/* <!-- Dark Mode Toggler --> */}
             <DarkModeSwitcher />
             {/* <!-- Dark Mode Toggler --> */}
-            <DropdownLenguage/>
+            {/* <DropdownLenguage/> */}
             {/* <!-- Notification Menu Area --> */}
             {/* <DropdownNotification /> */}
             {/* <!-- Notification Menu Area --> */}

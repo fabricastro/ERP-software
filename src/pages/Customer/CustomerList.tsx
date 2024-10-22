@@ -89,7 +89,7 @@ const CustomerList: React.FC = () => {
 
   return (
     <div>
-      {alert && <Alert type={alert.type} title={alert.type === 'success' ? 'Éxito' : 'Error'} message={alert.message} />}
+      {alert && <Alert type={alert.type} title={alert.type === 'success' ? 'Éxito' : 'Error'} message={alert.message} onClose={() => setAlert(null)}/>}
       <TableThree data={customer} columns={columns} actions={handleActions} />
       
       {confirmDialog.idToDelete !== null && (
