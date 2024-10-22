@@ -11,6 +11,7 @@
     "routes": {
       "salesdocs":"Salesdocs",
       "add_salesdocs": "Add Salesdoc",
+      "edit_salesdocs": "Edit Salesdoc",
       "dashboard": "Dashboard",
       "customer": "Customers",
       "add_customer": "Add Customer",

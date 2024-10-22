@@ -10,6 +10,8 @@ import Label from '../../components/Label/Label';
 import DefaultLayout from './../../layout/DefaultLayout';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import { useSettings } from '../../context/SettingsContext';
+import FormInput from './../../components/Input/input';
+import { type } from './../../types/product';
 
 interface SalesdocsAddProps {
     mode: 'add' | 'edit'; // Definir el tipo de modo como una unión de strings
@@ -77,7 +79,7 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
         } catch (error) {
             console.error("Error al cargar los datos del documento:", error);
         } finally {
-            setLoading(false); 
+            setLoading(false);
         }
     };
 
@@ -103,13 +105,13 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
     const calculateTotal = () => {
         // Verifica si items es un arreglo y tiene datos
         if (!Array.isArray(items) || items.length === 0) {
-          return 0; // Retorna 0 si no hay ítems
+            return 0; // Retorna 0 si no hay ítems
         }
         // Realiza la reducción si items tiene elementos
         const net = items.reduce((acc, item) => acc + item.quantity * item.unitPrice, 0);
         return Math.round(net * 100) / 100;
-      };
-      
+    };
+
 
     const generatePDF = () => {
         if (!settings || !settings.logo) {
@@ -268,124 +270,135 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
                     <>
                         <div className='grid grid-cols-4 gap-5'>
                             <div>
-                                <Label htmlFor='customer' required={true}>Selecciona un cliente:</Label>
-                                <select
-                                    value={customerId || ''}
-                                    onChange={handleCustomerChange}
-                                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
-                                >
-                                    <option value="">Seleccionar cliente</option>
-                                    {customers.map((customer) => (
-                                        <option key={customer.id} value={customer.id}>
-                                            {customer.name}
-                                        </option>
-                                    ))}
-                                </select>
+                                <FormInput
+                                label='Selecciona un cliente:'
+                                type="select"
+                                id='customer'
+                                value={customerId || ''}
+                                options={customers.map((customer) => customer.name)}
+                                onChange={(e) => setType(e.target.value)}
+                                required={true}
+                                />                             
                             </div>
 
                             <div>
-                                <Label htmlFor='invoiceNumber' required={true}>Nº de Presupuesto:</Label>
-                                <input
-                                    type="text"
-                                    value={invoiceNumber}
-                                    onChange={(e) => setInvoiceNumber(e.target.value)}
-                                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
+                            <FormInput
+                                label="Nº de Presupuesto"
+                                type="text"
+                                id='invoiceNumber'
+                                value={invoiceNumber}
+                                onChange={(e) => setInvoiceNumber(e.target.value)}
+                                required={true}
+                                disabled={mode === 'edit'}
                                 />
                             </div>
                         </div>
 
                         <div className='grid grid-cols-4 gap-5'>
                             <div>
-                                <Label htmlFor='invoiceDate' required={true} >Fecha:</Label>
-                                <input
-                                    type="date"
-                                    value={invoiceDate}
-                                    onChange={(e) => setInvoiceDate(e.target.value)}
-                                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
+                                <FormInput
+                                label='Fecha de emisión:'
+                                type="date"
+                                id='invoiceDate'
+                                value={invoiceDate}
+                                onChange={(e) => setInvoiceDate(e.target.value)}
+                                required={true}
+                                />                            
+                            </div>
+
+                            <div>
+                                <FormInput
+                                label='Fecha de validez:'
+                                type="date"
+                                id='validityDate'
+                                value={validityDate}
+                                onChange={(e) => setValidityDate(e.target.value)}
+                                required={true}
                                 />
                             </div>
 
                             <div>
-                                <Label htmlFor='validityDate' required={true} >Validez:</Label>
-                                <input
-                                    type="date"
-                                    value={validityDate}
-                                    onChange={(e) => setValidityDate(e.target.value)}
-                                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
+                                <FormInput
+                                label='Estado:'
+                                type="select"
+                                id='state'
+                                value={state}
+                                onChange={(e) => setState(e.target.value)}
+                                required={true}
+                                options={['Borrador', 'Enviado', 'Aprobado', 'Rechazado', 'Facturado']}
                                 />
-                            </div>
-
-                            <div>
-                                <Label htmlFor='state' required={true}>Estado</Label>
-                                <select className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black" value={state} onChange={(e) => setState(e.target.value)}>
-                                    <option value="Borrador">Borrador</option>
-                                    <option value="Enviado">Enviado</option>
-                                    <option value="Aprobado">Aprobado</option>
-                                    <option value="Rechazado">Rechazado</option>
-                                    <option value="Facturado">Facturado</option>
-                                </select>
                             </div>
                         </div>
 
                         <h2>Cliente</h2>
                         <div className='grid grid-cols-4 gap-5'>
                             <div>
-                                <Label htmlFor='clientName' required={true} >Razón Social:</Label>
-                                <input
-                                    type="text"
-                                    value={clientName}
-                                    onChange={(e) => setClientName(e.target.value)}
-                                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
+                                <FormInput
+                                label='Razon Social:'
+                                type="text"
+                                id='clientName'
+                                value={clientName}
+                                onChange={(e) => setClientName(e.target.value)}
+                                required={true}
                                 />
                             </div>
 
                             <div>
-                                <Label htmlFor='clientAddress' required={true} >Domicilio:</Label>
-                                <input
-                                    type="text"
-                                    value={clientAddress}
-                                    onChange={(e) => setClientAddress(e.target.value)}
-                                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
+                                <FormInput
+                                label='Domicilio:'
+                                type="text"
+                                id='clientAddress'
+                                value={clientAddress}
+                                onChange={(e) => setClientAddress(e.target.value)}
+                                required={true}
                                 />
                             </div>
 
                             <div>
-                                <Label htmlFor='clientPhone' required={true} >Teléfono:</Label>
-                                <input
-                                    type="text"
-                                    value={clientPhone}
-                                    onChange={(e) => setClientPhone(e.target.value)}
-                                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
+                                <FormInput
+                                label='Telfono:'
+                                type="text"
+                                id='clientPhone'
+                                value={clientPhone}
+                                onChange={(e) => setClientPhone(e.target.value)}
+                                required={true}
                                 />
                             </div>
 
                             <div>
-                                <Label htmlFor='clientCUIT' required={true} >CUIT:</Label>
-                                <input
-                                    type="text"
-                                    value={clientCUIT}
-                                    onChange={(e) => setClientCUIT(e.target.value)}
-                                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
+                                <FormInput
+                                label='CUIT:'
+                                type="text"
+                                id='clientCUIT'
+                                value={clientCUIT}
+                                onChange={(e) => setClientCUIT(e.target.value)}
+                                required={true}
                                 />
                             </div>
 
                             <div>
-                                <Label htmlFor='clientTaxStatus' required={true}>Condición de IVA:</Label>
-                                <input
-                                    type="text"
-                                    value={clientTaxStatus}
-                                    onChange={(e) => setClientTaxStatus(e.target.value)}
-                                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
+                                <FormInput
+                                label="Condiciones de IVA:"
+                                type="text"
+                                id='clientTaxStatus'
+                                value={clientTaxStatus}
+                                onChange={(e) => setClientTaxStatus(e.target.value)}
+                                required={true}
+                                disabled={mode === 'edit'}
                                 />
+                                
                             </div>
 
                             <div>
-                                <Label htmlFor='paymentCondition' required={true}>Condición de venta:</Label>
-                                <select className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black" value={paymentCondition} onChange={(e) => setPaymentCondition(e.target.value)}>
-                                    <option value="Efectivo">Efectivo</option>
-                                    <option value="Credito">Crédito</option>
-                                    <option value="Ambos">Ambos</option>
-                                </select>
+                                <FormInput
+                                label='Condición de pago:'
+                                type="select"
+                                id='paymentCondition'
+                                value={paymentCondition}
+                                onChange={(e) => setPaymentCondition(e.target.value)}
+                                required={true}
+                                options={['Efectivo', 'Credito', 'Ambos']}
+                                />
                             </div>
                         </div>
 

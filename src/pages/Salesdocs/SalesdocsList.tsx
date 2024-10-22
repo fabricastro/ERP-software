@@ -126,7 +126,7 @@ const SalesDocsList: React.FC = () => {
     </>
   );
 
-  if (loading) return <p>Cargando documentos de ventas...</p>;
+  if (loading) return <p>Cargando Presupuestos...</p>;
   if (error) return <p>{error}</p>;
 
   return (

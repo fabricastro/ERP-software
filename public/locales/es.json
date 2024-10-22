@@ -12,6 +12,7 @@
       "bill":"Facturas",
       "salesdocs":"Presupuestos",
       "add_salesdocs": "Agregar Presupuesto",
+      "edit_salesdocs": "Editar Presupuesto",
       "dashboard": "Principal",
       "customer": "Clientes",
       "add_customer": "Agregar Cliente",
