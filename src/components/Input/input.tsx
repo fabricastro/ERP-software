@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from "react";
 
-// Definimos la interfaz de las props
 interface FormInputProps {
   label: string;
   type?: string;
   id: string;
   value: string | number;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => void;
   placeholder?: string;
   additionalClasses?: string;
   required?: boolean;
   disabled?: boolean;
-  options?: string[];
+  options?: string[] | { label: string; value: string | number }[]; // Mantén soporte para array de strings o de objetos
 }
 
 const FormInput: React.FC<FormInputProps> = ({
@@ -24,17 +23,15 @@ const FormInput: React.FC<FormInputProps> = ({
   additionalClasses = "",
   required = false,
   disabled = false,
-  options = [], 
+  options = [],
 }) => {
   // Estado para manejar el error
   const [error, setError] = useState<string | null>(null);
   const [touched, setTouched] = useState<boolean>(false);
 
-  // Función para validar los campos según el tipo
   const validate = () => {
     let errorMessage = null;
 
-    // Verificamos que el campo no esté vacío si es requerido
     if (required && String(value).trim() === "") {
       errorMessage = "Este campo es obligatorio.";
     } else if (type === "email") {
@@ -46,18 +43,11 @@ const FormInput: React.FC<FormInputProps> = ({
       if (isNaN(Number(value))) {
         errorMessage = "Por favor, ingrese un número válido.";
       }
-    } else if (type === "password") {
-      const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
-      if (!passwordRegex.test(String(value))) {
-        errorMessage =
-          "Debe tener al menos 8 caracteres, incluyendo letras y números.";
-      }
     }
 
     setError(errorMessage);
   };
 
-  // Ejecutar validación cuando el valor o el tipo cambian si ha sido tocado
   useEffect(() => {
     if (touched) {
       validate();
@@ -75,28 +65,35 @@ const FormInput: React.FC<FormInputProps> = ({
       </label>
       <div className="relative h-16">
         {/* Verificamos si es un select o input */}
-        {options.length > 0 ? (
+        {options && options.length > 0 ? (
           <select
-          className={`w-full rounded border border-stroke py-3 px-4.5 text-black focus:border-primary 
-          focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary 
-          ${disabled ? 'bg-[#f0f3f6] dark:bg-[#313d4a] dark:text-white' : 'bg-white dark:bg-meta-4'}`}
+            className={`w-full rounded border border-stroke py-3 px-4.5 text-black focus:border-primary 
+            focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary 
+            ${disabled ? 'bg-[#f0f3f6] dark:bg-[#313d4a] dark:text-white' : 'bg-white dark:bg-meta-4'}`}
             id={id}
             value={value}
             onChange={(e) => {
-              onChange(e);
+              onChange(e as React.ChangeEvent<HTMLSelectElement>);
               setError(null); // Limpiar el error al cambiar el valor
             }}
-            disabled={disabled} // Permitir deshabilitar select
+            disabled={disabled}
             onBlur={() => {
-              setTouched(true); // Marca el input como tocado al perder el foco
+              setTouched(true);
               validate();
             }}
           >
-            {options.map((option, idx) => (
-              <option key={idx} value={option}>
-                {option}
-              </option>
-            ))}
+            <option value="">Selecciona una opción</option>
+            {options.map((option, idx) =>
+              typeof option === 'string' ? (
+                <option key={idx} value={option}>
+                  {option}
+                </option>
+              ) : (
+                <option key={idx} value={option.value}>
+                  {option.label}
+                </option>
+              )
+            )}
           </select>
         ) : (
           <input
@@ -106,16 +103,16 @@ const FormInput: React.FC<FormInputProps> = ({
             id={id}
             value={value}
             onChange={(e) => {
-              onChange(e);
+              onChange(e as React.ChangeEvent<HTMLInputElement>);
               setError(null); // Limpiar el error al cambiar el valor
             }}
             placeholder={placeholder}
-            disabled={disabled} // Permitir deshabilitar input
+            disabled={disabled}
             onBlur={() => {
-              setTouched(true); // Marca el input como tocado al perder el foco
+              setTouched(true);
               validate();
             }}
-            onFocus={() => setTouched(true)} // Marca el input como tocado al obtener el foco
+            onFocus={() => setTouched(true)}
           />
         )}
 

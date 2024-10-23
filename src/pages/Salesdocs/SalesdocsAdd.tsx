@@ -6,15 +6,14 @@ import { salesDocsService } from '../../services/SalesDocsService';
 import { customerService } from '../../services/CustomerService';
 import Alert from '../UiElements/Alerts';
 import ItemForm from './ItemForm';
-import Label from '../../components/Label/Label';
 import DefaultLayout from './../../layout/DefaultLayout';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import { useSettings } from '../../context/SettingsContext';
 import FormInput from './../../components/Input/input';
-import { type } from './../../types/product';
+import Label from '../../components/Label/Label';
 
 interface SalesdocsAddProps {
-    mode: 'add' | 'edit'; // Definir el tipo de modo como una unión de strings
+    mode: 'add' | 'edit';
 }
 
 const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
@@ -96,6 +95,7 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
             setClientTaxStatus('Exento');
         }
     };
+
 
     const calculateIVA = () => {
         const net = items.reduce((acc, item) => acc + item.quantity * item.unitPrice, 0);
@@ -271,25 +271,28 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
                         <div className='grid grid-cols-4 gap-5'>
                             <div>
                                 <FormInput
-                                label='Selecciona un cliente:'
-                                type="select"
-                                id='customer'
-                                value={customerId || ''}
-                                options={customers.map((customer) => customer.name)}
-                                onChange={(e) => setType(e.target.value)}
-                                required={true}
-                                />                             
+                                    label='Selecciona un cliente:'
+                                    type="select"
+                                    id='customer'
+                                    value={customerId || ''}
+                                    options={customers.map((customer) => ({
+                                        label: customer.name,
+                                        value: customer.id
+                                    }))}
+                                    onChange={(e) => handleCustomerChange(e as React.ChangeEvent<HTMLSelectElement>)}
+                                    required={true}
+                                />
                             </div>
 
                             <div>
-                            <FormInput
-                                label="Nº de Presupuesto"
-                                type="text"
-                                id='invoiceNumber'
-                                value={invoiceNumber}
-                                onChange={(e) => setInvoiceNumber(e.target.value)}
-                                required={true}
-                                disabled={mode === 'edit'}
+                                <FormInput
+                                    label="Nº de Presupuesto"
+                                    type="text"
+                                    id='invoiceNumber'
+                                    value={invoiceNumber}
+                                    onChange={(e) => setInvoiceNumber(e.target.value)}
+                                    required={true}
+                                    disabled={mode === 'edit'}
                                 />
                             </div>
                         </div>
@@ -297,36 +300,37 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
                         <div className='grid grid-cols-4 gap-5'>
                             <div>
                                 <FormInput
-                                label='Fecha de emisión:'
-                                type="date"
-                                id='invoiceDate'
-                                value={invoiceDate}
-                                onChange={(e) => setInvoiceDate(e.target.value)}
-                                required={true}
-                                />                            
-                            </div>
-
-                            <div>
-                                <FormInput
-                                label='Fecha de validez:'
-                                type="date"
-                                id='validityDate'
-                                value={validityDate}
-                                onChange={(e) => setValidityDate(e.target.value)}
-                                required={true}
+                                    label='Fecha de emisión:'
+                                    type="date"
+                                    id='invoiceDate'
+                                    value={invoiceDate}
+                                    onChange={(e) => setInvoiceDate(e.target.value)}
+                                    required={true}
                                 />
                             </div>
 
                             <div>
                                 <FormInput
-                                label='Estado:'
-                                type="select"
-                                id='state'
-                                value={state}
-                                onChange={(e) => setState(e.target.value)}
-                                required={true}
-                                options={['Borrador', 'Enviado', 'Aprobado', 'Rechazado', 'Facturado']}
+                                    label='Fecha de validez:'
+                                    type="date"
+                                    id='validityDate'
+                                    value={validityDate}
+                                    onChange={(e) => setValidityDate(e.target.value)}
+                                    required={true}
                                 />
+                            </div>
+
+                            <div>
+                                <FormInput
+                                    label='Estado:'
+                                    type="select"
+                                    id='state'
+                                    value={state}
+                                    onChange={(e) => setState(e.target.value)}
+                                    required={true}
+                                    options={['Borrador', 'Enviado', 'Aprobado', 'Rechazado', 'Facturado']}
+                                />
+
                             </div>
                         </div>
 
@@ -334,70 +338,70 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
                         <div className='grid grid-cols-4 gap-5'>
                             <div>
                                 <FormInput
-                                label='Razon Social:'
-                                type="text"
-                                id='clientName'
-                                value={clientName}
-                                onChange={(e) => setClientName(e.target.value)}
-                                required={true}
+                                    label='Razon Social:'
+                                    type="text"
+                                    id='clientName'
+                                    value={clientName}
+                                    onChange={(e) => setClientName(e.target.value)}
+                                    required={true}
                                 />
                             </div>
 
                             <div>
                                 <FormInput
-                                label='Domicilio:'
-                                type="text"
-                                id='clientAddress'
-                                value={clientAddress}
-                                onChange={(e) => setClientAddress(e.target.value)}
-                                required={true}
+                                    label='Domicilio:'
+                                    type="text"
+                                    id='clientAddress'
+                                    value={clientAddress}
+                                    onChange={(e) => setClientAddress(e.target.value)}
+                                    required={true}
                                 />
                             </div>
 
                             <div>
                                 <FormInput
-                                label='Telfono:'
-                                type="text"
-                                id='clientPhone'
-                                value={clientPhone}
-                                onChange={(e) => setClientPhone(e.target.value)}
-                                required={true}
+                                    label='Telfono:'
+                                    type="text"
+                                    id='clientPhone'
+                                    value={clientPhone}
+                                    onChange={(e) => setClientPhone(e.target.value)}
+                                    required={true}
                                 />
                             </div>
 
                             <div>
                                 <FormInput
-                                label='CUIT:'
-                                type="text"
-                                id='clientCUIT'
-                                value={clientCUIT}
-                                onChange={(e) => setClientCUIT(e.target.value)}
-                                required={true}
+                                    label='CUIT:'
+                                    type="text"
+                                    id='clientCUIT'
+                                    value={clientCUIT}
+                                    onChange={(e) => setClientCUIT(e.target.value)}
+                                    required={true}
                                 />
                             </div>
 
                             <div>
                                 <FormInput
-                                label="Condiciones de IVA:"
-                                type="text"
-                                id='clientTaxStatus'
-                                value={clientTaxStatus}
-                                onChange={(e) => setClientTaxStatus(e.target.value)}
-                                required={true}
-                                disabled={mode === 'edit'}
+                                    label="Condiciones de IVA:"
+                                    type="text"
+                                    id='clientTaxStatus'
+                                    value={clientTaxStatus}
+                                    onChange={(e) => setClientTaxStatus(e.target.value)}
+                                    required={true}
+                                    disabled={mode === 'edit'}
                                 />
-                                
+
                             </div>
 
                             <div>
                                 <FormInput
-                                label='Condición de pago:'
-                                type="select"
-                                id='paymentCondition'
-                                value={paymentCondition}
-                                onChange={(e) => setPaymentCondition(e.target.value)}
-                                required={true}
-                                options={['Efectivo', 'Credito', 'Ambos']}
+                                    label='Condición de pago:'
+                                    type="select"
+                                    id='paymentCondition'
+                                    value={paymentCondition}
+                                    onChange={(e) => setPaymentCondition(e.target.value)}
+                                    required={true}
+                                    options={['Efectivo', 'Credito', 'Ambos']}
                                 />
                             </div>
                         </div>
