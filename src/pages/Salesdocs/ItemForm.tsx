@@ -3,6 +3,7 @@ import { FaPlusCircle } from "react-icons/fa";
 import { articleService } from '../../services/ArticleService';
 
 interface Item {
+    name: string;
     description: string;
     quantity: number;
     unitPrice: number;
@@ -15,6 +16,7 @@ interface ItemFormProps {
 
 const ItemForm: React.FC<ItemFormProps> = ({ items, setItems }) => {
     const [newItem, setNewItem] = useState<Item>({
+        name: '',
         description: '',
         quantity: 1,
         unitPrice: 0,
@@ -42,6 +44,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ items, setItems }) => {
         if (selectedArticle) {
             setNewItem({
                 ...newItem,
+                name: selectedArticle.name,
                 description: selectedArticle.name,
                 unitPrice: selectedArticle.unitPrice,
             });
@@ -65,9 +68,10 @@ const ItemForm: React.FC<ItemFormProps> = ({ items, setItems }) => {
 
         // Agregar el nuevo ítem a la lista de ítems
         setItems([...items, newItem]);
-        
+
         // Reiniciar el estado de nuevo ítem
         setNewItem({
+            name: '',
             description: '',
             quantity: 1,
             unitPrice: 0,

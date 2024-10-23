@@ -11,7 +11,6 @@ const Header = (props: {
   setSidebarOpen: (arg0: boolean) => void;
 }) => {
   const {settings} = useSettings();
-  const userAvatarUrl = `https://ui-avatars.com/api/?name=${settings?.bussinessName ?? 'User'}&background=random&background=3C50E0&color=fff&format=svg&bold=true`;
 
   return (
     <header className="sticky top-0 z-999 flex w-full bg-white drop-shadow-1 dark:bg-boxdark dark:drop-shadow-none">
@@ -117,13 +116,6 @@ const Header = (props: {
           </ul>
 
           {/* <!-- User Area --> */}
-          <div className="flex items-center">
-            <img
-              src={userAvatarUrl}
-              alt="User Avatar"
-              className="w-10 h-10 rounded-full"
-            />
-          </div>
           <DropdownUser />
           {/* <!-- User Area --> */}
         </div>

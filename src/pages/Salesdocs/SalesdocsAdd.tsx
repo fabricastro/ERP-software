@@ -11,6 +11,7 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import { useSettings } from '../../context/SettingsContext';
 import FormInput from './../../components/Input/input';
 import Label from '../../components/Label/Label';
+import { jsPDF } from 'jspdf';
 
 interface SalesdocsAddProps {
     mode: 'add' | 'edit';
@@ -129,80 +130,94 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
             return;
         }
 
-        const tableHeaders = [
-            { title: "#", style: { width: 10 } },
-            { title: "Descripción", style: { width: 70 } },
-            { title: "Cantidad", style: { width: 30 } },
-            { title: "Precio unitario", style: { width: 40 } },
-            { title: "Total", style: { width: 40 } }
-        ];
+        const pdf = new jsPDF();
 
-        const tableRows = items.map((item, index) => [
-            String(index + 1),
-            String(item.description || 'Sin descripción'),
-            String(item.quantity || 0),
-            String(item.unitPrice || 0),
-            String((item.quantity * item.unitPrice).toFixed(2))
-        ]);
+        // Encabezado "DOCUMENTO NO VALIDO COMO FACTURA"
+        pdf.setFontSize(16);
+        pdf.setFont("helvetica", "bold");
+        pdf.text("DOCUMENTO NO VALIDO COMO FACTURA", 105, 20, null, null, "center");
 
-        const props = {
-            outputType: "save",
-            returnJsPDFDocObject: true,
-            fileName: "Presupuesto",
-            orientationLandscape: false,
-            compress: true,
-            logo: {
-                src: settings.logo,
-                width: 60,
-                height: 20,
-                margin: { top: 0, left: 0 }
-            },
-            settings: {
-                name: settings.bussinessName || 'N/A',
-                address: settings.address || 'N/A',
-                phone: settings.phone || 'N/A',
-                email: settings.email || 'N/A',
-                website: settings.website || 'N/A',
-            },
-            contact: {
-                label: "Factura emitida por:",
-                name: clientName || 'N/A',
-                address: clientAddress || 'N/A',
-                phone: clientPhone || 'N/A',
-                otherInfo: clientCUIT || 'N/A',
-            },
-            invoice: {
-                label: "Factura #: ",
-                num: invoiceNumber || 'N/A',
-                invDate: `Fecha: ${invoiceDate || 'N/A'}`,
-                invGenDate: `Validez: ${validityDate || 'N/A'}`,
-                headerBorder: true,
-                tableBodyBorder: true,
-                header: tableHeaders,
-                table: tableRows,
-                additionalRows: [
-                    {
-                        col1: 'Importe Total:',
-                        col2: calculateTotal().toFixed(2),
-                        col3: '$',
-                        style: { fontSize: 14 }
-                    }
-                ],
-            },
-            footer: {
-                text: "Powered by Technodevs.",
-            },
-            pageEnable: true,
-            pageLabel: "Page ",
-        };
+        // Logo y detalles de la empresa
+        pdf.setFontSize(12);
+        pdf.setFont("helvetica", "bold");
+        pdf.text(settings.bussinessName || "Empresa", 20, 35); // Nombre de la empresa
+        pdf.setFontSize(10);
+        pdf.setFont("helvetica", "normal");
+        pdf.text(`Razón Social: ${clientName}`, 20, 40);
+        pdf.text(`Domicilio: ${clientAddress}`, 20, 45);
 
-        try {
-            jsPDFInvoiceTemplate(props);
-            console.log("PDF generado correctamente");
-        } catch (error) {
-            console.error("Error al generar el PDF:", error);
-        }
+        // Código de documento y número de presupuesto
+        pdf.setFont("helvetica", "bold");
+        pdf.text("O", 160, 35); // Código del documento
+        pdf.setFont("helvetica", "normal");
+        pdf.text("COD. 0", 158, 40);
+
+        pdf.setFont("helvetica", "bold");
+        pdf.text("PRESUPUESTO", 180, 35);
+        pdf.setFont("helvetica", "normal");
+        pdf.text(invoiceNumber || "00001-00000001", 180, 40);
+
+        // Detalles fiscales
+        pdf.setFontSize(10);
+        pdf.text(`Fecha de emisión: ${invoiceDate}`, 180, 45);
+        pdf.text(`CUIT: ${clientCUIT}`, 180, 50);
+        pdf.text(`Ingresos Brutos: 56`, 180, 55); // Este dato parece estático, puedes cambiarlo si viene de otro lado
+        pdf.text("Fecha de inicio de actividades: 29/07/2018", 180, 60); // Si este dato es dinámico, cámbialo según tu servicio
+        pdf.text(`Condición frente al IVA: ${clientTaxStatus}`, 180, 65);
+
+        // Línea horizontal
+        pdf.line(20, 70, 200, 70); // (x1, y1, x2, y2)
+
+        // Datos del cliente
+        pdf.text(`Apellido y nombre / Razón Social: ${clientName}`, 20, 75);
+        pdf.text(`Domicilio: ${clientAddress}`, 20, 80);
+        pdf.text(`DNI: ${clientCUIT}`, 20, 85); // Si tienes un campo para DNI, cámbialo, si no usa CUIT
+        pdf.text(`Condición frente al IVA: ${clientTaxStatus}`, 20, 90);
+        pdf.text(`Condición de venta: ${paymentCondition} (vto pago: ${validityDate})`, 20, 95);
+
+        // Línea horizontal
+        pdf.line(20, 100, 200, 100);
+
+        // Encabezado de tabla de productos
+        pdf.text("Cantidad", 20, 105);
+        pdf.text("Producto / Servicio", 50, 105);
+        pdf.text("Precio Unit", 120, 105);
+        pdf.text("Bonif. %", 140, 105);
+        pdf.text("Imp. Bonif.", 160, 105);
+        pdf.text("% IVA", 180, 105);
+        pdf.text("Subtotal S/IVA", 200, 105);
+
+        // Filas de la tabla con los productos
+        let currentY = 115; // Posición Y inicial para las filas de la tabla
+        items.forEach((item) => {
+            // Asegúrate de que el unitPrice sea un número
+            const unitPrice = parseFloat(item.unitPrice) || 0; // Convierte a número o usa 0 si no es un número válido
+            const quantity = item.quantity || 0; // También asegurarse de que quantity es válido
+
+            pdf.text(`${quantity} unidades`, 20, currentY);
+            pdf.text(`${item.description}`, 50, currentY);
+            pdf.text(`$ ${unitPrice.toFixed(2)}`, 120, currentY);
+            pdf.text("0 %", 140, currentY); // Bonificación
+            pdf.text("$ 0.00", 160, currentY); // Importe bonificado
+            pdf.text("21 %", 180, currentY); // IVA, puedes cambiarlo si usas otro valor de IVA
+            pdf.text(`$ ${(unitPrice * quantity).toFixed(2)}`, 200, currentY);
+
+            currentY += 10; // Mueve la posición Y para la siguiente fila
+        });
+
+
+        // Subtotal
+        pdf.text("Importe Total:", 180, currentY + 10);
+        pdf.text(`$ ${calculateTotal().toFixed(2)}`, 200, currentY + 10);
+
+        // Pie de página
+        pdf.setFontSize(8);
+        pdf.text("Powered by Technodevs.", 105, 290, null, null, "center");
+
+        // Guardar PDF
+        pdf.save('Presupuesto.pdf');
     };
+
 
     const guardarFactura = async (e: React.FormEvent) => {
         e.preventDefault();

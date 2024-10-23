@@ -35,13 +35,10 @@ const ArticleList: React.FC = () => {
     const fetchArticles = async () => {
       setLoading(true);
       try {
-        // Llama al método findArticles del servicio y recibe la respuesta
         const response = await articleService.findArticles(page, limit);
   
-        // Imprime la respuesta completa para verificar su estructura
         console.log('Respuesta completa de la API:', response);
   
-        // Verificar si la respuesta tiene una propiedad `items` que contenga los artículos
         if (response && response.items) {
           setArticles(response.items);
         } else {
