@@ -12,6 +12,8 @@ import { useSettings } from '../../context/SettingsContext';
 import FormInput from './../../components/Input/input';
 import Label from '../../components/Label/Label';
 import { jsPDF } from 'jspdf';
+import ModalComponent from '../../components/ModalComponent';
+import CustomerFormFields from '../Customer/CustomerFormFields';
 
 interface SalesdocsAddProps {
     mode: 'add' | 'edit';
@@ -34,10 +36,24 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
     const [loading, setLoading] = useState(false);
     const [customers, setCustomers] = useState<any[]>([]);
     const [items, setItems] = useState<any[]>([]);
-    const [type, setType] = useState('presupuesto');
+    const [documentType, setDocumentType] = useState('presupuesto'); // Cambié este nombre para evitar el conflicto
     const { t } = useTranslation();
     const { settings } = useSettings();
     const { id } = useParams<{ id: string }>();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    // Estados del formulario de cliente
+    const [type, setType] = useState('Persona Humana'); // Mantiene el nombre 'type' para el cliente
+    const [name, setName] = useState('');
+    const [cuit, setCuit] = useState('');
+    const [fiscalAddress, setFiscalAddress] = useState('');
+    const [postalCode, setPostalCode] = useState('');
+    const [community, setCommunity] = useState('');
+    const [province, setProvince] = useState('');
+    const [country, setCountry] = useState('Argentina');
+    const [phone, setPhone] = useState('');
+    const [email, setEmail] = useState('');
+    const [web, setWeb] = useState('');
 
     useEffect(() => {
         const fetchCustomersAndInvoiceNumber = async () => {
@@ -62,7 +78,7 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
         try {
             const salesDocData: any = await salesDocsService.getById(docId);
             // Asignar los datos a los estados correspondientes
-            setType(salesDocData.type);
+            setDocumentType(salesDocData.type); // Ahora usa 'documentType' en lugar de 'type'
             setInvoiceNumber(salesDocData.number);
             setState(salesDocData.state);
             setInvoiceDate(salesDocData.date);
@@ -104,15 +120,12 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
     };
 
     const calculateTotal = () => {
-        // Verifica si items es un arreglo y tiene datos
         if (!Array.isArray(items) || items.length === 0) {
-            return 0; // Retorna 0 si no hay ítems
+            return 0;
         }
-        // Realiza la reducción si items tiene elementos
         const net = items.reduce((acc, item) => acc + item.quantity * item.unitPrice, 0);
         return Math.round(net * 100) / 100;
     };
-
 
     const generatePDF = () => {
         if (!settings || !settings.logo) {
@@ -131,13 +144,10 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
         }
 
         const pdf = new jsPDF();
-
-        // Encabezado "DOCUMENTO NO VALIDO COMO FACTURA"
         pdf.setFontSize(16);
         pdf.setFont("helvetica", "bold");
         pdf.text("DOCUMENTO NO VALIDO COMO FACTURA", 105, 20, null, null, "center");
 
-        // Logo y detalles de la empresa
         pdf.setFontSize(12);
         pdf.setFont("helvetica", "bold");
         pdf.text(settings.bussinessName || "Empresa", 20, 35); // Nombre de la empresa
@@ -146,7 +156,6 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
         pdf.text(`Razón Social: ${clientName}`, 20, 40);
         pdf.text(`Domicilio: ${clientAddress}`, 20, 45);
 
-        // Código de documento y número de presupuesto
         pdf.setFont("helvetica", "bold");
         pdf.text("O", 160, 35); // Código del documento
         pdf.setFont("helvetica", "normal");
@@ -157,7 +166,6 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
         pdf.setFont("helvetica", "normal");
         pdf.text(invoiceNumber || "00001-00000001", 180, 40);
 
-        // Detalles fiscales
         pdf.setFontSize(10);
         pdf.text(`Fecha de emisión: ${invoiceDate}`, 180, 45);
         pdf.text(`CUIT: ${clientCUIT}`, 180, 50);
@@ -165,20 +173,16 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
         pdf.text("Fecha de inicio de actividades: 29/07/2018", 180, 60); // Si este dato es dinámico, cámbialo según tu servicio
         pdf.text(`Condición frente al IVA: ${clientTaxStatus}`, 180, 65);
 
-        // Línea horizontal
         pdf.line(20, 70, 200, 70); // (x1, y1, x2, y2)
 
-        // Datos del cliente
         pdf.text(`Apellido y nombre / Razón Social: ${clientName}`, 20, 75);
         pdf.text(`Domicilio: ${clientAddress}`, 20, 80);
         pdf.text(`DNI: ${clientCUIT}`, 20, 85); // Si tienes un campo para DNI, cámbialo, si no usa CUIT
         pdf.text(`Condición frente al IVA: ${clientTaxStatus}`, 20, 90);
         pdf.text(`Condición de venta: ${paymentCondition} (vto pago: ${validityDate})`, 20, 95);
 
-        // Línea horizontal
         pdf.line(20, 100, 200, 100);
 
-        // Encabezado de tabla de productos
         pdf.text("Cantidad", 20, 105);
         pdf.text("Producto / Servicio", 50, 105);
         pdf.text("Precio Unit", 120, 105);
@@ -187,37 +191,30 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
         pdf.text("% IVA", 180, 105);
         pdf.text("Subtotal S/IVA", 200, 105);
 
-        // Filas de la tabla con los productos
-        let currentY = 115; // Posición Y inicial para las filas de la tabla
+        let currentY = 115;
         items.forEach((item) => {
-            // Asegúrate de que el unitPrice sea un número
-            const unitPrice = parseFloat(item.unitPrice) || 0; // Convierte a número o usa 0 si no es un número válido
-            const quantity = item.quantity || 0; // También asegurarse de que quantity es válido
+            const unitPrice = parseFloat(item.unitPrice) || 0;
+            const quantity = item.quantity || 0;
 
             pdf.text(`${quantity} unidades`, 20, currentY);
             pdf.text(`${item.description}`, 50, currentY);
             pdf.text(`$ ${unitPrice.toFixed(2)}`, 120, currentY);
             pdf.text("0 %", 140, currentY); // Bonificación
             pdf.text("$ 0.00", 160, currentY); // Importe bonificado
-            pdf.text("21 %", 180, currentY); // IVA, puedes cambiarlo si usas otro valor de IVA
+            pdf.text("21 %", 180, currentY); // IVA
             pdf.text(`$ ${(unitPrice * quantity).toFixed(2)}`, 200, currentY);
 
-            currentY += 10; // Mueve la posición Y para la siguiente fila
+            currentY += 10;
         });
 
-
-        // Subtotal
         pdf.text("Importe Total:", 180, currentY + 10);
         pdf.text(`$ ${calculateTotal().toFixed(2)}`, 200, currentY + 10);
 
-        // Pie de página
         pdf.setFontSize(8);
         pdf.text("Powered by Technodevs.", 105, 290, null, null, "center");
 
-        // Guardar PDF
         pdf.save('Presupuesto.pdf');
     };
-
 
     const guardarFactura = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -265,6 +262,31 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
         }
     };
 
+    const handleOpenModal = () => setIsModalOpen(true);
+    const handleCloseModal = () => setIsModalOpen(false);
+
+    const handleAddCustomer = async () => {
+        try {
+            await customerService.addCustomer({
+                type,
+                name,
+                cuit,
+                fiscalAddress,
+                postalCode,
+                community,
+                province,
+                country,
+                phone,
+                email,
+                web,
+            });
+            setAlert({ type: 'success', message: 'Cliente agregado con éxito' });
+            handleCloseModal();
+        } catch (error) {
+            setAlert({ type: 'error', message: 'Error al agregar el cliente. Inténtalo de nuevo.' });
+        }
+    };
+
     return (
         <DefaultLayout>
             <Breadcrumb pageName={mode === 'edit' ? t('routes.edit_salesdocs') : t('routes.add_salesdocs')} />
@@ -296,9 +318,26 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
                                     }))}
                                     onChange={(e) => handleCustomerChange(e as React.ChangeEvent<HTMLSelectElement>)}
                                     required={true}
+                                    onButtonClick={handleOpenModal}
+                                    buttonLabel="Agregar"
                                 />
                             </div>
-
+                            <ModalComponent isOpen={isModalOpen} onClose={handleCloseModal} title="Agregar Cliente">
+                                <CustomerFormFields
+                                    type={type} setType={setType}
+                                    name={name} setName={setName}
+                                    cuit={cuit} setCuit={setCuit}
+                                    fiscalAddress={fiscalAddress} setFiscalAddress={setFiscalAddress}
+                                    postalCode={postalCode} setPostalCode={setPostalCode}
+                                    community={community} setCommunity={setCommunity}
+                                    province={province} setProvince={setProvince}
+                                    country={country} setCountry={setCountry}
+                                    phone={phone} setPhone={setPhone}
+                                    email={email} setEmail={setEmail}
+                                    web={web} setWeb={setWeb}
+                                />
+                                <button onClick={handleAddCustomer} className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Guardar Cliente</button>
+                            </ModalComponent>
                             <div>
                                 <FormInput
                                     label="Nº de Presupuesto"
