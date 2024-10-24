@@ -68,7 +68,7 @@ const FormInput: React.FC<FormInputProps> = ({
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
       </label>
-      <div className="relative h-16 flex flex-col items-center">
+      <div className="relative h-16 flex flex-col">
         <div className="flex w-full">
           {/* Verificamos si es un select o input */}
           {options && options.length > 0 ? (
@@ -133,7 +133,7 @@ const FormInput: React.FC<FormInputProps> = ({
             </button>
           )}
         </div>
-        <div>
+        <div className="text-left items-start">
 
           {/* Mensaje de error */}
           <span
