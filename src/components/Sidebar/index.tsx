@@ -70,7 +70,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   <div className="flex flex-col items-center w-full px-4 py-6">
     {/* Logo principal centrado */}
     <NavLink to="/" className="mb-4 flex justify-center">
-      <img src={FaviconWhiteIcon} alt="Logo" className='w-4/5'/>
+      <img src={FaviconWhiteIcon} alt="Logo" className='w-2/5 mb-10'/>
     </NavLink>
     
     {/* Items del menú */}

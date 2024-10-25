@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import LogoDark from '../../images/logo/logo-dark.png';
+import LogoDark from '/logohorizontal.png';
 import Logo from '../../images/logo/logo.svg';
 import { useAuth } from '../../hooks/useAuth';
 import Loader from '../../common/Loader';
