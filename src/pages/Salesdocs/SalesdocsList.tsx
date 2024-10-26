@@ -111,6 +111,7 @@ const SalesDocsList: React.FC = () => {
   };
 
   const columns = [
+    { key: "number", label: "Número" },
     { key: "type", label: "Tipo" },
     { key: "customerName", label: "Cliente" },  // Cambiado a customerName
     { key: "state", label: "Estado" },

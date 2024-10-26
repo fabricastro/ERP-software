@@ -6,6 +6,7 @@ import { isTokenExpired } from '../utils/token';
 interface AuthContextProps {
   user: any;
   isAuthenticated: boolean;
+  loadingAuth: boolean;
   setUser: (user: any) => void;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
@@ -26,29 +27,26 @@ export const AuthProvider: React.FC = ({ children }) => {
     const savedUser = localStorage.getItem('user');
     return savedUser ? JSON.parse(savedUser) : null;
   });
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    return !!localStorage.getItem('token'); 
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [loadingAuth, setLoadingAuth] = useState<boolean>(true); // Nuevo estado de carga para autenticación
 
   const navigate = useNavigate();
 
-  // Recuperar los datos del usuario y el token cuando se recarga la página
   useEffect(() => {
     const token = localStorage.getItem('token');
     const savedUser = localStorage.getItem('user');
+    
     if (token && savedUser) {
-      setUser(JSON.parse(savedUser));
-      setIsAuthenticated(true);
+      if (!isTokenExpired(token)) {
+        setUser(JSON.parse(savedUser));
+        setIsAuthenticated(true);
+      } else {
+        logout();
+      }
     }
+
+    setLoadingAuth(false); // Indicar que la verificación de autenticación ha terminado
   }, []);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-
-    if (token && isTokenExpired(token)) {
-      logout();
-    }
-  }, [navigate]);
 
   const login = async (email: string, password: string) => {
     try {
@@ -76,7 +74,7 @@ export const AuthProvider: React.FC = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ user, setUser, isAuthenticated, loadingAuth, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -87,15 +87,15 @@ const options: ApexOptions = {
       'Sep',
       'Oct',
       'Nov',
-      'Dec',
-      'Jan',
+      'Dic',
+      'Ene',
       'Feb',
       'Mar',
-      'Apr',
+      'Abr',
       'May',
       'Jun',
       'Jul',
-      'Aug',
+      'Ago',
     ],
     axisBorder: {
       show: false,
@@ -153,7 +153,7 @@ const ChartOne: React.FC = () => {
               <span className="block h-2.5 w-full max-w-2.5 rounded-full bg-primary"></span>
             </span>
             <div className="w-full">
-              <p className="font-semibold text-primary">Total Revenue</p>
+              <p className="font-semibold text-primary">Total Presupuestado</p>
               <p className="text-sm font-medium">12.04.2022 - 12.05.2022</p>
             </div>
           </div>
@@ -162,7 +162,7 @@ const ChartOne: React.FC = () => {
               <span className="block h-2.5 w-full max-w-2.5 rounded-full bg-secondary"></span>
             </span>
             <div className="w-full">
-              <p className="font-semibold text-secondary">Total Sales</p>
+              <p className="font-semibold text-secondary">Total Facturado</p>
               <p className="text-sm font-medium">12.04.2022 - 12.05.2022</p>
             </div>
           </div>
@@ -170,13 +170,13 @@ const ChartOne: React.FC = () => {
         <div className="flex w-full max-w-45 justify-end">
           <div className="inline-flex items-center rounded-md bg-whiter p-1.5 dark:bg-meta-4">
             <button className="rounded bg-white py-1 px-3 text-xs font-medium text-black shadow-card hover:bg-white hover:shadow-card dark:bg-boxdark dark:text-white dark:hover:bg-boxdark">
-              Day
+              Dia
             </button>
             <button className="rounded py-1 px-3 text-xs font-medium text-black hover:bg-white hover:shadow-card dark:text-white dark:hover:bg-boxdark">
-              Week
+              Semana
             </button>
             <button className="rounded py-1 px-3 text-xs font-medium text-black hover:bg-white hover:shadow-card dark:text-white dark:hover:bg-boxdark">
-              Month
+              Mes
             </button>
           </div>
         </div>

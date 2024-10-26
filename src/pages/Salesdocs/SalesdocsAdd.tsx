@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import jsPDFInvoiceTemplate from 'jspdf-invoice-template';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { salesDocsService } from '../../services/SalesDocsService';
 import { customerService } from '../../services/CustomerService';
 import Alert from '../UiElements/Alerts';
@@ -10,7 +10,6 @@ import DefaultLayout from './../../layout/DefaultLayout';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import { useSettings } from '../../context/SettingsContext';
 import FormInput from './../../components/Input/input';
-import Label from '../../components/Label/Label';
 import { jsPDF } from 'jspdf';
 import ModalComponent from '../../components/ModalComponent';
 import CustomerFormFields from '../Customer/CustomerFormFields';
@@ -20,7 +19,8 @@ interface SalesdocsAddProps {
 }
 
 const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
-    const [invoiceNumber, setInvoiceNumber] = useState('');
+    const navigate = useNavigate();
+    const [invoiceNumber, setInvoiceNumber] = useState<number>(0);
     const [state, setState] = useState('Borrador');
     const [invoiceDate, setInvoiceDate] = useState('');
     const [validityDate, setValidityDate] = useState('');
@@ -38,7 +38,7 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
     const [items, setItems] = useState<any[]>([]);
     const [documentType, setDocumentType] = useState('presupuesto'); // Cambié este nombre para evitar el conflicto
     const { t } = useTranslation();
-    const { settings } = useSettings();
+    const { settings, fetchUpdatedSettings } = useSettings();
     const { id } = useParams<{ id: string }>();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -61,9 +61,8 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
                 const customerData = await customerService.getAll();
                 setCustomers(customerData);
                 if (mode === 'add') {
-                    const lastInvoiceNumber = localStorage.getItem('lastInvoiceNumber');
-                    const nextInvoiceNumber = lastInvoiceNumber ? parseInt(lastInvoiceNumber, 10) + 1 : 1;
-                    setInvoiceNumber(`AAA${nextInvoiceNumber}`);
+                    setInvoiceNumber(Number(settings?.nextBudgetId));
+                    console.log("modo add", settings?.nextBudgetId);
                 } else if (mode === 'edit' && id) {
                     loadSalesDocData(Number(id));
                 }
@@ -86,7 +85,7 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
             setCustomerId(salesDocData.customerId);
             setObservations(salesDocData.observations);
             setItems(salesDocData.articles);
-            setClientName(salesDocData.customer.type);
+            setClientName(salesDocData.customer.name);
             setClientAddress(salesDocData.customer.fiscalAddress);
             setClientPhone(salesDocData.customer.phone);
             setClientCUIT(salesDocData.customer.cuit);
@@ -113,7 +112,6 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
         }
     };
 
-
     const calculateIVA = () => {
         const net = items.reduce((acc, item) => acc + item.quantity * item.unitPrice, 0);
         return Math.round(net * 0.21 * 100) / 100;
@@ -123,98 +121,150 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
         if (!Array.isArray(items) || items.length === 0) {
             return 0;
         }
-        const net = items.reduce((acc, item) => acc + item.quantity * item.unitPrice, 0);
+
+        const net = items.reduce((acc, item) => {
+            // Calcular el subtotal con la bonificación aplicada
+            const subtotalConBonificacion = item.unitPrice * item.quantity * (1 - item.bonification / 100);
+            return acc + subtotalConBonificacion;
+        }, 0);
+
         return Math.round(net * 100) / 100;
     };
+
 
     const generatePDF = () => {
         if (!settings || !settings.logo) {
             console.error("Faltan datos de negocio o logo.");
             return;
         }
-
+    
         if (!clientName || !clientAddress || !clientPhone || !clientCUIT) {
             console.error("Faltan datos del cliente.");
             return;
         }
-
+    
         if (items.length === 0) {
             console.error("No hay ítems en la factura.");
             return;
         }
-
-        const pdf = new jsPDF();
-        pdf.setFontSize(16);
-        pdf.setFont("helvetica", "bold");
-        pdf.text("DOCUMENTO NO VALIDO COMO FACTURA", 105, 20, null, null, "center");
-
-        pdf.setFontSize(12);
-        pdf.setFont("helvetica", "bold");
-        pdf.text(settings.bussinessName || "Empresa", 20, 35); // Nombre de la empresa
-        pdf.setFontSize(10);
-        pdf.setFont("helvetica", "normal");
-        pdf.text(`Razón Social: ${clientName}`, 20, 40);
-        pdf.text(`Domicilio: ${clientAddress}`, 20, 45);
-
-        pdf.setFont("helvetica", "bold");
-        pdf.text("O", 160, 35); // Código del documento
-        pdf.setFont("helvetica", "normal");
-        pdf.text("COD. 0", 158, 40);
-
-        pdf.setFont("helvetica", "bold");
-        pdf.text("PRESUPUESTO", 180, 35);
-        pdf.setFont("helvetica", "normal");
-        pdf.text(invoiceNumber || "00001-00000001", 180, 40);
-
-        pdf.setFontSize(10);
-        pdf.text(`Fecha de emisión: ${invoiceDate}`, 180, 45);
-        pdf.text(`CUIT: ${clientCUIT}`, 180, 50);
-        pdf.text(`Ingresos Brutos: 56`, 180, 55); // Este dato parece estático, puedes cambiarlo si viene de otro lado
-        pdf.text("Fecha de inicio de actividades: 29/07/2018", 180, 60); // Si este dato es dinámico, cámbialo según tu servicio
-        pdf.text(`Condición frente al IVA: ${clientTaxStatus}`, 180, 65);
-
-        pdf.line(20, 70, 200, 70); // (x1, y1, x2, y2)
-
-        pdf.text(`Apellido y nombre / Razón Social: ${clientName}`, 20, 75);
-        pdf.text(`Domicilio: ${clientAddress}`, 20, 80);
-        pdf.text(`DNI: ${clientCUIT}`, 20, 85); // Si tienes un campo para DNI, cámbialo, si no usa CUIT
-        pdf.text(`Condición frente al IVA: ${clientTaxStatus}`, 20, 90);
-        pdf.text(`Condición de venta: ${paymentCondition} (vto pago: ${validityDate})`, 20, 95);
-
-        pdf.line(20, 100, 200, 100);
-
-        pdf.text("Cantidad", 20, 105);
-        pdf.text("Producto / Servicio", 50, 105);
-        pdf.text("Precio Unit", 120, 105);
-        pdf.text("Bonif. %", 140, 105);
-        pdf.text("Imp. Bonif.", 160, 105);
-        pdf.text("% IVA", 180, 105);
-        pdf.text("Subtotal S/IVA", 200, 105);
-
-        let currentY = 115;
-        items.forEach((item) => {
-            const unitPrice = parseFloat(item.unitPrice) || 0;
-            const quantity = item.quantity || 0;
-
-            pdf.text(`${quantity} unidades`, 20, currentY);
-            pdf.text(`${item.description}`, 50, currentY);
-            pdf.text(`$ ${unitPrice.toFixed(2)}`, 120, currentY);
-            pdf.text("0 %", 140, currentY); // Bonificación
-            pdf.text("$ 0.00", 160, currentY); // Importe bonificado
-            pdf.text("21 %", 180, currentY); // IVA
-            pdf.text(`$ ${(unitPrice * quantity).toFixed(2)}`, 200, currentY);
-
-            currentY += 10;
-        });
-
-        pdf.text("Importe Total:", 180, currentY + 10);
-        pdf.text(`$ ${calculateTotal().toFixed(2)}`, 200, currentY + 10);
-
-        pdf.setFontSize(8);
-        pdf.text("Powered by Technodevs.", 105, 290, null, null, "center");
-
-        pdf.save('Presupuesto.pdf');
+    
+        // Cargar la imagen para obtener sus dimensiones originales
+        const img = new Image();
+        img.src = settings.logo;
+    
+        img.onload = () => {
+            // Obtener el tamaño original de la imagen
+            const originalWidth = img.width;
+            const originalHeight = img.height;
+    
+            // Calcular un tamaño máximo permitido
+            const maxWidth = 60;
+            const maxHeight = 20;
+    
+            // Calcular el tamaño final manteniendo la proporción
+            let finalWidth = originalWidth;
+            let finalHeight = originalHeight;
+            
+            if (originalWidth > maxWidth || originalHeight > maxHeight) {
+                const widthRatio = maxWidth / originalWidth;
+                const heightRatio = maxHeight / originalHeight;
+                const scale = Math.min(widthRatio, heightRatio);
+    
+                finalWidth = originalWidth * scale;
+                finalHeight = originalHeight * scale;
+            }
+    
+            const tableHeaders = [
+                { title: "#", style: { width: 10 } },
+                { title: "Descripción", style: { width: 60 } },
+                { title: "Cantidad", style: { width: 20 } },
+                { title: "Precio Unit.", style: { width: 30 } },
+                { title: "Bonif %", style: { width: 20 } },
+                { title: "IVA %", style: { width: 20 } },
+                { title: "Subtotal", style: { width: 30 } }
+            ];
+    
+            const tableRows = items.map((item, index) => [
+                String(index + 1),
+                String(item.description || 'Sin descripción'),
+                String(item.quantity || 0),
+                Number(item.unitPrice ?? 0).toFixed(2), // Convertir a número antes de usar toFixed
+                String(item.bonification ?? 0), // Verificación para evitar undefined
+                String(item.iva ?? 0), // Verificación para evitar undefined
+                (Number(item.unitPrice ?? 0) * item.quantity * (1 - (item.bonification ?? 0) / 100)).toFixed(2) // Convertir a número antes de usar toFixed
+            ]);
+    
+            const props = {
+                outputType: "save",
+                returnJsPDFDocObject: true,
+                fileName: "Presupuesto",
+                orientationLandscape: false,
+                compress: true,
+                logo: {
+                    src: settings.logo,
+                    width: finalWidth,
+                    height: finalHeight,
+                    margin: { top: 0, left: 0 }
+                },
+                settings: {
+                    name: settings.bussinessName || 'N/A',
+                    address: settings.address || 'N/A',
+                    phone: settings.phone || 'N/A',
+                    email: settings.email || 'N/A',
+                    website: settings.website || 'N/A',
+                },
+                business: {
+                    name: settings.bussinessName || 'N/A',
+                    address: settings.address || 'N/A',
+                    phone: settings.phone || 'N/A',
+                    email: settings.email || 'N/A',
+                    website: settings.website || 'N/A',
+                },
+                contact: {
+                    label: "Datos Cliente:",
+                    name: clientName || 'N/A',
+                    address: clientAddress || 'N/A',
+                    phone: clientPhone || 'N/A',
+                    otherInfo: clientCUIT || 'N/A',
+                },
+                invoice: {
+                    label: "Presupuesto #: ",
+                    num: invoiceNumber || 'N/A',
+                    invDate: `Fecha: ${invoiceDate || 'N/A'}`,
+                    invGenDate: `Validez: ${validityDate || 'N/A'}`,
+                    headerBorder: true,
+                    tableBodyBorder: true,
+                    header: tableHeaders,
+                    table: tableRows,
+                    additionalRows: [
+                        {
+                            col1: 'Importe Total:',
+                            col2: calculateTotal().toFixed(2),
+                            col3: '$',
+                            style: { fontSize: 14 }
+                        }
+                    ],
+                },
+                footer: {
+                    text: "Powered by PALTA.",
+                },
+                pageEnable: true,
+                pageLabel: "Page ",
+            };
+    
+            try {
+                jsPDFInvoiceTemplate(props);
+                console.log("PDF generado correctamente");
+            } catch (error) {
+                console.error("Error al generar el PDF:", error);
+            }
+        };
+    
+        img.onerror = () => {
+            console.error("No se pudo cargar el logo.");
+        };
     };
+    
 
     const guardarFactura = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -254,6 +304,10 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
                     articles: items
                 });
                 setAlert({ type: 'success', message: 'Factura guardada con éxito' });
+                setTimeout(() => {
+                    navigate('/salesdocs');
+                }, 2000);
+                await fetchUpdatedSettings();
             }
             setLoading(false);
         } catch (error: any) {
@@ -267,7 +321,7 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
 
     const handleAddCustomer = async () => {
         try {
-            await customerService.addCustomer({
+            const newCustomer = await customerService.addCustomer({
                 type,
                 name,
                 cuit,
@@ -280,8 +334,14 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
                 email,
                 web,
             });
+
             setAlert({ type: 'success', message: 'Cliente agregado con éxito' });
-            handleCloseModal();
+            setIsModalOpen(false);
+
+            // Actualizar la lista de clientes y seleccionar el cliente recién agregado
+            const updatedCustomers = await customerService.getAll();
+            setCustomers(updatedCustomers);
+            setCustomerId(newCustomer.id);
         } catch (error) {
             setAlert({ type: 'error', message: 'Error al agregar el cliente. Inténtalo de nuevo.' });
         }
@@ -338,7 +398,7 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
                                 />
                                 <button onClick={handleAddCustomer} className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Guardar Cliente</button>
                             </ModalComponent>
-                            <div>
+                            <div className='w-[40%]'>
                                 <FormInput
                                     label="Nº de Presupuesto"
                                     type="text"

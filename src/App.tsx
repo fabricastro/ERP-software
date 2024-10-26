@@ -5,7 +5,7 @@ import SignIn from './pages/Authentication/SignIn';
 import SignUp from './pages/Authentication/SignUp';
 import Calendar from './pages/Calendar';
 import Chart from './pages/Chart';
-import ECommerce from './pages/Dashboard/ECommerce';
+import ECommerce from './pages/Dashboard/Dashboard';
 import FormElements from './pages/Form/FormElements';
 import FormLayout from './pages/Form/FormLayout';
 import Profile from './pages/Profile';
@@ -20,7 +20,7 @@ import { Bill } from './pages/Bill/Bill';
 import { Customer } from './pages/Customer/Customer';
 import { Article } from './pages/Article/Article';
 import { ArticleAdd } from './pages/Article/ArticleAdd';
-import  SalesdocsAdd  from './pages/Salesdocs/SalesdocsAdd';
+import SalesdocsAdd from './pages/Salesdocs/SalesdocsAdd';
 import { Confirm } from './pages/Authentication/Confirm';
 import { ConfirmEmail } from './pages/Authentication/ConfirmEmail';
 import Alert from './pages/UiElements/Alerts';
@@ -33,15 +33,14 @@ import { SettingsProvider, useSettings } from './context/SettingsContext';
 import { ProviderForm } from './pages/Provider/ProviderForm';
 import { CustomerForm } from './pages/Customer/CustomerForm';
 
-
 function App() {
-  const { user, logout } = useAuth();
-  const {settings} = useSettings();
+  const {logout, loadingAuth } = useAuth(); // Usa isAuthenticated y loadingAuth
+  const { settings } = useSettings(); // Usa el estado de loading desde el SettingsContext
   const navigate = useNavigate();
   const location = useLocation();
   const [alert, setAlert] = useState<{ type: 'success' | 'warning' | 'error'; title: string; message: string } | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
 
+  // Verifica si el token ha expirado
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token && isTokenExpired(token)) {
@@ -51,6 +50,7 @@ function App() {
     }
   }, [location.pathname, logout, navigate]);
 
+  // Cambia el título del documento una vez que los settings estén cargados
   useEffect(() => {
     if (settings) {
       const companyName = settings.bussinessName;
@@ -58,17 +58,17 @@ function App() {
     }
   }, [settings]);
 
-  useEffect(() => {
-    setTimeout(() => setLoading(false), 1000);
-  }, []);
-
+  // Mantiene el scroll en la parte superior cuando cambias de ruta
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  return loading ? (
-    <Loader />
-  ) : (
+  // Espera a que loadingAuth y settingsLoading terminen antes de mostrar el contenido
+  if (loadingAuth) {
+    return <Loader />;
+  }
+
+  return (
     <>
       {alert && (
         <Alert

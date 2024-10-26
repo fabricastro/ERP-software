@@ -4,6 +4,7 @@ interface FormInputProps {
   label: string;
   type?: string;
   id: string;
+  name?: string;
   value: string | number;
   onChange: (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => void;
   placeholder?: string;
@@ -12,9 +13,11 @@ interface FormInputProps {
   disabled?: boolean;
   options?: string[] | { label: string; value: string | number }[];
   add?: string;
-  onButtonClick?: () => void; // Nueva propiedad para la función del botón
-  buttonLabel?: string; // Nueva propiedad para el texto del botón
+  onButtonClick?: () => void;
+  buttonLabel?: string;
+  className?: string;
 }
+
 
 const FormInput: React.FC<FormInputProps> = ({
   label,

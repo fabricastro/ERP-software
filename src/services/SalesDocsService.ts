@@ -15,7 +15,7 @@ class SalesDocsService extends BaseService {
     paymentMethod: string;
     date: string;
     validityDate: string;
-    number: string;
+    number: number;
     observations: string;
     net: number;
     iva: number;
