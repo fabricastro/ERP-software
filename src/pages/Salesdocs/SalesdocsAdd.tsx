@@ -13,6 +13,7 @@ import FormInput from './../../components/Input/input';
 import { jsPDF } from 'jspdf';
 import ModalComponent from '../../components/ModalComponent';
 import CustomerFormFields from '../Customer/CustomerFormFields';
+import 'jspdf-autotable';
 
 interface SalesdocsAddProps {
     mode: 'add' | 'edit';
@@ -36,14 +37,14 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
     const [loading, setLoading] = useState(false);
     const [customers, setCustomers] = useState<any[]>([]);
     const [items, setItems] = useState<any[]>([]);
-    const [documentType, setDocumentType] = useState('presupuesto'); // Cambié este nombre para evitar el conflicto
+    const [documentType, setDocumentType] = useState('presupuesto');
     const { t } = useTranslation();
     const { settings, fetchUpdatedSettings } = useSettings();
     const { id } = useParams<{ id: string }>();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     // Estados del formulario de cliente
-    const [type, setType] = useState('Persona Humana'); // Mantiene el nombre 'type' para el cliente
+    const [type, setType] = useState('Persona Humana');
     const [name, setName] = useState('');
     const [cuit, setCuit] = useState('');
     const [fiscalAddress, setFiscalAddress] = useState('');
@@ -76,8 +77,7 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
     const loadSalesDocData = async (docId: number) => {
         try {
             const salesDocData: any = await salesDocsService.getById(docId);
-            // Asignar los datos a los estados correspondientes
-            setDocumentType(salesDocData.type); // Ahora usa 'documentType' en lugar de 'type'
+            setDocumentType(salesDocData.type);
             setInvoiceNumber(salesDocData.number);
             setState(salesDocData.state);
             setInvoiceDate(salesDocData.date);
@@ -123,148 +123,136 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
         }
 
         const net = items.reduce((acc, item) => {
-            // Calcular el subtotal con la bonificación aplicada
-            const subtotalConBonificacion = item.unitPrice * item.quantity * (1 - item.bonification / 100);
+            const subtotalConBonificacion = item.unitPrice * item.quantity * (1 - item.discount / 100);
             return acc + subtotalConBonificacion;
         }, 0);
 
         return Math.round(net * 100) / 100;
     };
 
-
     const generatePDF = () => {
         if (!settings || !settings.logo) {
             console.error("Faltan datos de negocio o logo.");
             return;
         }
-    
+
         if (!clientName || !clientAddress || !clientPhone || !clientCUIT) {
             console.error("Faltan datos del cliente.");
             return;
         }
-    
+
         if (items.length === 0) {
             console.error("No hay ítems en la factura.");
             return;
         }
-    
-        // Cargar la imagen para obtener sus dimensiones originales
+
+        const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+
+        // Agregar leyenda en el centro superior
+        doc.setFontSize(12);
+        doc.text("Boleta no válida como factura", pageWidth / 2, 10, { align: "center" });
+
+        // Cargar el logo de la empresa
         const img = new Image();
         img.src = settings.logo;
-    
+
         img.onload = () => {
-            // Obtener el tamaño original de la imagen
+            // Ajustar el tamaño del logo manteniendo la proporción
             const originalWidth = img.width;
             const originalHeight = img.height;
-    
-            // Calcular un tamaño máximo permitido
             const maxWidth = 60;
             const maxHeight = 20;
-    
-            // Calcular el tamaño final manteniendo la proporción
             let finalWidth = originalWidth;
             let finalHeight = originalHeight;
-            
+
             if (originalWidth > maxWidth || originalHeight > maxHeight) {
                 const widthRatio = maxWidth / originalWidth;
                 const heightRatio = maxHeight / originalHeight;
                 const scale = Math.min(widthRatio, heightRatio);
-    
                 finalWidth = originalWidth * scale;
                 finalHeight = originalHeight * scale;
             }
-    
-            const tableHeaders = [
-                { title: "#", style: { width: 10 } },
-                { title: "Descripción", style: { width: 60 } },
-                { title: "Cantidad", style: { width: 20 } },
-                { title: "Precio Unit.", style: { width: 30 } },
-                { title: "Bonif %", style: { width: 20 } },
-                { title: "IVA %", style: { width: 20 } },
-                { title: "Subtotal", style: { width: 30 } }
-            ];
-    
+
+            // Agregar logo al PDF
+            doc.addImage(img, 'PNG', 10, 20, finalWidth, finalHeight);
+
+            // Agregar datos de la empresa a la derecha del logo
+            doc.setFontSize(10);
+            doc.text(`${settings.bussinessName || 'N/A'}`, pageWidth - 60, 20);
+            doc.text(`Dirección: ${settings.address || 'N/A'}`, pageWidth - 60, 25);
+            doc.text(`Teléfono: ${settings.phone || 'N/A'}`, pageWidth - 60, 30);
+            doc.text(`Email: ${settings.email || 'N/A'}`, pageWidth - 60, 35);
+            doc.text(`Web: ${settings.website || 'N/A'}`, pageWidth - 60, 40);
+
+            // Dibujar una línea debajo del encabezado
+            doc.setLineWidth(0.1);
+            doc.line(10, 45, pageWidth - 10, 45);
+
+            // Agregar datos del cliente
+            doc.setFontSize(10);
+            doc.text(`Cliente: ${clientName}`, 10, 50);
+            doc.text(`Dirección: ${clientAddress}`, 10, 55);
+            doc.text(`Teléfono: ${clientPhone}`, 10, 60);
+            doc.text(`CUIT: ${clientCUIT}`, 10, 65);
+
+            // Agregar datos de la boleta
+            doc.text(`Invoice #: ${invoiceNumber}`, pageWidth - 60, 50);
+            doc.text(`Payment Date: ${invoiceDate}`, pageWidth - 60, 55);
+            doc.text(`Invoice Date: ${validityDate}`, pageWidth - 60, 60);
+
+            // Generar la tabla de ítems
+            const tableColumn = ["#", "Descripción", "Cantidad", "Precio Unit.", "Bonif %", "IVA %", "Subtotal"];
             const tableRows = items.map((item, index) => [
-                String(index + 1),
-                String(item.description || 'Sin descripción'),
-                String(item.quantity || 0),
-                Number(item.unitPrice ?? 0).toFixed(2), // Convertir a número antes de usar toFixed
-                String(item.bonification ?? 0), // Verificación para evitar undefined
-                String(item.iva ?? 0), // Verificación para evitar undefined
-                (Number(item.unitPrice ?? 0) * item.quantity * (1 - (item.bonification ?? 0) / 100)).toFixed(2) // Convertir a número antes de usar toFixed
+                index + 1,
+                item.description || 'Sin descripción',
+                item.quantity || 0,
+                Number(item.unitPrice ?? 0).toFixed(2), // Asegúrate de convertir a número antes de usar toFixed
+                item.discount ?? 0,
+                item.iva ?? 0,
+                (Number(item.unitPrice ?? 0) * item.quantity * (1 - (item.discount ?? 0) / 100)).toFixed(2)
             ]);
-    
-            const props = {
-                outputType: "save",
-                returnJsPDFDocObject: true,
-                fileName: "Presupuesto",
-                orientationLandscape: false,
-                compress: true,
-                logo: {
-                    src: settings.logo,
-                    width: finalWidth,
-                    height: finalHeight,
-                    margin: { top: 0, left: 0 }
-                },
-                settings: {
-                    name: settings.bussinessName || 'N/A',
-                    address: settings.address || 'N/A',
-                    phone: settings.phone || 'N/A',
-                    email: settings.email || 'N/A',
-                    website: settings.website || 'N/A',
-                },
-                business: {
-                    name: settings.bussinessName || 'N/A',
-                    address: settings.address || 'N/A',
-                    phone: settings.phone || 'N/A',
-                    email: settings.email || 'N/A',
-                    website: settings.website || 'N/A',
-                },
-                contact: {
-                    label: "Datos Cliente:",
-                    name: clientName || 'N/A',
-                    address: clientAddress || 'N/A',
-                    phone: clientPhone || 'N/A',
-                    otherInfo: clientCUIT || 'N/A',
-                },
-                invoice: {
-                    label: "Presupuesto #: ",
-                    num: invoiceNumber || 'N/A',
-                    invDate: `Fecha: ${invoiceDate || 'N/A'}`,
-                    invGenDate: `Validez: ${validityDate || 'N/A'}`,
-                    headerBorder: true,
-                    tableBodyBorder: true,
-                    header: tableHeaders,
-                    table: tableRows,
-                    additionalRows: [
-                        {
-                            col1: 'Importe Total:',
-                            col2: calculateTotal().toFixed(2),
-                            col3: '$',
-                            style: { fontSize: 14 }
-                        }
-                    ],
-                },
-                footer: {
-                    text: "Powered by PALTA.",
-                },
-                pageEnable: true,
-                pageLabel: "Page ",
-            };
-    
-            try {
-                jsPDFInvoiceTemplate(props);
-                console.log("PDF generado correctamente");
-            } catch (error) {
-                console.error("Error al generar el PDF:", error);
+
+            doc.autoTable({
+                head: [tableColumn],
+                body: tableRows,
+                startY: 70,
+                margin: { bottom: 30 },
+            });
+
+            // Agregar el total y observaciones después de la tabla
+            const finalY = doc.previousAutoTable.finalY || 70;
+
+            
+            doc.setLineWidth(0.5); // Set the line width to a small value for a thin line
+            doc.line(10, finalY + 5, 45 - 10, finalY + 5); // Draw a line across the page
+
+           
+            doc.setFontSize(12);
+            doc.text(`Total: $${calculateTotal().toFixed(2)}`, 160, finalY + 20);
+
+
+            doc.setFontSize(10);
+            doc.text("Observaciones:", 10, finalY + 20);
+            doc.setFontSize(9);
+            doc.text(observations || 'N/A', 10, finalY + 25, { maxWidth: pageWidth - 20 });
+
+            // Numeración de las páginas
+            const totalPages = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= totalPages; i++) {
+                doc.setPage(i);
+                doc.setFontSize(10);
+                doc.text(`Página ${i} de ${totalPages}`, pageWidth - 30, pageHeight - 10);
+                // Footer con "Hecho por PALTA"
+                doc.text("Hecho por PALTA.", 10, pageHeight - 10);
             }
-        };
-    
-        img.onerror = () => {
-            console.error("No se pudo cargar el logo.");
+
+            // Guardar el PDF
+            doc.save(`Presupuesto_${clientName}.pdf`);
         };
     };
-    
+
 
     const guardarFactura = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -338,7 +326,6 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
             setAlert({ type: 'success', message: 'Cliente agregado con éxito' });
             setIsModalOpen(false);
 
-            // Actualizar la lista de clientes y seleccionar el cliente recién agregado
             const updatedCustomers = await customerService.getAll();
             setCustomers(updatedCustomers);
             setCustomerId(newCustomer.id);
@@ -518,6 +505,15 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
                                     options={['Efectivo', 'Credito', 'Ambos']}
                                 />
                             </div>
+                        </div>
+                        <div className='grid grid-cols-1 gap-5'>
+                            <FormInput
+                                label='Observaciones:'
+                                type="textarea"
+                                id='observations'
+                                value={observations}
+                                onChange={(e) => setObservations(e.target.value)}
+                            />
                         </div>
 
                         <ItemForm items={items} setItems={setItems} />

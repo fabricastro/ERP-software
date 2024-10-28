@@ -22,6 +22,7 @@ class ArticleService extends BaseService {
     providerId: number;
     observations?: string;
     stock: number;
+    discount?: number;
   }) {
     return this.post('/article', data);
   }
@@ -62,6 +63,7 @@ class ArticleService extends BaseService {
     providerId?: number;
     observations?: string;
     stock?: number;
+    discount?: number;
   }) {
     return this.patch(`/article/${id}`, data);
   }

@@ -8,7 +8,7 @@ interface Item {
     description: string;
     quantity: number;
     unitPrice: number;
-    bonification: number;
+    discount: number;
     iva: number;
     subtotal: number;
 }
@@ -24,7 +24,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ items, setItems }) => {
         description: '',
         quantity: 1,
         unitPrice: 0,
-        bonification: 0,
+        discount: 0,
         iva: 21,
         subtotal: 0,
     });
@@ -54,7 +54,8 @@ const ItemForm: React.FC<ItemFormProps> = ({ items, setItems }) => {
                 name: selectedArticle.name,
                 description: selectedArticle.name,
                 unitPrice: selectedArticle.unitPrice,
-                iva: selectedArticle.iva || 21, // Usar el IVA del artículo si está disponible
+                iva: selectedArticle.iva || 21,
+                discount: selectedArticle.discount || 0,
             });
         }
     };
@@ -68,7 +69,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ items, setItems }) => {
 
     const calculateSubtotal = (item: Item) => {
         const subtotalSinIVA = item.unitPrice * item.quantity;
-        const subtotalConBonificacion = subtotalSinIVA - (subtotalSinIVA * (item.bonification / 100));
+        const subtotalConBonificacion = subtotalSinIVA - (subtotalSinIVA * (item.discount / 100));
         return subtotalConBonificacion;
     };
 
@@ -89,7 +90,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ items, setItems }) => {
             description: '',
             quantity: 1,
             unitPrice: 0,
-            bonification: 0,
+            discount: 0,
             iva: 21,
             subtotal: 0,
         });
@@ -151,12 +152,12 @@ const ItemForm: React.FC<ItemFormProps> = ({ items, setItems }) => {
                 </div>
                 <div className='flex flex-col w-full'>
                     <FormInput
-                        id="bonification"
+                        id="discount"
                         label="Bonif %"
                         type="number"
-                        name="bonification"
-                        value={newItem.bonification}
-                        onChange={(e) => handleNewItemChange('bonification')(parseFloat(e.target.value))}
+                        name="discount"
+                        value={newItem.discount}
+                        onChange={(e) => handleNewItemChange('discount')(parseFloat(e.target.value))}
                         className='w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black'
                     />
                 </div>
@@ -198,7 +199,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ items, setItems }) => {
                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{item.description}</td>
                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{item.quantity}</td>
                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{item.unitPrice}</td>
-                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{item.bonification}</td>
+                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{item.discount}</td>
                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{item.iva}</td>
                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{(item.subtotal ?? 0).toFixed(2)}</td>
                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
