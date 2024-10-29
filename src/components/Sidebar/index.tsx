@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import FaviconWhiteIcon from '/favicon-white.png';
 import { FaBoxArchive } from "react-icons/fa6";
 import { MdSpaceDashboard } from "react-icons/md";
+import { RiBillFill } from "react-icons/ri";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -53,7 +54,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   
   const menuItems = [
     { to: '/', icon: <MdSpaceDashboard />, label: t('main') },
-    { to: '/salesdocs', icon: <FaMoneyBillWave />, label: t('salesdocs.title') },
+    { to: '/budget', icon: <FaMoneyBillWave />, label: t('salesdocs.title') },
+    { to: '/bill', icon: <RiBillFill />, label: t('bill.title') },
     { to: '/article', icon: <FaBoxArchive />, label: t('routes.article') },
     { to: '/customer', icon: <FaUsers />, label: t('routes.customer') },
     { to: '/provider', icon: <FaUserPlus />, label: t('routes.provider') },

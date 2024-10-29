@@ -89,6 +89,11 @@ const SignIn: React.FC = () => {
                     value="Iniciar Sesión"
                     className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
                   />
+                  <p className='mt-4 text text-center'>Olvidaste tu contraseña? {''}
+                    <Link to="/recover" className="text-primary">
+                      Recuperar Contraseña
+                    </Link>
+                  </p>
                 </div>
               </form>
             )}

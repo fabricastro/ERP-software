@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { useAuth } from './AuthContext'; // Importa useAuth
+
 const URL_API = import.meta.env.VITE_API_URL;
 
 // Definimos la estructura de los datos del negocio
@@ -19,6 +21,9 @@ interface Settings {
 interface SettingsContextProps {
   settings: Settings | null;
   setSettings: React.Dispatch<React.SetStateAction<Settings | null>>;
+  loading: boolean;
+  error: string | null;
+  fetchUpdatedSettings: () => Promise<void>; 
 }
 
 const SettingsContext = createContext<SettingsContextProps | undefined>(undefined);
@@ -34,35 +39,62 @@ export const useSettings = () => {
 
 export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [settings, setSettings] = useState<Settings | null>(null);
+  const [loading, setLoading] = useState<boolean>(true); // Estado de carga
+  const [error, setError] = useState<string | null>(null); // Estado de error
 
-  // Cargar datos de la API
+  const { isAuthenticated, loadingAuth } = useAuth(); // Usa useAuth para acceder al estado de autenticación
+
+  // Función para obtener los settings actualizados desde el backend
+  const fetchUpdatedSettings = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Token no encontrado. No estás autenticado.');
+      }
+
+      const response = await axios.get(`${URL_API}/settings`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setSettings(response.data);
+    } catch (error: any) {
+      console.error('Error al obtener los settings actualizados:', error);
+      setError('Error al actualizar los settings');
+    }
+  };
+
+  // Cargar los datos iniciales solo si el usuario está autenticado
   useEffect(() => {
     const fetchSettingsData = async () => {
+      if (!isAuthenticated || loadingAuth) return; // Solo ejecuta si el usuario está autenticado
+
       try {
         const token = localStorage.getItem('token');
-  
         if (!token) {
           throw new Error('Token no encontrado. No estás autenticado.');
         }
-  
+
         const response = await axios.get(`${URL_API}/settings`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-  
+
         setSettings(response.data);
       } catch (error: any) {
-        console.error("Detalles del error:", error.response?.data);
+        setError('Error al cargar los datos de configuración');
+        console.error('Detalles del error:', error.response?.data || error.message);
+      } finally {
+        setLoading(false); // Finaliza la carga, haya éxito o error
       }
     };
-  
+
     fetchSettingsData();
-  }, []);
-  
+  }, [isAuthenticated, loadingAuth]); // Ejecuta solo cuando isAuthenticated y loadingAuth cambien
 
   return (
-    <SettingsContext.Provider value={{ settings, setSettings }}>
+    <SettingsContext.Provider value={{ settings, setSettings, loading, error, fetchUpdatedSettings }}>
       {children}
     </SettingsContext.Provider>
   );

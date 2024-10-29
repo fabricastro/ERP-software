@@ -48,6 +48,7 @@ class ArticleService extends BaseService {
     providerId?: number;
     observations?: string;
     stock?: number;
+    discount?: number;
   }) {
     return this.patch(`/article/${id}`, data);
   }

@@ -13,7 +13,6 @@ export const Salesdocs = () => {
                 <Buttons title={'Agregar Presupuesto'} to={'/salesdocs/add_salesdocs'} />
             </div>
             <div className="py-10 flex flex-col gap-5">
-                <h3>Lista de Presupuestos</h3>
                 <SalesDocsList />
             </div>
         </DefaultLayout>
