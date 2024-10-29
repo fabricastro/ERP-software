@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import TableThree from "../../components/Tables/TableThree"; // Importa la tabla reutilizable
 import { articleService } from "../../services/ArticleService";
 import { MdEdit } from "react-icons/md";
-import { FaTrash } from "react-icons/fa";
+import { FaEye, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import Alert from '../../pages/UiElements/Alerts';
 
@@ -86,6 +86,7 @@ const ArticleList: React.FC = () => {
 
   const handleActions = (article: Article) => (
     <>
+      <button onClick={() => handleEdit(article.id)} className="hover:text-primary text-[25px]"><FaEye /></button>
       <button onClick={() => handleEdit(article.id)} className="hover:text-primary text-[25px]"><MdEdit /></button>
       <button onClick={() => handleDelete(article.id.toString())} className="hover:text-danger text-[20px]"><FaTrash /></button>
     </>

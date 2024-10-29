@@ -1,9 +1,11 @@
 {
     "main": "Principal",
-    "bill": "Facturas",
     "billGen": "Generar Factura",
     "salesdocs":{
       "title":"Presupuestos"
+    },
+    "bill":{
+      "title":"Facturas"
     },
     "routes": {
       "bill":"Facturas",

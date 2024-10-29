@@ -87,8 +87,8 @@ function App() {
         {/* Rutas protegidas */}
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<ECommerce />} />
-          <Route path="/salesdocs" element={<Salesdocs />} />
-          <Route path="/salesdocs/add_salesdocs" element={<SalesdocsAdd mode='add' />} />
+          <Route path="/budget" element={<Salesdocs />} />
+          <Route path="/budget/add_salesdocs" element={<SalesdocsAdd mode='add' />} />
           <Route path='/salesdocs/edit/:id' element={<SalesdocsAdd mode='edit' />} />
           <Route path="/customer" element={<Customer />} />
           <Route path="/customer/add" element={<CustomerForm viewType='add' />} />
@@ -98,7 +98,7 @@ function App() {
           <Route path="/provider/add" element={<ProviderForm viewType='add' />} />
           <Route path="/provider/view/:id" element={<ProviderForm viewType='view' />} />
           <Route path="/provider/edit/:id" element={<ProviderForm viewType='edit' />} />
-          <Route path="/bill" element={<Bill />} />
+          <Route path="/bill" element={<Salesdocs />} />
           <Route path="/article" element={<Article />} />
           <Route path="/article/add_article" element={<ArticleAdd />} />
           <Route path="/article/edit/:id" element={<ArticleEdit />} />

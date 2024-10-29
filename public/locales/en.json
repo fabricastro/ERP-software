@@ -8,6 +8,9 @@
     "salesdocs":{
       "title":"Salesdocs"
     },
+    "bill":{
+      "title":"Bills"
+    }
     "routes": {
       "salesdocs":"Salesdocs",
       "add_salesdocs": "Add Salesdoc",

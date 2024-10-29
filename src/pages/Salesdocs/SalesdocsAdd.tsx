@@ -152,7 +152,7 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
 
         // Agregar leyenda en el centro superior
         doc.setFontSize(12);
-        doc.text("Boleta no válida como factura", pageWidth / 2, 10, { align: "center" });
+        doc.text("Documento no válido como factura", pageWidth / 2, 10, { align: "center" });
 
         // Cargar el logo de la empresa
         const img = new Image();
@@ -179,12 +179,15 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
             doc.addImage(img, 'PNG', 10, 20, finalWidth, finalHeight);
 
             // Agregar datos de la empresa a la derecha del logo
+            doc.setFontSize(16);
+            doc.setFillColor(28, 36, 52);
+            const businessInfoX = pageWidth - 80;
+            doc.text(`${settings.bussinessName || 'N/A'}`, businessInfoX, 20);
             doc.setFontSize(10);
-            doc.text(`${settings.bussinessName || 'N/A'}`, pageWidth - 60, 20);
-            doc.text(`Dirección: ${settings.address || 'N/A'}`, pageWidth - 60, 25);
-            doc.text(`Teléfono: ${settings.phone || 'N/A'}`, pageWidth - 60, 30);
-            doc.text(`Email: ${settings.email || 'N/A'}`, pageWidth - 60, 35);
-            doc.text(`Web: ${settings.website || 'N/A'}`, pageWidth - 60, 40);
+            doc.text(`Dirección: ${settings.address || 'N/A'}`, businessInfoX, 25);
+            doc.text(`Teléfono: ${settings.phone || 'N/A'}`, businessInfoX, 30);
+            doc.text(`Email: ${settings.email || 'N/A'}`, businessInfoX, 35);
+            doc.text(`Web: ${settings.website || 'N/A'}`, businessInfoX, 40);
 
             // Dibujar una línea debajo del encabezado
             doc.setLineWidth(0.1);
@@ -192,23 +195,26 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
 
             // Agregar datos del cliente
             doc.setFontSize(10);
-            doc.text(`Cliente: ${clientName}`, 10, 50);
-            doc.text(`Dirección: ${clientAddress}`, 10, 55);
-            doc.text(`Teléfono: ${clientPhone}`, 10, 60);
-            doc.text(`CUIT: ${clientCUIT}`, 10, 65);
+            doc.text(`Cliente:`, 10, 50);
+            doc.setFontSize(16);
+            doc.text(`${clientName}`, 10, 55);
+            doc.setFontSize(10);
+            doc.text(`Dirección: ${clientAddress}`, 10, 60);
+            doc.text(`Teléfono: ${clientPhone}`, 10, 65);
+            doc.text(`CUIT: ${clientCUIT}`, 10, 70);
 
             // Agregar datos de la boleta
-            doc.text(`Invoice #: ${invoiceNumber}`, pageWidth - 60, 50);
-            doc.text(`Payment Date: ${invoiceDate}`, pageWidth - 60, 55);
-            doc.text(`Invoice Date: ${validityDate}`, pageWidth - 60, 60);
+            doc.text(`Presupuesto Nº: ${invoiceNumber}`, businessInfoX, 50);
+            doc.text(`Fecha de Emisión: ${invoiceDate}`, businessInfoX, 55);
+            doc.text(`Validez: ${validityDate}`, businessInfoX, 60);
 
             // Generar la tabla de ítems
-            const tableColumn = ["#", "Descripción", "Cantidad", "Precio Unit.", "Bonif %", "IVA %", "Subtotal"];
+            const tableColumn = ["Código", "Cantidad", "Descripción", "Precio Unit.", "Bonif %", "IVA %", "Subtotal"];
             const tableRows = items.map((item, index) => [
-                index + 1,
-                item.description || 'Sin descripción',
+                item.code || index + 1,
                 item.quantity || 0,
-                Number(item.unitPrice ?? 0).toFixed(2), // Asegúrate de convertir a número antes de usar toFixed
+                item.description || 'Sin descripción',
+                Number(item.unitPrice ?? 0).toFixed(2),
                 item.discount ?? 0,
                 item.iva ?? 0,
                 (Number(item.unitPrice ?? 0) * item.quantity * (1 - (item.discount ?? 0) / 100)).toFixed(2)
@@ -217,26 +223,50 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
             doc.autoTable({
                 head: [tableColumn],
                 body: tableRows,
-                startY: 70,
+                startY: 75,
                 margin: { bottom: 30 },
+                theme: 'grid',
             });
 
             // Agregar el total y observaciones después de la tabla
             const finalY = doc.previousAutoTable.finalY || 70;
 
-            
-            doc.setLineWidth(0.5); // Set the line width to a small value for a thin line
-            doc.line(10, finalY + 5, 45 - 10, finalY + 5); // Draw a line across the page
+            // Línea debajo de la tabla de items
+            doc.setLineWidth(0.1);
+            doc.line(10, finalY + 5, pageWidth - 10, finalY + 5);
 
-           
+            // Resaltar el total en la esquina inferior derecha
             doc.setFontSize(12);
-            doc.text(`Total: $${calculateTotal().toFixed(2)}`, 160, finalY + 20);
+            doc.setDrawColor(0);
+            doc.setFillColor(255, 255, 255);
+            doc.rect(pageWidth - 70, finalY + 15, 60, 10, 'F'); // Rectángulo de fondo blanco para el total
+            doc.autoTable({
+                head: [['Total']],
+                body: [['$' + calculateTotal().toFixed(2)]],
+                startY: finalY + 15,
+                margin: { left: pageWidth - 55 }, // Posición del total en la parte derecha
+                theme: 'grid',
+                styles: { halign: 'right', fontSize: 12, cellPadding: 3 },
+                tableWidth: 40,
+            });
 
-
-            doc.setFontSize(10);
-            doc.text("Observaciones:", 10, finalY + 20);
-            doc.setFontSize(9);
-            doc.text(observations || 'N/A', 10, finalY + 25, { maxWidth: pageWidth - 20 });
+            // Observaciones
+            doc.setFontSize(12);
+            doc.setDrawColor(0);
+            doc.setFillColor(255, 255, 255);
+            doc.autoTable({
+                head: [['Observaciones']],
+                body: [[observations || 'N/A']],
+                startY: finalY + 60,
+                margin: { left: 15 }, // Posición alineada a la izquierda
+                theme: 'grid',
+                styles: {
+                    halign: 'left', // Alinear el texto a la izquierda dentro de la celda
+                    fontSize: 10,
+                    cellPadding: 2, // Añadir padding para mejorar la presentación
+                },
+                tableWidth: pageWidth - 30, // Ajustar el ancho de la tabla al ancho de la página
+            });
 
             // Numeración de las páginas
             const totalPages = doc.internal.getNumberOfPages();

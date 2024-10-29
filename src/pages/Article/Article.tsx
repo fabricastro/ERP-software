@@ -12,7 +12,6 @@ export const Article = () => {
                     <Buttons title={'Gestionar Cateogorias'} to={'/article/category'} bgColor="bg-[#4285F4]" />
                 </div>
                 <div className="py-10 flex flex-col gap-5">
-                    <h3>Listado de Clientes</h3>
                     <ArticleList />
                 </div>
         </DefaultLayout>
