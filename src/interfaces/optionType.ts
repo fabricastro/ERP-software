@@ -4,4 +4,5 @@ export interface OptionType {
     phone?: string;
     cuit?: string;
     address?: string;
+    clientEmail?: string;
   }
