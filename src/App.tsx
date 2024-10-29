@@ -128,9 +128,10 @@ function App() {
           <Route path="/tables" element={<Tables />} />
           <Route path="/chart" element={<Chart />} />
           <Route path="/ui/buttons" element={<Buttons />} />
+      <WelcomeModal isOpen={showWelcomeModal} onClose={() => setShowWelcomeModal(false)} onGoToSettings={goToSettings} />    
         </Route>
       </Routes>
-      <WelcomeModal isOpen={showWelcomeModal} onClose={() => setShowWelcomeModal(false)} onGoToSettings={goToSettings} />    </>
+        </>
   );
 }
 
