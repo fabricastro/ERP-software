@@ -37,9 +37,13 @@ function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Mover declaración de estados fuera de cualquier hook o condicional
-  const [alert, setAlert] = useState<{ type: 'success' | 'warning' | 'error'; title: string; message: string } | null>(null);
-  const [showWelcomeModal, setShowWelcomeModal] = useState(!isBusinessInfoComplete());
+   // Mover declaración de estados fuera de cualquier hook o condicional
+   const [alert, setAlert] = useState<{ type: 'success' | 'warning' | 'error'; title: string; message: string } | null>(null);
+   const [showWelcomeModal, setShowWelcomeModal] = useState(!isBusinessInfoComplete());
+ 
+   // Rutas públicas para verificar si se debe mostrar el modal
+   const publicRoutes = ['/signin', '/signup', '/confirm', '/auth/confirmemail'];
+   const isPublicRoute = publicRoutes.includes(location.pathname);
 
   // Verifica si el token ha expirado
   useEffect(() => {
@@ -128,10 +132,12 @@ function App() {
           <Route path="/tables" element={<Tables />} />
           <Route path="/chart" element={<Chart />} />
           <Route path="/ui/buttons" element={<Buttons />} />
-      <WelcomeModal isOpen={showWelcomeModal} onClose={() => setShowWelcomeModal(false)} onGoToSettings={goToSettings} />    
         </Route>
       </Routes>
-        </>
+      {!isPublicRoute && (
+        <WelcomeModal isOpen={showWelcomeModal} onClose={() => setShowWelcomeModal(false)} onGoToSettings={goToSettings} />
+      )}
+    </>
   );
 }
 
