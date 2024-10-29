@@ -43,7 +43,16 @@ const TableThree: React.FC<TableProps> = ({ data, columns, actions }) => {
                 <tr key={index} className="hover:bg-gray-100">
                   {columns.map((column) => (
                     <td key={column.key} className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      {item[column.key]}
+                      {column.key === 'category' && item.category ? (
+                        <span
+                          className="px-3 py-1 rounded-full text-white text-sm"
+                          style={{ backgroundColor: item.category.color }}
+                        >
+                          {item.category.name}
+                        </span>
+                      ) : (
+                        item[column.key]
+                      )}
                     </td>
                   ))}
                   {actions && (

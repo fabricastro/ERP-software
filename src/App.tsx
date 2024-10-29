@@ -19,23 +19,21 @@ import { Provider } from './pages/Provider/Provider';
 import { Bill } from './pages/Bill/Bill';
 import { Customer } from './pages/Customer/Customer';
 import { Article } from './pages/Article/Article';
-import { ArticleAdd } from './pages/Article/ArticleAdd';
 import  SalesdocsAdd  from './pages/Salesdocs/SalesdocsAdd';
 import { Confirm } from './pages/Authentication/Confirm';
 import { ConfirmEmail } from './pages/Authentication/ConfirmEmail';
 import Alert from './pages/UiElements/Alerts';
 import { Category } from './pages/Category/Category';
 import { CategoryAdd } from './pages/Category/CategoryAdd';
-import ArticleEdit from './pages/Article/ArticleEdit';
 import CategoryEdit from './pages/Category/CategoryEdit';
 import { isTokenExpired } from './utils/token';
 import { SettingsProvider, useSettings } from './context/SettingsContext';
 import { ProviderForm } from './pages/Provider/ProviderForm';
 import { CustomerForm } from './pages/Customer/CustomerForm';
-
+import { ArticleForm } from './pages/Article/ArticleForm';
 
 function App() {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const {settings} = useSettings();
   const navigate = useNavigate();
   const location = useLocation();
@@ -100,8 +98,9 @@ function App() {
           <Route path="/provider/edit/:id" element={<ProviderForm viewType='edit' />} />
           <Route path="/bill" element={<Bill />} />
           <Route path="/article" element={<Article />} />
-          <Route path="/article/add_article" element={<ArticleAdd />} />
-          <Route path="/article/edit/:id" element={<ArticleEdit />} />
+          <Route path="/article/add" element={<ArticleForm viewType='add' />} />
+          <Route path="/article/view/:id" element={<ArticleForm viewType='view' />} />
+          <Route path="/article/edit/:id" element={<ArticleForm viewType='edit' />} />
           <Route path='/article/category' element={<Category />} />
           <Route path='/article/category/add_category' element={<CategoryAdd />} />
           <Route path="/article/category/edit/:id" element={<CategoryEdit />} />

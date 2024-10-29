@@ -7,19 +7,7 @@ class CustomerService extends BaseService {
     super(import.meta.env.VITE_API_URL); 
   }
 
-  async addCustomer(data: {
-    type: string;
-    name: string;
-    cuit: string;
-    fiscalAddress: string;
-    postalCode: string;
-    community: string;
-    province: string;
-    country: string;
-    phone: string;
-    email: string;
-    web?: string;
-  }) {
+  async addCustomer(data: Customer) {
     return this.post('/customer', data);
   }
 

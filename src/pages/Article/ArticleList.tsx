@@ -1,19 +1,12 @@
 import React, { useEffect, useState } from "react";
-import TableThree from "../../components/Tables/TableThree"; // Importa la tabla reutilizable
+import TableThree from "../../components/Tables/TableThree";
 import { articleService } from "../../services/ArticleService";
 import { MdEdit } from "react-icons/md";
-import { FaTrash } from "react-icons/fa";
+import { FaEye, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import Alert from '../../pages/UiElements/Alerts';
-
-interface Article {
-  id: number;
-  type: string;
-  name: string;
-  stock: number;
-  unitPrice: number;
-  description: string;
-}
+import { Article } from "../../interfaces/article";
+import ConfirmDialog from "../../components/ConfirmDialog"; // Asegúrate de importar el componente de confirmación
 
 const ArticleList: React.FC = () => {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -21,83 +14,82 @@ const ArticleList: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const [alert, setAlert] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{ isOpen: boolean; idToDelete: string | null }>({ isOpen: false, idToDelete: null });
 
-  // Estados para paginación y orden
-  const [page, setPage] = useState<number>(1);
-  const [limit, setLimit] = useState<number>(100); // Fijamos el límite a 100 como en el ejemplo
-  const [order, setOrder] = useState<{ column: string; typeOrder: 'ASC' | 'DESC' }>({
-    column: 'name',
-    typeOrder: 'ASC',
-  });
-
-  // Cargar los artículos
   useEffect(() => {
     const fetchArticles = async () => {
       setLoading(true);
       try {
-        const response = await articleService.findArticles(page, limit);
-  
-        console.log('Respuesta completa de la API:', response);
-  
+        const response = await articleService.findArticles(1, 100);
         if (response && response.items) {
           setArticles(response.items);
         } else {
           throw new Error('Estructura de respuesta inesperada');
         }
-  
-        setLoading(false);
       } catch (err: any) {
-        console.error('Error en la solicitud:', err); // Registro de error para depuración
         setError('Error al cargar los artículos');
+      } finally {
         setLoading(false);
       }
     };
-  
     fetchArticles();
-  }, [page, limit]);
-  
+  }, []);
 
-
+  const handleView = (id: number) => navigate(`/article/view/${id}`);
+  const handleEdit = (id: number) => navigate(`/article/edit/${id}`);
 
   const handleDelete = async (id: string) => {
-    const confirmDelete = window.confirm('¿Estás seguro de que deseas eliminar este artículo?');
-    if (confirmDelete) {
-      try {
-        await articleService.deleteArticle(id);
-        setAlert({ type: 'success', message: 'Artículo eliminado con éxito' });
-        setArticles((prev) => prev.filter((article) => article.id !== Number(id)));
-      } catch (error) {
-        setAlert({ type: 'error', message: 'Error al eliminar el artículo' });
-      }
+    try {
+      await articleService.deleteArticle(id);
+      setAlert({ type: 'success', message: 'Artículo eliminado con éxito' });
+      setArticles((prev) => prev.filter((article) => article.id !== Number(id)));
+    } catch {
+      setAlert({ type: 'error', message: 'Error al eliminar el artículo' });
     }
   };
 
-  const columns = [
-    { key: "type", label: "Tipo" },
-    { key: "name", label: "Nombre" },
-    { key: "stock", label: "Stock" },
-    { key: "unitPrice", label: "Precio Unitario" },
-    { key: "description", label: "Descripción" },
-  ];
-
-  const handleEdit = (id: number) => {
-    navigate(`/article/edit/${id}`);
+  const openConfirmDialog = (id: string) => setConfirmDialog({ isOpen: true, idToDelete: id });
+  
+  const confirmDelete = () => {
+    if (confirmDialog.idToDelete !== null) {
+      handleDelete(confirmDialog.idToDelete);
+      setConfirmDialog({ isOpen: false, idToDelete: null });
+    }
   };
 
   const handleActions = (article: Article) => (
     <>
+      <button onClick={() => handleView(article.id)} className="hover:text-danger text-[20px]"><FaEye /></button>
       <button onClick={() => handleEdit(article.id)} className="hover:text-primary text-[25px]"><MdEdit /></button>
-      <button onClick={() => handleDelete(article.id.toString())} className="hover:text-danger text-[20px]"><FaTrash /></button>
+      <button onClick={() => openConfirmDialog(article.id.toString())} className="hover:text-danger text-[20px]"><FaTrash /></button>
     </>
   );
 
   if (loading) return <p>Cargando artículos...</p>;
   if (error) return <p>{error}</p>;
 
+  const columns = [
+    { key: "type", label: "Tipo" },
+    { key: "name", label: "Nombre" },
+    { key: "category", label: "Categoría"},
+    { key: "stock", label: "Stock" },
+    { key: "unitPrice", label: "Precio Unitario" },
+    { key: "description", label: "Descripción" },
+  ];
+
+  console.log(articles);
   return (
     <div>
       {alert && <Alert type={alert.type} title={alert.type === 'success' ? 'Éxito' : 'Error'} message={alert.message} />}
       <TableThree data={articles} columns={columns} actions={handleActions} />
+      {confirmDialog.idToDelete !== null && (
+        <ConfirmDialog
+          title="Confirmar Eliminación"
+          message="¿Estás seguro de que deseas eliminar este artículo?"
+          onConfirm={confirmDelete}
+          closeModal={() => setConfirmDialog({ isOpen: false, idToDelete: null })}
+        />
+      )}
     </div>
   );
 };

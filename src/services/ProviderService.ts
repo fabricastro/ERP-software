@@ -7,19 +7,7 @@ class ProviderService extends BaseService {
     super(import.meta.env.VITE_API_URL); 
   }
 
-  async addProvider(data: {
-    type: string;
-    name: string;
-    cuit: string;
-    fiscalAddress: string;
-    postalCode: string;
-    community: string;
-    province: string;
-    country: string;
-    phone: string;
-    email: string;
-    web?: string;
-  }) {
+  async addProvider(data: Provider): Promise<Provider> {
     return this.post('/provider', data);
   }
 

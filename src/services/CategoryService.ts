@@ -1,3 +1,4 @@
+import { Category } from '../interfaces/category';
 import { BaseService } from './BaseService';
 
 class CategoryService extends BaseService {
@@ -6,12 +7,12 @@ class CategoryService extends BaseService {
   }
 
   // Método para agregar una categoría
-  async addCategory(data: { name: string; color: string }) {
+  async addCategory(data: { name: string; color: string }): Promise<Category> {
     return this.post('/category', data);
   }
 
   // Método para obtener todas las categorías
-  async getAllCategories() {
+  async getAllCategories(): Promise<Category[]> {
     return this.get('/category');
   
   }
@@ -26,7 +27,7 @@ class CategoryService extends BaseService {
     return this.patch(`/category/${id}`, data);
   }
 
-  async deleteCategory(id: string) {
+  async deleteCategory(id: number) {
     return this.delete(`/category/${id}`);
   }
 }
