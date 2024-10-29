@@ -41,8 +41,6 @@ const SalesDocsList: React.FC<SalesdocsAddProps> = ({typeSalesdocs}) => {
         const order = { column: 'date', typeOrder: 'DESC' };
         const salesDocsResponse : any = await salesDocsService.findIn('salesDocs', filter, order, 1, 100);
         
-        console.log(salesDocsResponse);
-
         const salesDocsWithNames = salesDocsResponse.items.map((doc: SalesDoc) => {
           const formattedDate = new Date(doc.date).toLocaleDateString('es-AR', {
             year: 'numeric',

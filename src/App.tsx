@@ -18,7 +18,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { Provider } from './pages/Provider/Provider';
 import { Customer } from './pages/Customer/Customer';
 import { Article } from './pages/Article/Article';
-import  SalesdocsAdd  from './pages/Salesdocs/SalesdocsAdd';
+import SalesdocsAdd from './pages/Salesdocs/SalesdocsAdd';
 import { Confirm } from './pages/Authentication/Confirm';
 import { ConfirmEmail } from './pages/Authentication/ConfirmEmail';
 import Alert from './pages/UiElements/Alerts';
@@ -28,15 +28,18 @@ import { SettingsProvider, useSettings } from './context/SettingsContext';
 import { ProviderForm } from './pages/Provider/ProviderForm';
 import { CustomerForm } from './pages/Customer/CustomerForm';
 import { ArticleForm } from './pages/Article/ArticleForm';
-import { type } from './../node_modules/jspdf-autotable/dist/index.d';
-
+import WelcomeModal from './components/WelcomeModal';
 
 function App() {
-  const {logout, loadingAuth } = useAuth(); // Usa isAuthenticated y loadingAuth
-  const { settings } = useSettings(); // Usa el estado de loading desde el SettingsContext
+  const { isBusinessInfoComplete } = useSettings();
+  const { logout, loadingAuth } = useAuth();
+  const { settings } = useSettings();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Mover declaración de estados fuera de cualquier hook o condicional
   const [alert, setAlert] = useState<{ type: 'success' | 'warning' | 'error'; title: string; message: string } | null>(null);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(!isBusinessInfoComplete());
 
   // Verifica si el token ha expirado
   useEffect(() => {
@@ -48,7 +51,7 @@ function App() {
     }
   }, [location.pathname, logout, navigate]);
 
-  // Cambia el título del documento una vez que los settings estén cargados
+  // Cambia el título del documento cuando `settings` se actualiza
   useEffect(() => {
     if (settings) {
       const companyName = settings.bussinessName;
@@ -56,12 +59,23 @@ function App() {
     }
   }, [settings]);
 
-  // Mantiene el scroll en la parte superior cuando cambias de ruta
+  // Mantiene el scroll en la parte superior cuando cambia la ruta
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  // Espera a que loadingAuth y settingsLoading terminen antes de mostrar el contenido
+  // Comprueba si la información de la empresa está completa cuando `isBusinessInfoComplete` cambia
+  useEffect(() => {
+    setShowWelcomeModal(!isBusinessInfoComplete());
+  }, [isBusinessInfoComplete]);
+
+  // Función para cerrar el modal
+  const goToSettings = () => {
+    setShowWelcomeModal(false);
+    navigate('/settings');
+  };
+
+  // Espera a que termine `loadingAuth` antes de mostrar el contenido
   if (loadingAuth) {
     return <Loader />;
   }
@@ -85,27 +99,27 @@ function App() {
         {/* Rutas protegidas */}
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<ECommerce />} />
-          <Route path="/budget" element={<Salesdocs typeSalesdocs='budget' />} />
-          <Route path="/budget/add_budget" element={<SalesdocsAdd mode='add' typeSalesdocs='presupuesto' />} />
-          <Route path='/budget/edit/:id' element={<SalesdocsAdd mode='edit' typeSalesdocs='presupuesto' />} />
-          <Route path='/budget/view/:id' element={<SalesdocsAdd mode='view' typeSalesdocs='presupuesto' />} />
+          <Route path="/budget" element={<Salesdocs typeSalesdocs="budget" />} />
+          <Route path="/budget/add_budget" element={<SalesdocsAdd mode="add" typeSalesdocs="presupuesto" />} />
+          <Route path="/budget/edit/:id" element={<SalesdocsAdd mode="edit" typeSalesdocs="presupuesto" />} />
+          <Route path="/budget/view/:id" element={<SalesdocsAdd mode="view" typeSalesdocs="presupuesto" />} />
           <Route path="/customer" element={<Customer />} />
-          <Route path="/customer/add" element={<CustomerForm viewType='add' />} />
-          <Route path="/customer/view/:id" element={<CustomerForm viewType='view' />} />
-          <Route path="/customer/edit/:id" element={<CustomerForm viewType='edit' />} />
+          <Route path="/customer/add" element={<CustomerForm viewType="add" />} />
+          <Route path="/customer/view/:id" element={<CustomerForm viewType="view" />} />
+          <Route path="/customer/edit/:id" element={<CustomerForm viewType="edit" />} />
           <Route path="/provider" element={<Provider />} />
-          <Route path="/provider/add" element={<ProviderForm viewType='add' />} />
-          <Route path="/provider/view/:id" element={<ProviderForm viewType='view' />} />
-          <Route path="/provider/edit/:id" element={<ProviderForm viewType='edit' />} />
-          <Route path="/bill" element={<Salesdocs typeSalesdocs='bill' />} />
-          <Route path="/bill/add_bill" element={<SalesdocsAdd mode='add' typeSalesdocs='factura' />} />
-          <Route path='/bill/edit/:id' element={<SalesdocsAdd mode='edit' typeSalesdocs='factura' />} />
-          <Route path='/bill/view/:id' element={<SalesdocsAdd mode='view' typeSalesdocs='factura' />} />
+          <Route path="/provider/add" element={<ProviderForm viewType="add" />} />
+          <Route path="/provider/view/:id" element={<ProviderForm viewType="view" />} />
+          <Route path="/provider/edit/:id" element={<ProviderForm viewType="edit" />} />
+          <Route path="/bill" element={<Salesdocs typeSalesdocs="bill" />} />
+          <Route path="/bill/add_bill" element={<SalesdocsAdd mode="add" typeSalesdocs="factura" />} />
+          <Route path="/bill/edit/:id" element={<SalesdocsAdd mode="edit" typeSalesdocs="factura" />} />
+          <Route path="/bill/view/:id" element={<SalesdocsAdd mode="view" typeSalesdocs="factura" />} />
           <Route path="/article" element={<Article />} />
-          <Route path="/article/add" element={<ArticleForm viewType='add' />} />
-          <Route path="/article/view/:id" element={<ArticleForm viewType='view' />} />
-          <Route path="/article/edit/:id" element={<ArticleForm viewType='edit' />} />
-          <Route path='/article/category' element={<Category />} />
+          <Route path="/article/add" element={<ArticleForm viewType="add" />} />
+          <Route path="/article/view/:id" element={<ArticleForm viewType="view" />} />
+          <Route path="/article/edit/:id" element={<ArticleForm viewType="edit" />} />
+          <Route path="/article/category" element={<Category />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/profile" element={<Profile />} />
@@ -116,7 +130,7 @@ function App() {
           <Route path="/ui/buttons" element={<Buttons />} />
         </Route>
       </Routes>
-    </>
+      <WelcomeModal isOpen={showWelcomeModal} onClose={() => setShowWelcomeModal(false)} onGoToSettings={goToSettings} />    </>
   );
 }
 

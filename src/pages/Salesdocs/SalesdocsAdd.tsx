@@ -82,8 +82,8 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
                     customer.name.toLowerCase().includes(inputValue.toLowerCase())
                 )
                 .map((customer) => ({
-                    address: customer.fiscalAddress as string,
                     value: customer.id as number,
+                    address: customer.fiscalAddress as string,
                     label: customer.name as string,
                     phone: customer.phone as string,
                     cuit: customer.cuit as string
@@ -131,7 +131,7 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
     const handleCustomerChange = (selectedOption: OptionType | null) => {
         setCustomerId(selectedOption);
         setClientName(selectedOption?.label);
-        setClientAddress(selectedOption?.fiscalAddress);
+        setClientAddress(selectedOption?.address);
         setClientPhone(selectedOption?.phone);
         setClientCUIT(selectedOption?.cuit);
     };

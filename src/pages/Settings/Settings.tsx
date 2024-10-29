@@ -40,6 +40,11 @@ const Settings = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [enteredPassword, setEnteredPassword] = useState('');
 
+   // Validación de URL de imagenes
+   const isImageURLValid = (url: string) => {
+    return /\.(webp|png|jpg)$/i.test(url);
+  };
+  
   const validateForm = () => {
     const isEmailValid = email.trim() !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     const isBusinessNameValid = name.trim() !== '';
@@ -258,7 +263,7 @@ const Settings = () => {
                         onChange={(e) => setWebsite(e.target.value)}
                       />
                       <FormInput
-                        label="Logotipo"
+                        label="Logotipo (procura ingresar url de imagen con extensión .webp, .png o .jpg)"
                         type="text"
                         id="logo"
                         value={logo}

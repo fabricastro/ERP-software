@@ -24,6 +24,7 @@ interface SettingsContextProps {
   loading: boolean;
   error: string | null;
   fetchUpdatedSettings: () => Promise<void>; 
+  isBusinessInfoComplete: () => boolean;
 }
 
 const SettingsContext = createContext<SettingsContextProps | undefined>(undefined);
@@ -93,8 +94,14 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     fetchSettingsData();
   }, [isAuthenticated, loadingAuth]); // Ejecuta solo cuando isAuthenticated y loadingAuth cambien
 
+   // Verifica si los campos clave de Información empresarial están completos
+   const isBusinessInfoComplete = () => {
+    const { bussinessName, address, cuit, phone, email } = settings || {};
+    return bussinessName && address && cuit && phone && email;
+  };
+
   return (
-    <SettingsContext.Provider value={{ settings, setSettings, loading, error, fetchUpdatedSettings }}>
+    <SettingsContext.Provider value={{ settings, setSettings, loading, error, fetchUpdatedSettings, isBusinessInfoComplete  }}>
       {children}
     </SettingsContext.Provider>
   );

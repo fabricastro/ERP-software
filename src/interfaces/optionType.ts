@@ -3,5 +3,5 @@ export interface OptionType {
     label: string;
     phone?: string;
     cuit?: string;
-    fiscalAddress?: string;
+    address?: string;
   }
