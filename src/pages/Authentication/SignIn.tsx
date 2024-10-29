@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Loader from '../../common/Loader';
 import LogoDark from '/logohorizontal.png';
-import Logo from '../../images/logo/logo.svg';
+import Logo from '/logo-white.png';
 
 const SignIn: React.FC = () => {
   const [email, setEmail] = useState<string>('');

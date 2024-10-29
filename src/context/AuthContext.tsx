@@ -10,6 +10,7 @@ interface AuthContextProps {
   setUser: (user: any) => void;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  verifyPassword: (password: string) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -65,6 +66,16 @@ export const AuthProvider: React.FC = ({ children }) => {
     }
   };
 
+  const verifyPassword = async (password: string) => {
+    if (!user?.email) return false;
+    try {
+      await loginService({ email: user.email, password }); // Intenta autenticar con el email y password
+      return true; // Si tiene éxito, la contraseña es correcta
+    } catch {
+      return false; // Si falla, la contraseña es incorrecta
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -74,7 +85,7 @@ export const AuthProvider: React.FC = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, isAuthenticated, loadingAuth, login, logout }}>
+    <AuthContext.Provider value={{ user, setUser, isAuthenticated, loadingAuth, login, logout, verifyPassword }}>
       {children}
     </AuthContext.Provider>
   );
