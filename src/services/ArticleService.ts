@@ -21,35 +21,9 @@ class ArticleService extends BaseService {
   getById(id: any): Promise<Article> {
     return this.get(`/article/${id}`);
   }
-
-  // Método para filtrar artículos con `findIn`
-   findArticles(
-    filter: Record<string, any>,
-    page: number = 1,
-    limit: number = 10,
-    order: { column: string; typeOrder: 'ASC' | 'DESC' } = { column: 'name', typeOrder: 'ASC' }
-  ): Promise<Article[]> {
-    return this.findIn('article', filter, page, limit, order);
-  }
   
   // Método para actualizar un artículo
-  async updateArticle(id: any, data: {
-    type?: string;
-    categoryId?: number;
-    name?: string;
-    status?: string;
-    description?: string;
-    sku?: string;
-    barcode?: string;
-    internalCost?: number;
-    profitability?: number;
-    unitPrice?: number;
-    iva?: number;
-    providerId?: number;
-    observations?: string;
-    stock?: number;
-    discount?: number;
-  }) {
+  async updateArticle(id: any, data: Article) {
     return this.patch(`/article/${id}`, data);
   }
 

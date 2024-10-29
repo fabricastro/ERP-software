@@ -70,7 +70,8 @@ const ItemForm: React.FC<ItemFormProps> = ({ items, setItems }) => {
     const calculateSubtotal = (item: Item) => {
         const subtotalSinIVA = item.unitPrice * item.quantity;
         const subtotalConBonificacion = subtotalSinIVA - (subtotalSinIVA * (item.discount / 100));
-        return subtotalConBonificacion;
+        const subtotalConIVA = subtotalConBonificacion * (1 + item.iva / 100);
+        return subtotalConIVA;
     };
 
     const handleAddItem = () => {
@@ -201,7 +202,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ items, setItems }) => {
                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{item.unitPrice}</td>
                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{item.discount}</td>
                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{item.iva}</td>
-                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{(item.subtotal ?? 0).toFixed(2)}</td>
+                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{Number(item.subtotal ?? 0).toFixed(2)}</td>
                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                                     <button onClick={() => handleRemoveItem(index)}>Eliminar</button>
                                 </td>

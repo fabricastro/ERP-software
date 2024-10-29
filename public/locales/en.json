@@ -1,6 +1,5 @@
 {
     "main": "Main",
-    "bill": "Bills",
     "billGen": "Generate Bill",
     "customer":{
       "list":"Customer list"
@@ -10,11 +9,17 @@
     },
     "bill":{
       "title":"Bills"
-    }
+    },
     "routes": {
+      "budget":"Budget",
+      "add_budget": "Add Budget",
+      "edit_budget": "Edit Budget",
       "salesdocs":"Salesdocs",
       "add_salesdocs": "Add Salesdoc",
       "edit_salesdocs": "Edit Salesdoc",
+      "bill":"Bills",
+      "add_bill": "Add Bill",
+      "edit_bill": "Edit Bill",
       "dashboard": "Dashboard",
       "customer": "Customers",
       "add_customer": "Add Customer",

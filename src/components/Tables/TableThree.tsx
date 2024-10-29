@@ -4,6 +4,7 @@ import { LuSearchX } from "react-icons/lu";
 interface Column {
   key: string;
   label: string;
+  bgColor?: string;
 }
 
 interface TableProps {
@@ -11,8 +12,22 @@ interface TableProps {
   columns: Column[];
   actions?: (item: any) => React.ReactNode;
 }
+function getTextColor(backgroundColor) {
+  // Extrae el valor RGB del color de fondo
+  const color = backgroundColor.substring(1); // omitir '#'
+  const r = parseInt(color.substring(0, 2), 16);
+  const g = parseInt(color.substring(2, 4), 16);
+  const b = parseInt(color.substring(4, 6), 16);
+  // Calcular el brillo percibido
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+  // Si el fondo es claro, usa texto oscuro, si es oscuro, usa texto claro
+  return brightness > 155 ? '#000' : '#fff';
+}
 
 const TableThree: React.FC<TableProps> = ({ data, columns, actions }) => {
+  const getValue = (item: any, key?: string) => {
+    return key?.split('.').reduce((acc, part) => acc && acc[part], item);
+  };
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:p-5 xl:pb-1">
       <div className="max-w-full overflow-x-auto">
@@ -43,15 +58,18 @@ const TableThree: React.FC<TableProps> = ({ data, columns, actions }) => {
                 <tr key={index} className="hover:bg-gray-100">
                   {columns.map((column) => (
                     <td key={column.key} className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      {column.key === 'category' && item.category ? (
+                      {column.bgColor ? (
                         <span
-                          className="px-3 py-1 rounded-full text-white text-sm"
-                          style={{ backgroundColor: item.category.color }}
+                          style={{
+                            backgroundColor: getValue(item, column.bgColor),
+                            color: getTextColor(getValue(item, column.bgColor)),
+                          }}
+                          className="inline-block px-3 font-bold py-1 rounded-full text-sm"
                         >
-                          {item.category.name}
+                          {getValue(item, column.key)}
                         </span>
                       ) : (
-                        item[column.key]
+                        getValue(item, column.key)
                       )}
                     </td>
                   ))}

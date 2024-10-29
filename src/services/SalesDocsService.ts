@@ -10,7 +10,7 @@ class SalesDocsService extends BaseService {
   // Método para agregar una factura
   async addSalesDoc(data: {
     type: string;
-    customerId: number;
+    customerId?: number;
     state: string;
     paymentMethod: string;
     date: string;

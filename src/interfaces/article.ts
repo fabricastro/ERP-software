@@ -19,4 +19,6 @@ export interface Article extends Base {
   provider?: Provider;
   observations?: string;
   stock: number;
+  discount?: number;
+  subtotal?: number;
   }

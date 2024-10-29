@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import jsPDFInvoiceTemplate from 'jspdf-invoice-template';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { salesDocsService } from '../../services/SalesDocsService';
@@ -10,27 +9,30 @@ import DefaultLayout from './../../layout/DefaultLayout';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import { useSettings } from '../../context/SettingsContext';
 import FormInput from './../../components/Input/input';
-import { jsPDF } from 'jspdf';
 import ModalComponent from '../../components/ModalComponent';
 import CustomerFormFields from '../Customer/CustomerFormFields';
 import 'jspdf-autotable';
-
+import { PDFService } from '../../services/PDFService';
+import { Buttons } from '../../components/Buttons/Buttons';
+import SelectForm from '../../components/Input/select';
+import { OptionType } from '../../interfaces/optionType';
+import { Customer } from '../../interfaces/customer';
 interface SalesdocsAddProps {
-    mode: 'add' | 'edit';
+    mode: 'add' | 'edit' | 'view';
+    typeSalesdocs: 'presupuesto' | 'factura';
 }
 
-const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
+const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
     const navigate = useNavigate();
     const [invoiceNumber, setInvoiceNumber] = useState<number>(0);
     const [state, setState] = useState('Borrador');
     const [invoiceDate, setInvoiceDate] = useState('');
     const [validityDate, setValidityDate] = useState('');
-    const [customerId, setCustomerId] = useState<number | null>(null);
-    const [clientName, setClientName] = useState('');
-    const [clientAddress, setClientAddress] = useState('');
-    const [clientPhone, setClientPhone] = useState('');
-    const [clientCUIT, setClientCUIT] = useState('');
-    const [clientTaxStatus, setClientTaxStatus] = useState('Exento');
+    const [customerId, setCustomerId] = useState<OptionType | null>(null);
+    const [clientName, setClientName] = useState<string | undefined>('');
+    const [clientAddress, setClientAddress] = useState<string | undefined>('');
+    const [clientPhone, setClientPhone] = useState<string | undefined>('');
+    const [clientCUIT, setClientCUIT] = useState<string | undefined>('');
     const [paymentCondition, setPaymentCondition] = useState('Efectivo');
     const [observations, setObservations] = useState('');
     const [alert, setAlert] = useState<{ type: 'success' | 'error', message: string } | null>(null);
@@ -57,12 +59,10 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
     const [web, setWeb] = useState('');
 
     useEffect(() => {
-        const fetchCustomersAndInvoiceNumber = async () => {
+        const fetchInvoiceNumber = async () => {
             try {
-                const customerData = await customerService.getAll();
-                setCustomers(customerData);
                 if (mode === 'add') {
-                    setInvoiceNumber(Number(settings?.nextBudgetId));
+                    setInvoiceNumber(Number(typeSalesdocs === 'presupuesto' ? settings?.nextBudgetId : settings?.nextBillId));
                     console.log("modo add", settings?.nextBudgetId);
                 } else if (mode === 'edit' && id) {
                     loadSalesDocData(Number(id));
@@ -71,8 +71,34 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
                 console.error('Error al cargar los datos:', error);
             }
         };
-        fetchCustomersAndInvoiceNumber();
+        fetchInvoiceNumber();
     }, [mode, id]);
+
+    const loadCustomers = async (inputValue: string): Promise<OptionType[]> => {
+        try {
+            const fetchedCustomers = await customerService.getAll();
+            const filteredCustomers = fetchedCustomers
+                .filter((customer) =>
+                    customer.name.toLowerCase().includes(inputValue.toLowerCase())
+                )
+                .map((customer) => ({
+                    address: customer.fiscalAddress as string,
+                    value: customer.id as number,
+                    label: customer.name as string,
+                    phone: customer.phone as string,
+                    cuit: customer.cuit as string
+                }));
+            setCustomers(filteredCustomers);
+            return filteredCustomers;
+        } catch (error) {
+            console.error("Error al cargar los proveedores:", error);
+            return [];
+        }
+    };
+
+    useEffect(() => {
+        loadCustomers('');
+    }, []);
 
     const loadSalesDocData = async (docId: number) => {
         try {
@@ -83,13 +109,17 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
             setInvoiceDate(salesDocData.date);
             setValidityDate(salesDocData.validityDate);
             setCustomerId(salesDocData.customerId);
+            setCustomerId(
+                salesDocData.customerId && salesDocData.customer
+                    ? { value: salesDocData.customerId, label: salesDocData.customer.name }
+                    : null
+            );
             setObservations(salesDocData.observations);
             setItems(salesDocData.articles);
             setClientName(salesDocData.customer.name);
             setClientAddress(salesDocData.customer.fiscalAddress);
             setClientPhone(salesDocData.customer.phone);
             setClientCUIT(salesDocData.customer.cuit);
-            setClientTaxStatus(salesDocData.customer.taxStatus);
             console.log(salesDocData);
         } catch (error) {
             console.error("Error al cargar los datos del documento:", error);
@@ -98,18 +128,12 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
         }
     };
 
-    const handleCustomerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedCustomerId = Number(e.target.value);
-        setCustomerId(selectedCustomerId);
-
-        const selectedCustomer = customers.find(customer => customer.id === selectedCustomerId);
-        if (selectedCustomer) {
-            setClientName(selectedCustomer.name);
-            setClientAddress(selectedCustomer.fiscalAddress);
-            setClientPhone(selectedCustomer.phone);
-            setClientCUIT(selectedCustomer.cuit);
-            setClientTaxStatus('Exento');
-        }
+    const handleCustomerChange = (selectedOption: OptionType | null) => {
+        setCustomerId(selectedOption);
+        setClientName(selectedOption?.label);
+        setClientAddress(selectedOption?.fiscalAddress);
+        setClientPhone(selectedOption?.phone);
+        setClientCUIT(selectedOption?.cuit);
     };
 
     const calculateIVA = () => {
@@ -119,180 +143,60 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
 
     const calculateTotal = () => {
         if (!Array.isArray(items) || items.length === 0) {
-            return 0;
+            return { subtotalSinIVA: 0, totalConIVA: 0, iva: 0 };
         }
 
-        const net = items.reduce((acc, item) => {
+        // Calcular subtotal sin IVA
+        const subtotalSinIVA = items.reduce((acc, item) => {
             const subtotalConBonificacion = item.unitPrice * item.quantity * (1 - item.discount / 100);
             return acc + subtotalConBonificacion;
         }, 0);
 
-        return Math.round(net * 100) / 100;
-    };
+        // Calcular total con IVA
+        const totalConIVA = items.reduce((acc, item) => {
+            const subtotalConBonificacion = item.unitPrice * item.quantity * (1 - item.discount / 100);
+            const subtotalConIVA = subtotalConBonificacion * (1 + item.iva / 100);
+            return acc + subtotalConIVA;
+        }, 0);
 
-    const generatePDF = () => {
-        if (!settings || !settings.logo) {
-            console.error("Faltan datos de negocio o logo.");
-            return;
-        }
+        // Calcular IVA aplicando la diferencia entre total y subtotal
+        const iva = Math.round((totalConIVA - subtotalSinIVA) * 100) / 100;
 
-        if (!clientName || !clientAddress || !clientPhone || !clientCUIT) {
-            console.error("Faltan datos del cliente.");
-            return;
-        }
-
-        if (items.length === 0) {
-            console.error("No hay ítems en la factura.");
-            return;
-        }
-
-        const doc = new jsPDF();
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const pageHeight = doc.internal.pageSize.getHeight();
-
-        // Agregar leyenda en el centro superior
-        doc.setFontSize(12);
-        doc.text("Documento no válido como factura", pageWidth / 2, 10, { align: "center" });
-
-        // Cargar el logo de la empresa
-        const img = new Image();
-        img.src = settings.logo;
-
-        img.onload = () => {
-            // Ajustar el tamaño del logo manteniendo la proporción
-            const originalWidth = img.width;
-            const originalHeight = img.height;
-            const maxWidth = 60;
-            const maxHeight = 20;
-            let finalWidth = originalWidth;
-            let finalHeight = originalHeight;
-
-            if (originalWidth > maxWidth || originalHeight > maxHeight) {
-                const widthRatio = maxWidth / originalWidth;
-                const heightRatio = maxHeight / originalHeight;
-                const scale = Math.min(widthRatio, heightRatio);
-                finalWidth = originalWidth * scale;
-                finalHeight = originalHeight * scale;
-            }
-
-            // Agregar logo al PDF
-            doc.addImage(img, 'PNG', 10, 20, finalWidth, finalHeight);
-
-            // Agregar datos de la empresa a la derecha del logo
-            doc.setFontSize(16);
-            doc.setFillColor(28, 36, 52);
-            const businessInfoX = pageWidth - 80;
-            doc.text(`${settings.bussinessName || 'N/A'}`, businessInfoX, 20);
-            doc.setFontSize(10);
-            doc.text(`Dirección: ${settings.address || 'N/A'}`, businessInfoX, 25);
-            doc.text(`Teléfono: ${settings.phone || 'N/A'}`, businessInfoX, 30);
-            doc.text(`Email: ${settings.email || 'N/A'}`, businessInfoX, 35);
-            doc.text(`Web: ${settings.website || 'N/A'}`, businessInfoX, 40);
-
-            // Dibujar una línea debajo del encabezado
-            doc.setLineWidth(0.1);
-            doc.line(10, 45, pageWidth - 10, 45);
-
-            // Agregar datos del cliente
-            doc.setFontSize(10);
-            doc.text(`Cliente:`, 10, 50);
-            doc.setFontSize(16);
-            doc.text(`${clientName}`, 10, 55);
-            doc.setFontSize(10);
-            doc.text(`Dirección: ${clientAddress}`, 10, 60);
-            doc.text(`Teléfono: ${clientPhone}`, 10, 65);
-            doc.text(`CUIT: ${clientCUIT}`, 10, 70);
-
-            // Agregar datos de la boleta
-            doc.text(`Presupuesto Nº: ${invoiceNumber}`, businessInfoX, 50);
-            doc.text(`Fecha de Emisión: ${invoiceDate}`, businessInfoX, 55);
-            doc.text(`Validez: ${validityDate}`, businessInfoX, 60);
-
-            // Generar la tabla de ítems
-            const tableColumn = ["Código", "Cantidad", "Descripción", "Precio Unit.", "Bonif %", "IVA %", "Subtotal"];
-            const tableRows = items.map((item, index) => [
-                item.code || index + 1,
-                item.quantity || 0,
-                item.description || 'Sin descripción',
-                Number(item.unitPrice ?? 0).toFixed(2),
-                item.discount ?? 0,
-                item.iva ?? 0,
-                (Number(item.unitPrice ?? 0) * item.quantity * (1 - (item.discount ?? 0) / 100)).toFixed(2)
-            ]);
-
-            doc.autoTable({
-                head: [tableColumn],
-                body: tableRows,
-                startY: 75,
-                margin: { bottom: 30 },
-                theme: 'grid',
-            });
-
-            // Agregar el total y observaciones después de la tabla
-            const finalY = doc.previousAutoTable.finalY || 70;
-
-            // Línea debajo de la tabla de items
-            doc.setLineWidth(0.1);
-            doc.line(10, finalY + 5, pageWidth - 10, finalY + 5);
-
-            // Resaltar el total en la esquina inferior derecha
-            doc.setFontSize(12);
-            doc.setDrawColor(0);
-            doc.setFillColor(255, 255, 255);
-            doc.rect(pageWidth - 70, finalY + 15, 60, 10, 'F'); // Rectángulo de fondo blanco para el total
-            doc.autoTable({
-                head: [['Total']],
-                body: [['$' + calculateTotal().toFixed(2)]],
-                startY: finalY + 15,
-                margin: { left: pageWidth - 55 }, // Posición del total en la parte derecha
-                theme: 'grid',
-                styles: { halign: 'right', fontSize: 12, cellPadding: 3 },
-                tableWidth: 40,
-            });
-
-            // Observaciones
-            doc.setFontSize(12);
-            doc.setDrawColor(0);
-            doc.setFillColor(255, 255, 255);
-            doc.autoTable({
-                head: [['Observaciones']],
-                body: [[observations || 'N/A']],
-                startY: finalY + 60,
-                margin: { left: 15 }, // Posición alineada a la izquierda
-                theme: 'grid',
-                styles: {
-                    halign: 'left', // Alinear el texto a la izquierda dentro de la celda
-                    fontSize: 10,
-                    cellPadding: 2, // Añadir padding para mejorar la presentación
-                },
-                tableWidth: pageWidth - 30, // Ajustar el ancho de la tabla al ancho de la página
-            });
-
-            // Numeración de las páginas
-            const totalPages = doc.internal.getNumberOfPages();
-            for (let i = 1; i <= totalPages; i++) {
-                doc.setPage(i);
-                doc.setFontSize(10);
-                doc.text(`Página ${i} de ${totalPages}`, pageWidth - 30, pageHeight - 10);
-                // Footer con "Hecho por PALTA"
-                doc.text("Hecho por PALTA.", 10, pageHeight - 10);
-            }
-
-            // Guardar el PDF
-            doc.save(`Presupuesto_${clientName}.pdf`);
+        return {
+            subtotalSinIVA: Math.round(subtotalSinIVA * 100) / 100,
+            totalConIVA: Math.round(totalConIVA * 100) / 100,
+            iva
         };
     };
 
+    const generatePDF = () => {
+        if (!settings || !settings.logo || !clientName || !clientAddress || !clientPhone || !clientCUIT || items.length === 0) {
+            console.error("Faltan datos necesarios para generar el PDF.");
+            return;
+        }
+        console.log(typeSalesdocs);
+        PDFService.generatePDF(
+            settings,
+            { clientName, clientAddress, clientPhone, clientCUIT },
+            items,
+            typeSalesdocs,
+            invoiceNumber,
+            invoiceDate,
+            validityDate,
+            observations,
+            calculateTotal
+        );
 
-    const guardarFactura = async (e: React.FormEvent) => {
-        e.preventDefault();
+    };
+
+    const saveSalesDocs = async () => {
         setLoading(true);
 
         try {
             if (mode === 'edit' && id) {
                 await salesDocsService.updateSalesDoc(Number(id), {
-                    type: "presupuesto",
-                    customerId: customerId,
+                    type: typeSalesdocs,
+                    customerId: customerId?.value,
                     state,
                     paymentMethod: paymentCondition,
                     date: invoiceDate,
@@ -301,15 +205,15 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
                     observations,
                     net: items.reduce((acc, item) => acc + item.quantity * item.unitPrice, 0),
                     iva: calculateIVA(),
-                    amount: calculateTotal(),
+                    amount: totalConIVA,
                     articles: items
                 });
                 setAlert({ type: 'success', message: 'Documento actualizado con éxito' });
                 setLoading(false);
             } else if (mode === 'add') {
                 await salesDocsService.addSalesDoc({
-                    type: "presupuesto",
-                    customerId: customerId || 1,
+                    type: typeSalesdocs,
+                    customerId: customerId?.value,
                     state,
                     paymentMethod: paymentCondition,
                     date: invoiceDate,
@@ -318,12 +222,15 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
                     observations,
                     net: items.reduce((acc, item) => acc + item.quantity * item.unitPrice, 0),
                     iva: calculateIVA(),
-                    amount: calculateTotal(),
+                    amount: totalConIVA,
                     articles: items
                 });
                 setAlert({ type: 'success', message: 'Factura guardada con éxito' });
                 setTimeout(() => {
-                    navigate('/salesdocs');
+                    if (typeSalesdocs === 'factura')
+                        navigate('/bill');
+                    else
+                        navigate('/budget');
                 }, 2000);
                 await fetchUpdatedSettings();
             }
@@ -339,7 +246,7 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
 
     const handleAddCustomer = async () => {
         try {
-            const newCustomer = await customerService.addCustomer({
+            const newCustomer: Customer = await customerService.addCustomer({
                 type,
                 name,
                 cuit,
@@ -351,24 +258,44 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
                 phone,
                 email,
                 web,
+                id: 0
             });
 
             setAlert({ type: 'success', message: 'Cliente agregado con éxito' });
             setIsModalOpen(false);
+            setCustomerId({ value: newCustomer.id, label: newCustomer.name });
+            setCustomers(prevCustomers => [
+                ...prevCustomers,
+                { value: newCustomer.id, label: newCustomer.name }
+            ]);
 
-            const updatedCustomers = await customerService.getAll();
-            setCustomers(updatedCustomers);
-            setCustomerId(newCustomer.id);
+            setName('');
+            setCuit('');
+            setFiscalAddress('');
+            setPostalCode('');
+            setCommunity('');
+            setProvince('');
+            setCountry('Argentina');
+            setPhone('');
+            setEmail('');
+            setWeb('');
+
+            handleCloseModal();
         } catch (error) {
             setAlert({ type: 'error', message: 'Error al agregar el cliente. Inténtalo de nuevo.' });
         }
     };
-
+    const { subtotalSinIVA, totalConIVA, iva } = calculateTotal();
     return (
         <DefaultLayout>
-            <Breadcrumb pageName={mode === 'edit' ? t('routes.edit_salesdocs') : t('routes.add_salesdocs')} />
+            <Breadcrumb
+                pageName={
+                    mode === 'edit'
+                        ? t(`routes.edit_${typeSalesdocs === 'presupuesto' ? 'budget' : 'bill'}`)
+                        : t(`routes.add_${typeSalesdocs === 'presupuesto' ? 'budget' : 'bill'}`)
+                }
+            />
             <div className="flex flex-col gap-5.5">
-                <h1>{t('billGen')}</h1>
                 {loading && <p>Cargando...</p>}
                 {alert && (
                     <Alert
@@ -384,19 +311,16 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
                     <>
                         <div className='grid grid-cols-3 gap-5'>
                             <div>
-                                <FormInput
-                                    label='Selecciona un cliente:'
-                                    type="select"
-                                    id='customer'
-                                    value={customerId || ''}
-                                    options={customers.map((customer) => ({
-                                        label: customer.name,
-                                        value: customer.id
-                                    }))}
-                                    onChange={(e) => handleCustomerChange(e as React.ChangeEvent<HTMLSelectElement>)}
-                                    required={true}
+                                <SelectForm
+                                    label="Proveedor"
+                                    id="customerId"
+                                    value={customerId}
+                                    options={customers}
+                                    onChange={handleCustomerChange}
+                                    placeholder="Selecciona un proveedor"
+                                    required
                                     onButtonClick={handleOpenModal}
-                                    buttonLabel="Agregar"
+                                    isDisabled={mode === 'view'}
                                 />
                             </div>
                             <ModalComponent isOpen={isModalOpen} onClose={handleCloseModal} title="Agregar Cliente">
@@ -474,7 +398,7 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
                                     id='clientName'
                                     value={clientName}
                                     onChange={(e) => setClientName(e.target.value)}
-                                    required={true}
+                                    disabled
                                 />
                             </div>
 
@@ -485,18 +409,18 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
                                     id='clientAddress'
                                     value={clientAddress}
                                     onChange={(e) => setClientAddress(e.target.value)}
-                                    required={true}
+                                    disabled
                                 />
                             </div>
 
                             <div>
                                 <FormInput
-                                    label='Telfono:'
+                                    label='Teléfono:'
                                     type="text"
                                     id='clientPhone'
                                     value={clientPhone}
                                     onChange={(e) => setClientPhone(e.target.value)}
-                                    required={true}
+                                    disabled
                                 />
                             </div>
 
@@ -507,21 +431,8 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
                                     id='clientCUIT'
                                     value={clientCUIT}
                                     onChange={(e) => setClientCUIT(e.target.value)}
-                                    required={true}
+                                    disabled
                                 />
-                            </div>
-
-                            <div>
-                                <FormInput
-                                    label="Condiciones de IVA:"
-                                    type="text"
-                                    id='clientTaxStatus'
-                                    value={clientTaxStatus}
-                                    onChange={(e) => setClientTaxStatus(e.target.value)}
-                                    required={true}
-                                    disabled={mode === 'edit'}
-                                />
-
                             </div>
 
                             <div>
@@ -536,40 +447,49 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode }) => {
                                 />
                             </div>
                         </div>
-                        <div className='grid grid-cols-1 gap-5'>
-                            <FormInput
-                                label='Observaciones:'
-                                type="textarea"
-                                id='observations'
-                                value={observations}
-                                onChange={(e) => setObservations(e.target.value)}
-                            />
-                        </div>
 
                         <ItemForm items={items} setItems={setItems} />
 
-                        <div className="mt-4 flex justify-start">
-                            <h2 className='border p-4 mr-18'>Total: ${calculateTotal()}</h2>
+                        <div className=" flex justify-between gap-3">
+                            <div className='w-[50%]'>
+                                <label className="mb-3 block text-sm font-medium text-black dark:text-white">Observaciones</label>
+                                <textarea
+                                    title='Observaciones:'
+                                    id='observations'
+                                    placeholder='Escriba sus observaciones...'
+                                    className='w-full h-[80%] p-2 text-sm border border-stroke bg-[#F9F9F9] rounded focus:outline-none focus:ring-0 focus:border-primary'
+                                    value={observations}
+                                    onChange={(e) => setObservations(e.target.value)}
+                                />
+                            </div>
+                            <table className='table-auto'>
+                                <thead>
+                                    <tr className='bg-gray-2 text-left flex flex-col dark:bg-meta-4 mr-24 border border-border-stroke'>
+                                        <th className='w-full py-2 px-2 font-medium text-black dark:text-white'>
+                                            <td className="border-b w-full border-[#000] py-2 px-4 dark:border-strokedark">IVA</td>
+                                            <td className="border-b w-full border-[#000] py-2 px-4 dark:border-strokedark">${iva}</td>
+                                        </th>
+                                        <th className='w-full py-2 px-2 font-medium text-black dark:text-white'>
+                                            <td className="border-b w-full border-[#000] py-2 px-4 dark:border-strokedark">Subtotal</td>
+                                            <td className="border-b w-full border-[#000] py-2 px-4 dark:border-strokedark">${subtotalSinIVA}</td>
+                                        </th>
+                                        <th className='w-full py-2 px-2 font-medium text-black dark:text-white'>
+                                            <td className=" w-full py-2 px-4 dark:border-strokedark">Total</td>
+                                            <td className=" w-full py-2 px-4 dark:border-strokedark">${totalConIVA}</td>
+                                        </th>
+                                    </tr>
+                                </thead>
+                            </table>
                         </div>
 
-                        <div className="mt-4 flex justify-end gap-3">
-                            <button
-                                className="px-6 py-3 bg-blue-500 text-white rounded"
-                                onClick={generatePDF}
-                            >
-                                Generar PDF
-                            </button>
-                            <button
-                                className="px-6 py-3 bg-green-500 text-white rounded"
-                                onClick={guardarFactura}
-                            >
-                                {mode === 'edit' ? 'Actualizar Factura' : 'Guardar Factura'}
-                            </button>
+                        <div className="mt-4 flex justify-end gap-3 mr-24">
+                            <Buttons title='Generar PDF' bgColor='bg-primary' onClick={generatePDF}></Buttons>
+                            <Buttons title={mode === 'edit' ? 'Actualizar Factura' : 'Guardar Factura'} onClick={saveSalesDocs}></Buttons>
                         </div>
                     </>
                 )}
             </div>
-        </DefaultLayout>
+        </DefaultLayout >
     );
 };
 

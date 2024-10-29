@@ -8,7 +8,12 @@
       "title":"Facturas"
     },
     "routes": {
+      "budget":"Presupuestos",
+      "add_budget": "Agregar Presupuesto",
+      "edit_budget": "Editar Presupuesto",
       "bill":"Facturas",
+      "add_bill": "Agregar Factura",
+      "edit_bill": "Editar Factura",
       "salesdocs":"Presupuestos",
       "add_salesdocs": "Agregar Presupuesto",
       "edit_salesdocs": "Editar Presupuesto",

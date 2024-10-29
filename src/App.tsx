@@ -28,6 +28,7 @@ import { SettingsProvider, useSettings } from './context/SettingsContext';
 import { ProviderForm } from './pages/Provider/ProviderForm';
 import { CustomerForm } from './pages/Customer/CustomerForm';
 import { ArticleForm } from './pages/Article/ArticleForm';
+import { type } from './../node_modules/jspdf-autotable/dist/index.d';
 
 
 function App() {
@@ -84,9 +85,10 @@ function App() {
         {/* Rutas protegidas */}
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<ECommerce />} />
-          <Route path="/budget" element={<Salesdocs />} />
-          <Route path="/budget/add_salesdocs" element={<SalesdocsAdd mode='add' />} />
-          <Route path='/salesdocs/edit/:id' element={<SalesdocsAdd mode='edit' />} />
+          <Route path="/budget" element={<Salesdocs typeSalesdocs='budget' />} />
+          <Route path="/budget/add_budget" element={<SalesdocsAdd mode='add' typeSalesdocs='presupuesto' />} />
+          <Route path='/budget/edit/:id' element={<SalesdocsAdd mode='edit' typeSalesdocs='presupuesto' />} />
+          <Route path='/budget/view/:id' element={<SalesdocsAdd mode='view' typeSalesdocs='presupuesto' />} />
           <Route path="/customer" element={<Customer />} />
           <Route path="/customer/add" element={<CustomerForm viewType='add' />} />
           <Route path="/customer/view/:id" element={<CustomerForm viewType='view' />} />
@@ -95,7 +97,10 @@ function App() {
           <Route path="/provider/add" element={<ProviderForm viewType='add' />} />
           <Route path="/provider/view/:id" element={<ProviderForm viewType='view' />} />
           <Route path="/provider/edit/:id" element={<ProviderForm viewType='edit' />} />
-          <Route path="/bill" element={<Salesdocs />} />
+          <Route path="/bill" element={<Salesdocs typeSalesdocs='bill' />} />
+          <Route path="/bill/add_bill" element={<SalesdocsAdd mode='add' typeSalesdocs='factura' />} />
+          <Route path='/bill/edit/:id' element={<SalesdocsAdd mode='edit' typeSalesdocs='factura' />} />
+          <Route path='/bill/view/:id' element={<SalesdocsAdd mode='view' typeSalesdocs='factura' />} />
           <Route path="/article" element={<Article />} />
           <Route path="/article/add" element={<ArticleForm viewType='add' />} />
           <Route path="/article/view/:id" element={<ArticleForm viewType='view' />} />

@@ -54,26 +54,24 @@ export class BaseService {
     // Método para ordenar listados
     async findIn<T>(
         resource: string,
+        filter: Record<string, any> = {},
+        order: { column: string; typeOrder: 'ASC' | 'DESC' } = { column: 'name', typeOrder: 'ASC' },
         page: number = 1,
         limit: number = 100
-      ): Promise<T> {
+    ): Promise<T> {
         try {
-          // Construcción de la URL con los valores codificados de forma estática
-          const orderParam = "%7B%22column%22%3A%22name%22%2C%22typeOrder%22%3A%22ASC%22%7D";
-          const filterParam = "%7B%22isForSalesDocs%22%3Afalse%7D";
-      
-          // Construcción de la URL con valores hardcodeados
-          const url = `/${resource}/findIn/${page}/${limit}?order=${orderParam}&filter=${filterParam}`;
-      
-          console.log(`URL generada: ${url}`); // Imprimir la URL para ver cómo se genera
-      
-          const response = await this.api.get<T>(url);
-          return response.data;
+            // Codificar los parámetros de filtro y orden en JSON y luego en URI
+            const filterParam = encodeURIComponent(JSON.stringify(filter));
+            const orderParam = encodeURIComponent(JSON.stringify(order));
+    
+            // Construcción de la URL con los valores de filtro y orden dinámicos
+            const url = `/${resource}/findIn/${page}/${limit}?order=${orderParam}&filter=${filterParam}`;
+            const response = await this.api.get<T>(url);
+            return response.data;
         } catch (error: any) {
-          throw new Error(error.response?.data?.message || 'Error en la solicitud');
+            throw new Error(error.response?.data?.message || 'Error en la solicitud');
         }
-      }
-      
+    }
 
     // Método para obtener datos (GET)
     async get<T>(url: string, params?: any): Promise<T> {

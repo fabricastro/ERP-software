@@ -19,14 +19,12 @@ interface SalesDoc {
   customerName?: string;
 }
 
-interface Customer {
-  id: number;
-  name: string;
+interface SalesdocsAddProps{
+  typeSalesdocs: 'budget' | 'bill'
 }
 
-const SalesDocsList: React.FC = () => {
+const SalesDocsList: React.FC<SalesdocsAddProps> = ({typeSalesdocs}) => {
   const [salesDocs, setSalesDocs] = useState<SalesDoc[]>([]);
-  const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [alert, setAlert] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -37,26 +35,15 @@ const SalesDocsList: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCustomers = async () => {
-      try {
-        const customerResponse = await customerService.getAll();
-        setCustomers(customerResponse);
-      } catch (err) {
-        setError('Error al cargar los clientes');
-      }
-    };
-
-    fetchCustomers();
-  }, []);
-
-  useEffect(() => {
     const fetchSalesDocs = async () => {
       try {
-        const salesDocsResponse = await salesDocsService.getAll();
+        const filter = { type: typeSalesdocs === 'budget' ? 'presupuesto' : 'factura' };
+        const order = { column: 'date', typeOrder: 'DESC' };
+        const salesDocsResponse : any = await salesDocsService.findIn('salesDocs', filter, order, 1, 100);
+        
+        console.log(salesDocsResponse);
 
-        const salesDocsWithNames = salesDocsResponse.map((doc: SalesDoc) => {
-          const customer = customers.find(c => c.id === doc.customerId);
-
+        const salesDocsWithNames = salesDocsResponse.items.map((doc: SalesDoc) => {
           const formattedDate = new Date(doc.date).toLocaleDateString('es-AR', {
             year: 'numeric',
             month: '2-digit',
@@ -65,7 +52,6 @@ const SalesDocsList: React.FC = () => {
 
           return {
             ...doc,
-            customerName: customer ? customer.name : 'Cliente desconocido',
             date: formattedDate
           };
         });
@@ -77,11 +63,8 @@ const SalesDocsList: React.FC = () => {
         setLoading(false);
       }
     };
-
-    if (customers.length > 0) {
-      fetchSalesDocs();
-    }
-  }, [customers]);
+    fetchSalesDocs();
+  }, [typeSalesdocs]);
 
 
   const handleDelete = (id: number) => {
@@ -107,13 +90,16 @@ const SalesDocsList: React.FC = () => {
   };
 
   const handleEdit = (id: number) => {
-    navigate(`/salesdocs/edit/${id}`);
+    navigate(`/${typeSalesdocs}/edit/${id}`);
+  };
+  
+  const handleView = (id: number) => {
+    navigate(`/${typeSalesdocs}/view/${id}`);
   };
 
   const columns = [
     { key: "number", label: "Número" },
-    // { key: "type", label: "Tipo" },
-    { key: "customerName", label: "Cliente" },  // Cambiado a customerName
+    { key: "customer.name", label: "Cliente" },
     { key: "state", label: "Estado" },
     { key: "paymentMethod", label: "Método de Pago" },
     { key: "date", label: "Fecha" },
@@ -122,7 +108,7 @@ const SalesDocsList: React.FC = () => {
 
   const handleActions = (salesDoc: SalesDoc) => (
     <>
-      <button onClick={() => handleEdit(article.id)} className="hover:text-primary text-[25px]"><FaEye /></button>
+      <button onClick={() => handleView(salesDoc.id)} className="hover:text-primary text-[25px]"><FaEye /></button>
       <button onClick={() => handleEdit(salesDoc.id)} className="hover:text-primary text-[25px]"><MdEdit /></button>
       <button onClick={() => handleDelete(salesDoc.id)} className="hover:text-danger text-[20px]"><FaTrash /></button>
     </>

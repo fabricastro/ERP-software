@@ -20,9 +20,10 @@ const ArticleList: React.FC = () => {
     const fetchArticles = async () => {
       setLoading(true);
       try {
-        const response = await articleService.findArticles(1, 100);
-        if (response && response.items) {
-          setArticles(response.items);
+
+        const response = await articleService.getAll();
+        if (response) {
+          setArticles(response);
         } else {
           throw new Error('Estructura de respuesta inesperada');
         }
@@ -71,13 +72,12 @@ const ArticleList: React.FC = () => {
   const columns = [
     { key: "type", label: "Tipo" },
     { key: "name", label: "Nombre" },
-    { key: "category", label: "Categoría"},
+    { key: "category.name", label: "Categoría", bgColor: "category.color" },
     { key: "stock", label: "Stock" },
     { key: "unitPrice", label: "Precio Unitario" },
     { key: "description", label: "Descripción" },
   ];
 
-  console.log(articles);
   return (
     <div>
       {alert && <Alert type={alert.type} title={alert.type === 'success' ? 'Éxito' : 'Error'} message={alert.message} />}

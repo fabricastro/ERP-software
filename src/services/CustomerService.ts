@@ -7,7 +7,7 @@ class CustomerService extends BaseService {
     super(import.meta.env.VITE_API_URL); 
   }
 
-  async addCustomer(data: Customer) {
+  async addCustomer(data: Customer): Promise<Customer> {
     return this.post('/customer', data);
   }
 

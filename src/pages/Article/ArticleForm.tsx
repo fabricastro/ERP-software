@@ -358,7 +358,8 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({ viewType }) => {
           iva: iva?.value as number,
           providerId: selectedProvider?.value as number,
           observations,
-          stock
+          stock,
+          id: 0
         });
         setAlert({ type: 'success', message: 'Artículo actualizado con éxito' });
       }

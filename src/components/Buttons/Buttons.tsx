@@ -9,8 +9,9 @@ interface ButtonProps {
   customStyles?: string;
   type?: 'button' | 'submit' | 'reset';
   disabled?: boolean;
-  icon?: React.ReactNode; // Prop para el ícono opcional
-  iconPosition?: 'left' | 'right'; // Prop para la posición del ícono, por defecto a la izquierda
+  icon?: React.ReactNode; // Ícono opcional
+  iconPosition?: 'left' | 'right'; // Posición del ícono por defecto a la izquierda
+  onClick?: () => void; // Nueva prop para el evento onClick directo
 }
 
 export const Buttons: FC<ButtonProps> = ({
@@ -21,14 +22,17 @@ export const Buttons: FC<ButtonProps> = ({
   customStyles = '',
   type = 'button',
   disabled = false,
-  icon, // Ícono opcional
-  iconPosition = 'left', // Posición del ícono por defecto
+  icon,
+  iconPosition = 'left',
+  onClick, // Prop para el onClick directo
 }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
     if (!disabled) {
-      if (typeof to === 'function') {
+      if (onClick) {
+        onClick();
+      } else if (typeof to === 'function') {
         to();
       } else if (typeof to === 'string') {
         navigate(to);
@@ -46,7 +50,6 @@ export const Buttons: FC<ButtonProps> = ({
           disabled ? 'bg-gray-3 cursor-not-allowed' : `${bgColor} ${textColor} hover:bg-opacity-90`
         } py-3 px-6 text-center font-medium lg:px-8 xl:px-6 ${customStyles}`}
       >
-        {/* Renderizar el ícono opcional en la posición correcta */}
         {icon && iconPosition === 'left' && <span className="mr-2">{icon}</span>}
         {title}
         {icon && iconPosition === 'right' && <span className="ml-2">{icon}</span>}
