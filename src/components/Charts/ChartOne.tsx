@@ -1,5 +1,5 @@
 import { ApexOptions } from 'apexcharts';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import ReactApexChart from 'react-apexcharts';
 
 interface ChartOneProps {
@@ -9,24 +9,7 @@ interface ChartOneProps {
 }
 
 const ChartOne: React.FC<ChartOneProps> = ({ budgets, bills, months }) => {
-  const fullYearMonths = [
-    '2024-01', '2024-02', '2024-03', '2024-04', '2024-05', '2024-06',
-    '2024-07', '2024-08', '2024-09', '2024-10', '2024-11', '2024-12',
-    '2025-01'
-  ];
-
-  const alignedBudgets = fullYearMonths.map(month => {
-    const index = months.indexOf(month);
-    return index !== -1 ? budgets[index] : 0;
-  });
-
-  const alignedBills = fullYearMonths.map(month => {
-    const index = months.indexOf(month);
-    return index !== -1 ? bills[index] : 0;
-  });
-
-  const [chartKey, setChartKey] = useState(0);
-
+  // Opciones del gráfico
   const options: ApexOptions = {
     legend: {
       show: false,
@@ -103,9 +86,13 @@ const ChartOne: React.FC<ChartOneProps> = ({ budgets, bills, months }) => {
     },
     xaxis: {
       type: 'category',
-      categories: fullYearMonths,
+      categories: months,
       labels: {
-        formatter: (val) => new Date(val + '-01').toLocaleString('default', { month: 'short' }),
+        datetimeFormatter: {
+          month: "MMM 'yy",  // Formato para cada mes
+          year: "yyyy",
+        },
+        format: "MMM 'yy",  // Fijar formato para mostrar el mes y año
       },
       axisBorder: {
         show: false,
@@ -121,7 +108,7 @@ const ChartOne: React.FC<ChartOneProps> = ({ budgets, bills, months }) => {
         },
       },
       min: 0,
-      max: Math.max(...alignedBudgets, ...alignedBills) * 1.2,
+      max: Math.max(...budgets, ...bills) * 1.2, // Ajuste máximo del eje Y con margen del 20%
     },
     tooltip: {
       enabled: true,
@@ -135,23 +122,9 @@ const ChartOne: React.FC<ChartOneProps> = ({ budgets, bills, months }) => {
   };
 
   const series = [
-    { name: 'Total Presupuestado', data: alignedBudgets },
-    { name: 'Total Facturado', data: alignedBills },
+    { name: 'Total Presupuestado', data: budgets },
+    { name: 'Total Facturado', data: bills },
   ];
-
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        // Cambia `key` para forzar el renderizado del gráfico solo al volver a la pestaña activa
-        setChartKey(prevKey => prevKey + 1);
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, []);
 
   return (
     <div className="col-span-12 rounded-sm border border-stroke bg-white px-5 pt-7.5 pb-5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:col-span-8">
@@ -177,17 +150,8 @@ const ChartOne: React.FC<ChartOneProps> = ({ budgets, bills, months }) => {
           </div>
         </div>
       </div>
-
-      <div>
-        <div id="chartOne" className="-ml-5">
-          <ReactApexChart
-            key={chartKey}  // Se actualiza solo en cambios de pestaña
-            options={options}
-            series={series}
-            type="area"
-            height={500}
-          />
-        </div>
+      <div id="chartOne" className="-ml-5">
+        <ReactApexChart options={options} series={series} type="area" height={500} />
       </div>
     </div>
   );

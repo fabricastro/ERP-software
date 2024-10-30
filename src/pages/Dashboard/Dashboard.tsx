@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import CardDataStats from '../../components/CardDataStats';
 import DefaultLayout from '../../layout/DefaultLayout';
-import ChartOne from '../../components/Charts/ChartOne';
 import withWelcomeModal from '../../hoc/withWelcomeModal';
 import { FaBoxes, FaMoneyBill, FaUsers } from 'react-icons/fa';
 import { RiBillFill } from "react-icons/ri";
 import { dashboardService } from '../../services/DashboardService';
+import ChartOne from '../../components/Charts/ChartOne';
 
 const ECommerce: React.FC = () => {
   const [amountBudget, setAmountBudget] = useState<number>(0);
@@ -25,11 +25,13 @@ const ECommerce: React.FC = () => {
       setQuantityArticles(res.data.quantityArticles);
       setQuantityCustomers(res.data.quantityCustomers);
       
-      setChartOneData({
-        budgets: res.data.chartOneData.budgets,
-        bills: res.data.chartOneData.bills,
-        months: res.data.chartOneData.months,
-      });
+      if (res.data.chartOneData) {
+        setChartOneData({
+          budgets: res.data.chartOneData.budgets || [],
+          bills: res.data.chartOneData.bills || [],
+          months: res.data.chartOneData.months || [],
+        });
+      }
     });
   };
 
@@ -57,9 +59,9 @@ const ECommerce: React.FC = () => {
         <CardDataStats title="Clientes" total={quantityCustomers?.toString()} rate="" children={<FaUsers className='text-2xl text-primary' />} />
       </div>
       <div className='mt-5'>
-        <ChartOne budgets={chartOneData.budgets} bills={chartOneData.bills} months={chartOneData.months} />
-    {/*     <ChartTwo />
-        <ChartThree /> */}
+        {chartOneData.budgets.length > 0 && chartOneData.bills.length > 0 && (
+          <ChartOne budgets={chartOneData.budgets} bills={chartOneData.bills} months={chartOneData.months} />
+        )}
       </div>
     </DefaultLayout>
   );
