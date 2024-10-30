@@ -9,7 +9,7 @@ interface WelcomeModalProps {
 }
 
 const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose, onGoToSettings }) => {
-  console.log("WelcomeModal isOpen:", isOpen); // Verificar el estado
+  // console.log("WelcomeModal isOpen:", isOpen);
 
   if (!isOpen) return null; // Asegúrate de que el modal solo se muestre cuando `isOpen` es true
 
