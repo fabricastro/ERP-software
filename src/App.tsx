@@ -12,7 +12,7 @@ import Profile from './pages/Profile';
 import Settings from './pages/Settings/Settings';
 import Tables from './pages/Tables';
 import Buttons from './pages/UiElements/Buttons';
-import { Salesdocs } from './pages/Salesdocs/Salesdocs';
+import Salesdocs  from './pages/Salesdocs/Salesdocs';
 import PrivateRoute from './routes/PrivateRoute';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Provider } from './pages/Provider/Provider';
