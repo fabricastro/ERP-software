@@ -31,3 +31,25 @@ export const updateUserService = async (id: number, userData: UpdateUserParams):
     throw new Error(error.response?.data?.message || 'Error al actualizar el usuario');
   }
 };
+
+export const recoveryPassword = async (email: string): Promise<any> => {
+  try {
+    const response = await axios.post(`${URL_API}/auth/recovery`, { email });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Error al solicitar la recuperación de contraseña');
+  }
+};
+
+export const resetPassword = async (token: string, newPassword: string): Promise<any> => {
+  try {
+      const response = await axios.post(`${URL_API}/auth/reset-password`, {
+          token,
+          newPassword,
+      });
+      return response.data;
+  } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Error al restablecer la contraseña.');
+  }
+
+};

@@ -6,7 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 export const Confirm = () => {
     const location = useLocation();
     const navigate = useNavigate();
-  const { login } = useAuth();
+    const { login } = useAuth();
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);

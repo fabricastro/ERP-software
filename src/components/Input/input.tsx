@@ -41,20 +41,26 @@ const FormInput: React.FC<FormInputProps> = ({
     let errorMessage = null;
 
     if (required && String(value).trim() === "") {
-      errorMessage = "Este campo es obligatorio.";
+        errorMessage = "Este campo es obligatorio.";
     } else if (type === "email") {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(String(value))) {
-        errorMessage = "Por favor, ingrese un correo electrónico válido.";
-      }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(String(value))) {
+            errorMessage = "Por favor, ingrese un correo electrónico válido.";
+        }
     } else if (type === "number") {
-      if (isNaN(Number(value))) {
-        errorMessage = "Por favor, ingrese un número válido.";
-      }
+        if (isNaN(Number(value))) {
+            errorMessage = "Por favor, ingrese un número válido.";
+        }
+    } else if (type === "password") {
+      const passwordRegex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
+        if (!passwordRegex.test(String(value))) {
+            errorMessage = "La contraseña debe tener al menos 8 caracteres, una letra mayúscula y un número.";
+        }
     }
 
     setError(errorMessage);
-  };
+};
 
   useEffect(() => {
     if (touched) {
