@@ -5,7 +5,7 @@ import SignIn from './pages/Authentication/SignIn';
 import SignUp from './pages/Authentication/SignUp';
 import Calendar from './pages/Calendar';
 import Chart from './pages/Chart';
-import ECommerce from './pages/Dashboard/Dashboard';
+import Dashboard from './pages/Dashboard/Dashboard';
 import FormElements from './pages/Form/FormElements';
 import FormLayout from './pages/Form/FormLayout';
 import Profile from './pages/Profile';
@@ -85,7 +85,7 @@ function App() {
         <Route path="/passwordrecovery" element={<PasswordRecovery />} />
         {/* Rutas protegidas */}
         <Route element={<PrivateRoute />}>
-          <Route path="/" element={<ECommerce />} />
+          <Route path="/" element={<Dashboard />} />
           <Route path="/budget" element={<Salesdocs typeSalesdocs="budget" />} />
           <Route path="/budget/add_budget" element={<SalesdocsAdd mode="add" typeSalesdocs="presupuesto" />} />
           <Route path="/budget/edit/:id" element={<SalesdocsAdd mode="edit" typeSalesdocs="presupuesto" />} />
