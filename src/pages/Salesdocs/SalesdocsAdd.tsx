@@ -98,7 +98,7 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
                 if (mode === 'add') {
                     setInvoiceNumber(Number(typeSalesdocs === 'presupuesto' ? settings?.nextBudgetId : settings?.nextBillId));
                     console.log("modo add", settings?.nextBudgetId);
-                } else if (mode === 'edit' && id) {
+                } else if ((mode === 'edit' || mode === 'view') && id) {
                     loadSalesDocData(Number(id));
                 }
             } catch (error) {
@@ -488,12 +488,12 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
 
                         <div className="flex flex-col md:flex-row justify-between gap-3">
                             <div className="w-full md:w-[50%]">
-                                <label className="mb-3 block text-sm font-medium text-black dark:text-white">Observaciones</label>
+                                <label className="mb-3 block text-md font-medium text-black dark:text-white">Observaciones</label>
                                 <textarea
                                     title='Observaciones:'
                                     id='observations'
                                     placeholder='Escriba sus observaciones...'
-                                    className='w-full h-[80%] p-2 text-sm border border-stroke bg-[#F9F9F9] rounded focus:outline-none focus:ring-0 focus:border-primary'
+                                    className='w-full h-[80%] p-2 text-md border border-stroke bg-[#F9F9F9] rounded focus:outline-none focus:ring-0 focus:border-primary'
                                     value={observations}
                                     onChange={(e) => setObservations(e.target.value)}
                                 />
@@ -521,7 +521,14 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
                         <div className="mt-4 flex flex-col md:flex-row justify-end gap-3 mr-0 md:mr-24">
                             <Buttons title='Enviar PDF por Correo' bgColor='bg-primary' onClick={handleSendMail}></Buttons>
                             <Buttons title='Generar PDF' bgColor='bg-primary' onClick={generatePDF}></Buttons>
-                            <Buttons title={mode === 'edit' ? 'Actualizar Factura' : 'Guardar Factura'} onClick={saveSalesDocs}></Buttons>
+                            <Buttons 
+                                title={
+                                    mode === 'edit' 
+                                        ? (typeSalesdocs === 'factura' ? 'Actualizar Factura' : 'Actualizar Presupuesto') 
+                                        : (typeSalesdocs === 'factura' ? 'Guardar Factura' : 'Guardar Presupuesto')
+                                } 
+                                onClick={saveSalesDocs}
+                            />
                         </div>
                     </>
                 )}

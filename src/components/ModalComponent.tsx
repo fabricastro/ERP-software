@@ -16,7 +16,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, width =
     return (
         <div className="fixed inset-0 z-999 flex items-center justify-center bg-black bg-opacity-50">
             <div
-                className="bg-white rounded-lg shadow-lg mx-auto p-6"
+                className="bg-white rounded-lg shadow-lg mx-4 xl:mx-0 p-6 w-full max-w-md"
                 style={{ width: width, height: height, maxWidth: "1024px" }}
             >
                 {/* Modal header */}
@@ -28,7 +28,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, width =
                 </div>
 
                 {/* Modal content */}
-                <div className="mt-4">
+                <div className="mt-4 overflow-y-auto max-h-[calc(100vh-200px)]">
                     {children}
                 </div>
             </div>

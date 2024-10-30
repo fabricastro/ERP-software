@@ -8,7 +8,7 @@ export const Article = () => {
     return (
         <DefaultLayout>
                 <Breadcrumb pageName="Artículos" />
-                <div className="flex flex-row gap-4">
+                <div className="flex flex-col sm:flex-row gap-4">
                     <Buttons title={'Agregar Artículo'} to={'/article/add'} />
                     <Buttons title={'Gestionar Categorías'} to={'/article/category'} icon={<TbCategoryFilled />} bgColor="bg-[#4285F4]" />
                 </div>

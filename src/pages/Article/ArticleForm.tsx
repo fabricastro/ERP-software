@@ -520,7 +520,7 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({ viewType }) => {
         isDisabled={viewType === 'view'}
       />
       
-      <ModalComponent isOpen={isProviderModalOpen} onClose={handleProviderCloseModal} title="Agregar proveedor">
+      <ModalComponent isOpen={isProviderModalOpen} onClose={handleProviderCloseModal} title="Agregar Proveedor">
         <ProviderModal
           type={typeProvider} setType={setTypeProvider}
           name={nameProvider} setName={setNameProvider}
@@ -578,6 +578,5 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({ viewType }) => {
     )}
   </form>
 </DefaultLayout>
-
   );
 };

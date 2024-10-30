@@ -71,7 +71,7 @@ const ProviderModal: React.FC<ProviderModalProps> = ({
     }, [onSave]);
     
     return (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="flex flex-col sm:grid gap-0 sm:gap-x-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
             <FormInput
                 label="Tipo de Cliente"
                 type="select"
@@ -174,15 +174,15 @@ const ProviderModal: React.FC<ProviderModalProps> = ({
                 disabled={disabled}
             />
             <div className=" col-span-2">
-            <button
-                onClick={onSave}
-                type='button'
-                className="bg-blue-500 text-white py-2 px-4 rounded"
-            >
-                Guardar
-            </button>
+                <button
+                    onClick={onSave}
+                    type='button'
+                    className="bg-blue-500 text-white py-2 px-4 rounded"
+                >
+                    Guardar
+                </button>
+            </div>
         </div>
-    </div>
     );
 };
 

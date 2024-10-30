@@ -63,7 +63,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       navigate('/');
     } catch (error: any) {
       console.error('Error:', error.message);
-      throw new Error('Credenciales incorrectas o error en la autenticación');
+      throw new Error('Usuario o contraseña incorrectos. Verifica e inténtalo nuevamente.');
     }
   };
 

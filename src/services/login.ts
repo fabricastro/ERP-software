@@ -32,7 +32,7 @@ export const loginService = async ({ email, password, token }: { email: string; 
     }
 
     if (error.response?.status === 401) {
-      throw new Error('Credenciales incorrectas o error en la autenticación');
+      throw new Error('Usuario o contraseña incorrectos. Verifica e inténtalo nuevamente.');
     }
 
     throw new Error(
