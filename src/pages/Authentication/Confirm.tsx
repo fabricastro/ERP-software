@@ -21,12 +21,15 @@ export const Confirm = () => {
                 return;
             }
             try {
-                const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/confirm`, { token });
+                const apiUrl = import.meta.env.VITE_API_URL;
+                console.log(apiUrl);
+                const response = await axios.post(`${apiUrl}/auth/confirm`, { token });
                 const email = response.data.user.email as string;
                 const accessToken = response.data.accessToken as string;
                 await login(email, undefined, accessToken); 
                 navigate("/");
             } catch (error: any) {
+                console.error("Error al confirmar el correo:", error);
                 setError(error.response?.data?.message || "Error al confirmar el correo.");
             } finally {
                 setLoading(false);
