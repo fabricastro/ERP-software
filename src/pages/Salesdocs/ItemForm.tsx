@@ -104,11 +104,11 @@ const ItemForm: React.FC<ItemFormProps> = ({ items, setItems }) => {
 
     return (
         <div>
-            <h2 className='pb-4 text-xl'>Agregar Item</h2>
-            <div className='flex gap-3 pb-6 items-center'>
-                <div className='flex flex-col w-full'>
+            <h2 className="pb-4 text-xl">Agregar Item</h2>
+            <div className="flex flex-wrap gap-3 pb-6 items-center">
+                <div className="flex flex-col w-full md:w-[45%] lg:w-[30%]">
                     <FormInput
-                        label='Selecciona un artículo:'
+                        label="Selecciona un artículo:"
                         type="select"
                         id="article"
                         value={articleID || ''}
@@ -119,17 +119,17 @@ const ItemForm: React.FC<ItemFormProps> = ({ items, setItems }) => {
                         onChange={(e) => handleArticleChange(e as React.ChangeEvent<HTMLSelectElement>)}
                     />
                 </div>
-                <div className='flex flex-col w-full'>
+                <div className="flex flex-col w-full md:w-[45%] lg:w-[30%]">
                     <FormInput
-                        id='description'
-                        label='O Ingrese Manualmente:'
-                        name='description'
+                        id="description"
+                        label="O Ingrese Manualmente:"
+                        name="description"
                         value={newItem.description}
                         onChange={(e) => handleNewItemChange('description')(e.target.value)}
-                        className='w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black'
+                        className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
                     />
                 </div>
-                <div className='flex flex-col w-[50%]'>
+                <div className="flex flex-col w-[48%] md:w-[20%] lg:w-[10%]">
                     <FormInput
                         id="quantity"
                         label="Cantidad"
@@ -137,10 +137,10 @@ const ItemForm: React.FC<ItemFormProps> = ({ items, setItems }) => {
                         name="quantity"
                         value={newItem.quantity}
                         onChange={(e) => handleNewItemChange('quantity')(parseFloat(e.target.value))}
-                        className='w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black'
+                        className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
                     />
                 </div>
-                <div className='flex flex-col w-full'>
+                <div className="flex flex-col w-[48%] md:w-[20%] lg:w-[15%]">
                     <FormInput
                         id="unitPrice"
                         label="Precio Unitario"
@@ -148,10 +148,10 @@ const ItemForm: React.FC<ItemFormProps> = ({ items, setItems }) => {
                         name="unitPrice"
                         value={newItem.unitPrice}
                         onChange={(e) => handleNewItemChange('unitPrice')(parseFloat(e.target.value))}
-                        className='w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black'
+                        className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
                     />
                 </div>
-                <div className='flex flex-col w-full'>
+                <div className="flex flex-col w-[48%] md:w-[15%] lg:w-[10%]">
                     <FormInput
                         id="discount"
                         label="Bonif %"
@@ -159,10 +159,10 @@ const ItemForm: React.FC<ItemFormProps> = ({ items, setItems }) => {
                         name="discount"
                         value={newItem.discount}
                         onChange={(e) => handleNewItemChange('discount')(parseFloat(e.target.value))}
-                        className='w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black'
+                        className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
                     />
                 </div>
-                <div className='flex flex-col w-full'>
+                <div className="flex flex-col w-[48%] md:w-[15%] lg:w-[10%]">
                     <FormInput
                         id="iva"
                         label="IVA %"
@@ -170,51 +170,56 @@ const ItemForm: React.FC<ItemFormProps> = ({ items, setItems }) => {
                         name="iva"
                         value={newItem.iva}
                         onChange={(e) => handleNewItemChange('iva')(parseFloat(e.target.value))}
-                        className='w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black'
+                        className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black"
                     />
                 </div>
-                <div className='flex w-full pl-4'>
-                    <button className='bg-primary flex items-center text-white rounded-lg h-[52px] px-2 hover:bg-opacity-90 transition-all' onClick={handleAddItem}>
-                        <FaPlusCircle className='text-xl mr-1' /> Agregar Item
+                <div className="flex w-full md:w-auto lg:w-[15%] pl-4 mt-2 md:mt-0">
+                    <button
+                        className="bg-primary flex items-center text-white rounded-lg h-[52px] px-2 hover:bg-opacity-90 transition-all w-full md:w-auto"
+                        onClick={handleAddItem}
+                    >
+                        <FaPlusCircle className="text-xl mr-1" /> Agregar Item
                     </button>
                 </div>
             </div>
 
-            <h2 className='pb-4 text-xl'>Items</h2>
-            <table className='w-full table-auto'>
-                <thead>
-                    <tr className='bg-gray-2 text-left dark:bg-meta-4'>
-                        <th className='min-w-[120px] py-4 px-4 font-medium text-black dark:text-white'>Descripción</th>
-                        <th className='min-w-[120px] py-4 px-4 font-medium text-black dark:text-white'>Cantidad</th>
-                        <th className='min-w-[120px] py-4 px-4 font-medium text-black dark:text-white'>Precio Unitario sin IVA</th>
-                        <th className='min-w-[120px] py-4 px-4 font-medium text-black dark:text-white'>Bonif %</th>
-                        <th className='min-w-[120px] py-4 px-4 font-medium text-black dark:text-white'>IVA %</th>
-                        <th className='min-w-[120px] py-4 px-4 font-medium text-black dark:text-white'>Subtotal</th>
-                        <th className='min-w-[120px] py-4 px-4 font-medium text-black dark:text-white'>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {Array.isArray(items) && items.length > 0 ? (
-                        items.map((item, index) => (
-                            <tr key={index} className='hover:bg-gray-100'>
-                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{item.description}</td>
-                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{item.quantity}</td>
-                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{item.unitPrice}</td>
-                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{item.discount}</td>
-                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{item.iva}</td>
-                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{Number(item.subtotal ?? 0).toFixed(2)}</td>
-                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                                    <button onClick={() => handleRemoveItem(index)}>Eliminar</button>
-                                </td>
-                            </tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td colSpan={7} className="text-center py-5">No hay ítems agregados.</td>
+            <h2 className="pb-4 text-xl">Items</h2>
+            <div className="overflow-x-auto">
+                <table className="w-full table-auto">
+                    <thead>
+                        <tr className="bg-gray-2 text-left dark:bg-meta-4">
+                            <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">Descripción</th>
+                            <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">Cantidad</th>
+                            <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">Precio Unitario sin IVA</th>
+                            <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">Bonif %</th>
+                            <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">IVA %</th>
+                            <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">Subtotal</th>
+                            <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">Acciones</th>
                         </tr>
-                    )}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {Array.isArray(items) && items.length > 0 ? (
+                            items.map((item, index) => (
+                                <tr key={index} className="hover:bg-gray-100">
+                                    <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{item.description}</td>
+                                    <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{item.quantity}</td>
+                                    <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{item.unitPrice}</td>
+                                    <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{item.discount}</td>
+                                    <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{item.iva}</td>
+                                    <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">{Number(item.subtotal ?? 0).toFixed(2)}</td>
+                                    <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                                        <button onClick={() => handleRemoveItem(index)}>Eliminar</button>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan={7} className="text-center py-5">No hay ítems agregados.</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };

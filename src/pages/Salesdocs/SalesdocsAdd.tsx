@@ -206,7 +206,7 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
         };
     };
 
-    const generatePDF = ( sendMail: boolean): Promise<Buffer | null> => {
+    const generatePDF = (sendMail: boolean): Promise<Buffer | null> => {
         if (!settings || !settings.logo || !clientName || !clientAddress || !clientPhone || !clientCUIT || items.length === 0) {
             console.error("Faltan datos necesarios para generar el PDF.");
             return Promise.resolve(null);
@@ -346,7 +346,7 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
                     <p>Cargando datos de negocio...</p>
                 ) : (
                     <>
-                        <div className='grid grid-cols-3 gap-5'>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                             <div>
                                 <SelectForm
                                     label="Proveedor"
@@ -376,7 +376,7 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
                                 />
                                 <button onClick={handleAddCustomer} className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Guardar Cliente</button>
                             </ModalComponent>
-                            <div className='w-[40%]'>
+                            <div className="w-full md:w-[40%]">
                                 <FormInput
                                     label="Nº de Presupuesto"
                                     type="text"
@@ -389,7 +389,7 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
                             </div>
                         </div>
 
-                        <div className='grid grid-cols-4 gap-5'>
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
                             <div>
                                 <FormInput
                                     label='Fecha de emisión:'
@@ -422,12 +422,11 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
                                     required={true}
                                     options={['Borrador', 'Enviado', 'Aprobado', 'Rechazado', 'Facturado']}
                                 />
-
                             </div>
                         </div>
 
                         <h2>Cliente</h2>
-                        <div className='grid grid-cols-4 gap-5'>
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
                             <div>
                                 <FormInput
                                     label='Razon Social:'
@@ -487,8 +486,8 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
 
                         <ItemForm items={items} setItems={setItems} />
 
-                        <div className=" flex justify-between gap-3">
-                            <div className='w-[50%]'>
+                        <div className="flex flex-col md:flex-row justify-between gap-3">
+                            <div className="w-full md:w-[50%]">
                                 <label className="mb-3 block text-sm font-medium text-black dark:text-white">Observaciones</label>
                                 <textarea
                                     title='Observaciones:'
@@ -499,28 +498,28 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
                                     onChange={(e) => setObservations(e.target.value)}
                                 />
                             </div>
-                            <table className='table-auto'>
+                            <table className="table-auto w-full md:w-auto">
                                 <thead>
-                                    <tr className='bg-gray-2 text-left flex flex-col dark:bg-meta-4 mr-24 border border-border-stroke'>
-                                        <th className='w-full py-2 px-2 font-medium text-black dark:text-white'>
-                                            <td className="border-b w-full border-[#000] py-2 px-4 dark:border-strokedark">IVA</td>
-                                            <td className="border-b w-full border-[#000] py-2 px-4 dark:border-strokedark">${iva}</td>
-                                        </th>
-                                        <th className='w-full py-2 px-2 font-medium text-black dark:text-white'>
+                                    <tr className="bg-gray-2 text-left flex flex-col dark:bg-meta-4 md:mr-24 border border-border-stroke">
+                                        <th className="w-full py-2 px-2 font-medium text-black dark:text-white">
                                             <td className="border-b w-full border-[#000] py-2 px-4 dark:border-strokedark">Subtotal</td>
                                             <td className="border-b w-full border-[#000] py-2 px-4 dark:border-strokedark">${subtotalSinIVA}</td>
                                         </th>
-                                        <th className='w-full py-2 px-2 font-medium text-black dark:text-white'>
-                                            <td className=" w-full py-2 px-4 dark:border-strokedark">Total</td>
-                                            <td className=" w-full py-2 px-4 dark:border-strokedark">${totalConIVA}</td>
+                                        <th className="w-full py-2 px-2 font-medium text-black dark:text-white">
+                                            <td className="border-b w-full border-[#000] py-2 px-4 dark:border-strokedark">IVA</td>
+                                            <td className="border-b w-full border-[#000] py-2 px-4 dark:border-strokedark">${iva}</td>
+                                        </th>
+                                        <th className="w-full py-2 px-2 font-medium text-black dark:text-white">
+                                            <td className="w-full py-2 px-4 dark:border-strokedark">Total</td>
+                                            <td className="w-full py-2 px-4 dark:border-strokedark">${totalConIVA}</td>
                                         </th>
                                     </tr>
                                 </thead>
                             </table>
                         </div>
 
-                        <div className="mt-4 flex justify-end gap-3 mr-24">
-                            <Buttons title='Enviar PDF por Correo' bgColor='bg-primary' onClick={handleSendMail} ></Buttons>
+                        <div className="mt-4 flex flex-col md:flex-row justify-end gap-3 mr-0 md:mr-24">
+                            <Buttons title='Enviar PDF por Correo' bgColor='bg-primary' onClick={handleSendMail}></Buttons>
                             <Buttons title='Generar PDF' bgColor='bg-primary' onClick={generatePDF}></Buttons>
                             <Buttons title={mode === 'edit' ? 'Actualizar Factura' : 'Guardar Factura'} onClick={saveSalesDocs}></Buttons>
                         </div>

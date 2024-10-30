@@ -263,7 +263,7 @@ const Settings = () => {
                         onChange={(e) => setWebsite(e.target.value)}
                       />
                       <FormInput
-                        label="Logotipo (procura ingresar url de imagen con extensión .webp, .png o .jpg)"
+                        label="Logotipo (solo de tipo .webp, .png o .jpg)"
                         type="text"
                         id="logo"
                         value={logo}

@@ -197,6 +197,19 @@ export const PDFService = {
                     tableWidth: 60,
                 });
 
+                // Agregar las observaciones
+                doc.setFontSize(8);
+                doc.autoTable({
+                    head: [['Observaciones']],
+                    body: [[observations || 'Sin observaciones']],
+                    startY: finalY + 60, // Posición debajo del total
+                    margin: { left: pageWidth - 200 }, // Alineado a la derecha
+                    theme: 'striped',
+                    styles: { halign: 'left', fontSize: 12, cellPadding: 3 },
+                    tableWidth: 190,
+                })
+                 
+
                 // Numeración de las páginas
                 const totalPages = doc.internal.getNumberOfPages();
                 for (let i = 1; i <= totalPages; i++) {

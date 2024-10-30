@@ -7,7 +7,7 @@ import { RiBillFill } from "react-icons/ri";
 import { dashboardService } from '../../services/DashboardService';
 import ChartOne from '../../components/Charts/ChartOne';
 
-const ECommerce: React.FC = () => {
+const Dashboard: React.FC = () => {
   const [amountBudget, setAmountBudget] = useState<number>(0);
   const [amountBill, setAmountBill] = useState<number>(0);
   const [quantityArticles, setQuantityArticles] = useState<number>(0);
@@ -67,4 +67,4 @@ const ECommerce: React.FC = () => {
   );
 };
 
-export default withWelcomeModal(ECommerce);
+export default withWelcomeModal(Dashboard);

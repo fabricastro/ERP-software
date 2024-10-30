@@ -1,4 +1,3 @@
-// withWelcomeModal.tsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import WelcomeModal from '../components/WelcomeModal';
@@ -8,11 +7,13 @@ const MODAL_INTERVAL_MS = 5 * 60 * 1000;
 
 function withWelcomeModal<T>(WrappedComponent: React.ComponentType<T>) {
     return (props: T) => {
-        const { isBusinessInfoComplete } = useSettings();
+        const { isBusinessInfoComplete, loading } = useSettings(); // Agregar `loading` aquí
         const navigate = useNavigate();
         const [showWelcomeModal, setShowWelcomeModal] = useState(false);
 
         useEffect(() => {
+            if (loading) return; // Espera hasta que se cargue la información completamente
+
             const businessInfoComplete = isBusinessInfoComplete();
             const lastShown = localStorage.getItem('lastWelcomeModalShown');
             const now = Date.now();
@@ -26,10 +27,10 @@ function withWelcomeModal<T>(WrappedComponent: React.ComponentType<T>) {
                 setShowWelcomeModal(true);
                 localStorage.setItem('lastWelcomeModalShown', now.toString());
                 console.log("Showing Welcome Modal");
+            } else {
+                setShowWelcomeModal(false); // Oculta el modal si la información está completa
             }
-        }, [isBusinessInfoComplete]);
-
-
+        }, [isBusinessInfoComplete, loading]);
 
         const goToSettings = () => {
             setShowWelcomeModal(false);
