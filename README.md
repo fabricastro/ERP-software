@@ -1,6 +1,6 @@
-# ERP Soft
+# ERP PALTA
 
-ERP Pedilo es un sistema de planificación de recursos empresariales diseñado para ayudar a las empresas a gestionar diversas áreas de su operación desde una sola plataforma. Permite gestionar inventarios, ventas, compras, facturación, clientes, proveedores y mucho más, brindando una solución integral para optimizar la eficiencia operativa.
+ERP PALTA es un sistema de planificación de recursos empresariales diseñado para ayudar a las empresas a gestionar diversas áreas de su operación desde una sola plataforma. Permite gestionar inventarios, ventas, compras, facturación, clientes, proveedores y mucho más, brindando una solución integral para optimizar la eficiencia operativa.
 
 ## Características principales
 
