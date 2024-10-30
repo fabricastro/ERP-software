@@ -97,8 +97,11 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
    // Verifica si los campos clave de Información empresarial están completos
    const isBusinessInfoComplete = () => {
     const { bussinessName, address, cuit, phone, email } = settings || {};
-    return Boolean(bussinessName && address && cuit && phone && email);
-  };  
+    const complete = Boolean(bussinessName && address && cuit && phone && email);
+    // console.log("isBusinessInfoComplete:", complete); 
+    return complete;
+  };
+  
 
   return (
     <SettingsContext.Provider value={{ settings, setSettings, loading, error, fetchUpdatedSettings, isBusinessInfoComplete  }}>

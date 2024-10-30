@@ -108,7 +108,7 @@ const SignIn: React.FC = () => {
                   )}
                 </div>
                   <p className='mt-4 text text-center'>Olvidaste tu contraseña? {''}
-                    <Link to="/recover" className="text-primary">
+                    <Link to="/passwordrecovery" className="text-primary">
                       Recuperar Contraseña
                     </Link>
                   <p className='mt-6'>

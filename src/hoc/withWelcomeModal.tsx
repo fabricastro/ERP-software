@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import WelcomeModal from '../components/WelcomeModal';
 import { useSettings } from '../context/SettingsContext';
 
-const MODAL_INTERVAL_MS = 15 * 60 * 1000; // 15 minutos
+const MODAL_INTERVAL_MS = 5 * 60 * 1000;
 
 function withWelcomeModal<T>(WrappedComponent: React.ComponentType<T>) {
     return (props: T) => {

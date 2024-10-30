@@ -28,7 +28,7 @@ import { SettingsProvider, useSettings } from './context/SettingsContext';
 import { ProviderForm } from './pages/Provider/ProviderForm';
 import { CustomerForm } from './pages/Customer/CustomerForm';
 import { ArticleForm } from './pages/Article/ArticleForm';
-
+import PasswordRecovery  from './pages/Authentication/PasswordRecovery';
 function App() {
   const { logout, loadingAuth } = useAuth();
   const { settings } = useSettings();
@@ -82,6 +82,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/confirm" element={<Confirm />} />
         <Route path="/auth/confirmemail" element={<ConfirmEmail />} />
+        <Route path="/passwordrecovery" element={<PasswordRecovery />} />
         {/* Rutas protegidas */}
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<ECommerce />} />
