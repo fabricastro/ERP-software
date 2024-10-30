@@ -25,6 +25,7 @@ export const Confirm = () => {
                 const email = response.data.user.email as string;
                 const accessToken = response.data.accessToken as string;
                 await login(email, undefined, accessToken); 
+                navigate("/");
             } catch (error: any) {
                 setError(error.response?.data?.message || "Error al confirmar el correo.");
             } finally {
