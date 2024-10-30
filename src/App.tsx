@@ -37,13 +37,11 @@ function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
-   // Mover declaración de estados fuera de cualquier hook o condicional
-   const [alert, setAlert] = useState<{ type: 'success' | 'warning' | 'error'; title: string; message: string } | null>(null);
-   const [showWelcomeModal, setShowWelcomeModal] = useState(!isBusinessInfoComplete());
- 
-   // Rutas públicas para verificar si se debe mostrar el modal
-   const publicRoutes = ['/signin', '/signup', '/confirm', '/auth/confirmemail'];
-   const isPublicRoute = publicRoutes.includes(location.pathname);
+  // Definir el intervalo de tiempo para mostrar el modal 
+  const MODAL_INTERVAL_MS = 30 * 60 * 1000; // 30 minutos
+
+  const [alert, setAlert] = useState<{ type: 'success' | 'warning' | 'error'; title: string; message: string } | null>(null);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
 
   // Verifica si el token ha expirado
   useEffect(() => {
@@ -69,12 +67,22 @@ function App() {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  // Comprueba si la información de la empresa está completa cuando `isBusinessInfoComplete` cambia
+  // Verifica si la información de empresa está completa y maneja el tiempo de visualización del modal
   useEffect(() => {
-    setShowWelcomeModal(!isBusinessInfoComplete());
+    const businessInfoComplete = isBusinessInfoComplete();
+    const lastShown = localStorage.getItem('lastWelcomeModalShown');
+
+    // Si la información empresarial no está completa y ha pasado el tiempo de espera, muestra el modal
+    if (!businessInfoComplete) {
+      const now = Date.now();
+      if (!lastShown || now - parseInt(lastShown, 10) > MODAL_INTERVAL_MS) {
+        setShowWelcomeModal(true);
+        localStorage.setItem('lastWelcomeModalShown', now.toString()); // Actualiza el tiempo de la última visualización
+      }
+    }
   }, [isBusinessInfoComplete]);
 
-  // Función para cerrar el modal
+  // Función para cerrar el modal y navegar a la configuración
   const goToSettings = () => {
     setShowWelcomeModal(false);
     navigate('/settings');
@@ -135,9 +143,7 @@ function App() {
           <Route path="/ui/buttons" element={<Buttons />} />
         </Route>
       </Routes>
-      {!isPublicRoute && (
-        <WelcomeModal isOpen={showWelcomeModal} onClose={() => setShowWelcomeModal(false)} onGoToSettings={goToSettings} />
-      )}
+      <WelcomeModal isOpen={showWelcomeModal} onClose={() => setShowWelcomeModal(false)} onGoToSettings={goToSettings} />
     </>
   );
 }

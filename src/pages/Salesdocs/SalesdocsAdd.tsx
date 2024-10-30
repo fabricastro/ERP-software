@@ -17,6 +17,9 @@ import { Buttons } from '../../components/Buttons/Buttons';
 import SelectForm from '../../components/Input/select';
 import { OptionType } from '../../interfaces/optionType';
 import { Customer } from '../../interfaces/customer';
+import { mailService } from '../../services/MailService';
+import { Buffer } from 'buffer';
+
 interface SalesdocsAddProps {
     mode: 'add' | 'edit' | 'view';
     typeSalesdocs: 'presupuesto' | 'factura';
@@ -32,6 +35,7 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
     const [clientName, setClientName] = useState<string | undefined>('');
     const [clientAddress, setClientAddress] = useState<string | undefined>('');
     const [clientPhone, setClientPhone] = useState<string | undefined>('');
+    const [clientEmail, setClientEmail] = useState<string | undefined>('');
     const [clientCUIT, setClientCUIT] = useState<string | undefined>('');
     const [paymentCondition, setPaymentCondition] = useState('Efectivo');
     const [observations, setObservations] = useState('');
@@ -57,6 +61,36 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
     const [web, setWeb] = useState('');
+
+    const handleSendMail = async () => {
+        const pdfUint8Array = await generatePDF(true);
+        console.log(pdfUint8Array);
+        if (!pdfUint8Array) {
+            console.error("No se pudo generar el PDF");
+            return;
+        }
+        const pdfBase64 = Buffer.from(pdfUint8Array);
+
+        // Detalles del correo
+        const to = clientEmail;
+        const subject = "Factura Adjunta";
+        const text = "Adjunto encontrará su factura.";
+        const html = "<p>Adjunto encontrará su factura en formato PDF.</p>";
+        const attachments = [
+            {
+                filename: "factura.pdf",
+                content: pdfBase64,
+                contentType: "application/pdf",
+            },
+        ];
+
+        try {
+            await mailService.sendMail(to, subject, text, html, attachments);
+            setAlert({ type: 'success', message: 'Correo enviado exitosamente' });
+        } catch (error) {
+            setAlert({ type: 'error', message: 'Error al enviar el correo' });
+        }
+    };
 
     useEffect(() => {
         const fetchInvoiceNumber = async () => {
@@ -86,7 +120,8 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
                     address: customer.fiscalAddress as string,
                     label: customer.name as string,
                     phone: customer.phone as string,
-                    cuit: customer.cuit as string
+                    cuit: customer.cuit as string,
+                    clientEmail: customer.email as string
                 }));
             setCustomers(filteredCustomers);
             return filteredCustomers;
@@ -120,6 +155,7 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
             setClientAddress(salesDocData.customer.fiscalAddress);
             setClientPhone(salesDocData.customer.phone);
             setClientCUIT(salesDocData.customer.cuit);
+            setClientEmail(salesDocData.customer.email);
             console.log(salesDocData);
         } catch (error) {
             console.error("Error al cargar los datos del documento:", error);
@@ -134,6 +170,7 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
         setClientAddress(selectedOption?.address);
         setClientPhone(selectedOption?.phone);
         setClientCUIT(selectedOption?.cuit);
+        setClientEmail(selectedOption?.clientEmail);
     };
 
     const calculateIVA = () => {
@@ -169,13 +206,13 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
         };
     };
 
-    const generatePDF = () => {
+    const generatePDF = ( sendMail: boolean): Promise<Buffer | null> => {
         if (!settings || !settings.logo || !clientName || !clientAddress || !clientPhone || !clientCUIT || items.length === 0) {
             console.error("Faltan datos necesarios para generar el PDF.");
-            return;
+            return Promise.resolve(null);
         }
-        console.log(typeSalesdocs);
-        PDFService.generatePDF(
+
+        return PDFService.generatePDF(
             settings,
             { clientName, clientAddress, clientPhone, clientCUIT },
             items,
@@ -184,9 +221,9 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
             invoiceDate,
             validityDate,
             observations,
-            calculateTotal
+            calculateTotal,
+            sendMail
         );
-
     };
 
     const saveSalesDocs = async () => {
@@ -483,6 +520,7 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
                         </div>
 
                         <div className="mt-4 flex justify-end gap-3 mr-24">
+                            <Buttons title='Enviar PDF por Correo' bgColor='bg-primary' onClick={handleSendMail} ></Buttons>
                             <Buttons title='Generar PDF' bgColor='bg-primary' onClick={generatePDF}></Buttons>
                             <Buttons title={mode === 'edit' ? 'Actualizar Factura' : 'Guardar Factura'} onClick={saveSalesDocs}></Buttons>
                         </div>
