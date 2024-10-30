@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import WelcomeModal from '../components/WelcomeModal';
 import { useSettings } from '../context/SettingsContext';
 
-const MODAL_INTERVAL_MS = 15 * 60 * 1000; // 15 minutos
+const MODAL_INTERVAL_MS = 5 * 60 * 1000;
 
 function withWelcomeModal<T>(WrappedComponent: React.ComponentType<T>) {
     return (props: T) => {
@@ -17,10 +17,10 @@ function withWelcomeModal<T>(WrappedComponent: React.ComponentType<T>) {
             const lastShown = localStorage.getItem('lastWelcomeModalShown');
             const now = Date.now();
 
-            // console.log("Business info complete:", businessInfoComplete);
-            // console.log("Last shown time:", lastShown);
-            // console.log("Current time:", now);
-            // console.log("Time difference:", lastShown ? now - parseInt(lastShown, 10) : "No last shown time");
+            console.log("Business info complete:", businessInfoComplete);
+            console.log("Last shown time:", lastShown);
+            console.log("Current time:", now);
+            console.log("Time difference:", lastShown ? now - parseInt(lastShown, 10) : "No last shown time");
 
             if (!businessInfoComplete && (!lastShown || now - parseInt(lastShown, 10) > MODAL_INTERVAL_MS)) {
                 setShowWelcomeModal(true);
