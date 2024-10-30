@@ -58,8 +58,9 @@ function App() {
   // Cambia el título del documento cuando `settings` se actualiza
   useEffect(() => {
     if (settings) {
-      const companyName = settings.bussinessName;
-      document.title = `${companyName} - Sistema de Gestión`;
+      const bussinessName = settings.bussinessName;
+      
+      document.title = `${bussinessName ?? 'PALTA'} - Sistema de Gestión`;
     }
   }, [settings]);
 

@@ -1,38 +1,30 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../context/AuthContext";
 
 export const Confirm = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { login } = useAuth();
+  const { login } = useAuth();
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const confirmEmail = async () => {
-            // Obtener el token de la URL
             const searchParams = new URLSearchParams(location.search);
             const token = searchParams.get("token");
-
             if (!token) {
                 setError("Token no válido.");
                 setLoading(false);
                 return;
             }
-
             try {
-                // Enviar el token a la API para confirmarlo
-                const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/confirm`, {
-                    token,
-                });
-
-                // Si la confirmación es exitosa, iniciar sesión automáticamente
-                const { email } = response.data;
-                login(email); 
-                navigate("/");
+                const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/confirm`, { token });
+                const email = response.data.user.email as string;
+                const accessToken = response.data.accessToken as string;
+                await login(email, undefined, accessToken); 
             } catch (error: any) {
                 setError(error.response?.data?.message || "Error al confirmar el correo.");
             } finally {

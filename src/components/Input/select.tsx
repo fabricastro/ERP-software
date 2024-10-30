@@ -53,7 +53,7 @@ const SelectForm: React.FC<SelectFormProps> = ({
 
   return (
     <div className={`h-16 mb-5.5 ${additionalClasses}`}>
-      <label htmlFor={id} className="mb-3 block text-sm font-medium text-black dark:text-white">
+      <label htmlFor={id} className="mb-3 block text-[16px] font-medium text-black dark:text-white">
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
       </label>

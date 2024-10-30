@@ -61,11 +61,10 @@ const FormInput: React.FC<FormInputProps> = ({
       validate();
     }
   }, [value, type]);
-
   return (
     <div className={`mb-5.5 ${additionalClasses}`}>
       <label
-        className="mb-3 block text-sm font-medium text-black dark:text-white"
+        className="mb-3 block text-[16px] font-medium text-black dark:text-white"
         htmlFor={id}
       >
         {label}

@@ -8,7 +8,7 @@ interface AuthContextProps {
   isAuthenticated: boolean;
   loadingAuth: boolean;
   setUser: (user: any) => void;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password?: string, token?: string) => Promise<void>;
   logout: () => void;
   verifyPassword: (password: string) => Promise<boolean>;
 }
@@ -49,9 +49,10 @@ export const AuthProvider: React.FC = ({ children }) => {
     setLoadingAuth(false); // Indicar que la verificación de autenticación ha terminado
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password?: string, token?: string) => {
     try {
-      const { accessToken, user } = await loginService({ email, password });
+      const credentials = token ? { email, token } : { email, password };
+      const { accessToken, user } = await loginService(credentials);
       
       // Guardar el token y los datos del usuario en localStorage
       localStorage.setItem('token', accessToken);
