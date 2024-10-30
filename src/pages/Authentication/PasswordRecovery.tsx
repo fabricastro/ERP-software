@@ -28,6 +28,7 @@ const PasswordRecovery: React.FC = () => {
         try {
             if (!email) throw new Error('El campo de correo electrónico es obligatorio.');
             await recoveryPassword(email);
+            setEmail('');
             setLoading(false);
             setSuccessMessage('Se ha enviado un enlace de recuperación a tu correo electrónico.');
         } catch (err: any) {
@@ -51,12 +52,13 @@ const PasswordRecovery: React.FC = () => {
 
                 <div className="w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2">
                     <div className='w-full p-4 sm:p-12.5 xl:p-17.5'>
-                        <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
-                            Recupera tu Contraseña
-                        </h2>
                         {loading ? (
                             <Loader />
                         ) : (
+                        <>
+                            <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
+                                Recupera tu Contraseña
+                            </h2>
                             <form onSubmit={handleSubmit}>
                                 {error && <p className="text-black bg-red-200 rounded-md mb-4 p-4">{error}</p>}
                                 {successMessage && <p className="text-black bg-green-200 rounded-md mb-4 p-4">{successMessage}</p>}
@@ -72,21 +74,21 @@ const PasswordRecovery: React.FC = () => {
                                         validateForm();
                                     }}
                                     required
-                                />
+                                    />
 
                                 <div
                                     className="mb-2 relative"
                                     onMouseEnter={() => !isFormValid && setShowTooltip(true)}
                                     onMouseLeave={() => setShowTooltip(false)}
-                                >
+                                    >
                                     <input
                                         type="submit"
                                         value="Recuperar Contraseña"
                                         disabled={!isFormValid}
                                         title="Recuperar Contraseña"
                                         className={`w-full cursor-pointer rounded-lg border font-semibold text-xl border-primary bg-primary p-4 text-white transition hover:bg-opacity-90 ${!isFormValid ? 'opacity-50 cursor-not-allowed' : ''
-                                            }`}
-                                    />
+                                        }`}
+                                        />
                                     {!isFormValid && showTooltip && (
                                         <div className="absolute z-999 top-[-40px] left-1/2 transform -translate-x-1/2 px-3 py-2 bg-white text-black text-sm rounded-lg shadow-lg">
                                             Por favor, ingresa un correo electrónico válido
@@ -99,7 +101,8 @@ const PasswordRecovery: React.FC = () => {
                                         Volver al inicio de sesión
                                     </Link>
                                 </p>
-                            </form>
+                                </form>
+                                </>
                         )}
                     </div>
                 </div>

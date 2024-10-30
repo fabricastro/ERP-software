@@ -111,12 +111,13 @@ const ItemForm: React.FC<ItemFormProps> = ({ items, setItems }) => {
                         label="Selecciona un artículo:"
                         type="select"
                         id="article"
-                        value={articleID || ''}
+                        value={articleID || 'No existen artículos'}
                         options={articles.map((article) => ({
                             label: article.name,
                             value: article.id
                         }))}
                         onChange={(e) => handleArticleChange(e as React.ChangeEvent<HTMLSelectElement>)}
+                        disabled={articles.length === 0}
                     />
                 </div>
                 <div className="flex flex-col w-full md:w-[45%] lg:w-[30%]">

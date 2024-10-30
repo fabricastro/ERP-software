@@ -349,12 +349,12 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                             <div>
                                 <SelectForm
-                                    label="Proveedor"
+                                    label="Cliente"
                                     id="customerId"
                                     value={customerId}
                                     options={customers}
                                     onChange={handleCustomerChange}
-                                    placeholder="Selecciona un proveedor"
+                                    placeholder="Selecciona un cliente"
                                     required
                                     onButtonClick={handleOpenModal}
                                     isDisabled={mode === 'view'}
