@@ -503,12 +503,12 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
                                 <thead>
                                     <tr className='bg-gray-2 text-left flex flex-col dark:bg-meta-4 mr-24 border border-border-stroke'>
                                         <th className='w-full py-2 px-2 font-medium text-black dark:text-white'>
-                                            <td className="border-b w-full border-[#000] py-2 px-4 dark:border-strokedark">IVA</td>
-                                            <td className="border-b w-full border-[#000] py-2 px-4 dark:border-strokedark">${iva}</td>
-                                        </th>
-                                        <th className='w-full py-2 px-2 font-medium text-black dark:text-white'>
                                             <td className="border-b w-full border-[#000] py-2 px-4 dark:border-strokedark">Subtotal</td>
                                             <td className="border-b w-full border-[#000] py-2 px-4 dark:border-strokedark">${subtotalSinIVA}</td>
+                                        </th>
+                                        <th className='w-full py-2 px-2 font-medium text-black dark:text-white'>
+                                            <td className="border-b w-full border-[#000] py-2 px-4 dark:border-strokedark">IVA</td>
+                                            <td className="border-b w-full border-[#000] py-2 px-4 dark:border-strokedark">${iva}</td>
                                         </th>
                                         <th className='w-full py-2 px-2 font-medium text-black dark:text-white'>
                                             <td className=" w-full py-2 px-4 dark:border-strokedark">Total</td>
