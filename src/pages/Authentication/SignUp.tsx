@@ -118,7 +118,7 @@ const SignUp: React.FC = () => {
                         }`}
                       />
                       {!isFormValid && showTooltip && (
-                        <div className="absolute z-999 top-[-40px] left-1/2 transform -translate-x-1/2 px-3 py-2 bg-gray-800 text-black text-sm rounded-lg shadow-lg">
+                        <div className="absolute z-999 top-[-40px] left-1/2 transform -translate-x-1/2 px-3 py-2 bg-white text-black text-sm rounded-lg shadow-lg">
                           Por favor, completa los campos obligatorios
                         </div>
                       )}
