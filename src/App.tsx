@@ -28,7 +28,7 @@ import { SettingsProvider, useSettings } from './context/SettingsContext';
 import { ProviderForm } from './pages/Provider/ProviderForm';
 import { CustomerForm } from './pages/Customer/CustomerForm';
 import { ArticleForm } from './pages/Article/ArticleForm';
-import { PasswordRecovery } from './pages/Authentication/PasswordRecovery';
+import PasswordRecovery  from './pages/Authentication/PasswordRecovery';
 function App() {
   const { logout, loadingAuth } = useAuth();
   const { settings } = useSettings();
