@@ -2,6 +2,7 @@ import React from 'react';
 import CardDataStats from '../../components/CardDataStats';
 import DefaultLayout from '../../layout/DefaultLayout';
 import ChartOne from '../../components/Charts/ChartOne';
+import withWelcomeModal from '../../hoc/withWelcomeModal';
 
 const ECommerce: React.FC = () => {
   return (
@@ -20,4 +21,4 @@ const ECommerce: React.FC = () => {
   );
 };
 
-export default ECommerce;
+export default withWelcomeModal(ECommerce);

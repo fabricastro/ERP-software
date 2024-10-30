@@ -1,32 +1,25 @@
-import React from "react";
-import Modal from './ModalComponent';
-import { useNavigate } from 'react-router-dom';
-import { Config } from './../../node_modules/@types/react-transition-group/config.d';
+// ModalComponent.tsx
+import React from 'react';
 
-interface WelcomeModalProps {
+interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onGoToSettings: () => void;
+  title: string;
+  children: React.ReactNode;
 }
 
-const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose }) => {
-  const navigate = useNavigate();
-
-  const handleGoToSettings = () => {
-    onClose();
-    navigate('/settings');
-  };
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
+  if (!isOpen) return null; // No renderiza nada si isOpen es false
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="¡Bienvenido a PALTA!">
-      <p className="mb-4">
-        Para empezar a usar la aplicación, es necesario que completes los datos en el módulo de <strong>Información empresarial</strong> en el modulo de Configuración.
-      </p>
-      <button onClick={handleGoToSettings} className="px-4 py-2 bg-primary text-white rounded">
-        Completar Información Empresarial
-      </button>
-    </Modal>
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <h2>{title}</h2>
+        <button onClick={onClose}>Cerrar</button>
+        <div>{children}</div>
+      </div>
+    </div>
   );
 };
 
-export default WelcomeModal;
+export default Modal;

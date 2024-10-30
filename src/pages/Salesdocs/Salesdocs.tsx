@@ -3,12 +3,12 @@ import Breadcrumb from "../../components/Breadcrumbs/Breadcrumb"
 import { useTranslation } from "react-i18next"
 import { Buttons } from "../../components/Buttons/Buttons"
 import SalesDocsList from './SalesdocsList';
-
+import withWelcomeModal from "../../hoc/withWelcomeModal";
 interface SalesdocsAddProps{
     typeSalesdocs: 'budget' | 'bill'
   }
 
-export const Salesdocs: React.FC<SalesdocsAddProps> = ({ typeSalesdocs }) => {
+ const Salesdocs: React.FC<SalesdocsAddProps> = ({ typeSalesdocs }) => {
     const { t } = useTranslation();
     const buttonTitle = typeSalesdocs === 'budget' ? 'Agregar Presupuesto' : 'Agregar Factura';
     const buttonRoute = typeSalesdocs === 'budget' ? '/budget/add_budget' : '/bill/add_bill';
@@ -26,3 +26,5 @@ export const Salesdocs: React.FC<SalesdocsAddProps> = ({ typeSalesdocs }) => {
         </DefaultLayout>
     );
 }
+
+export default withWelcomeModal(Salesdocs)

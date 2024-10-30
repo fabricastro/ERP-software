@@ -28,20 +28,14 @@ import { SettingsProvider, useSettings } from './context/SettingsContext';
 import { ProviderForm } from './pages/Provider/ProviderForm';
 import { CustomerForm } from './pages/Customer/CustomerForm';
 import { ArticleForm } from './pages/Article/ArticleForm';
-import WelcomeModal from './components/WelcomeModal';
 
 function App() {
-  const { isBusinessInfoComplete } = useSettings();
   const { logout, loadingAuth } = useAuth();
   const { settings } = useSettings();
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Definir el intervalo de tiempo para mostrar el modal 
-  const MODAL_INTERVAL_MS = 30 * 60 * 1000; // 30 minutos
-
   const [alert, setAlert] = useState<{ type: 'success' | 'warning' | 'error'; title: string; message: string } | null>(null);
-  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
 
   // Verifica si el token ha expirado
   useEffect(() => {
@@ -65,27 +59,6 @@ function App() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
-
-  // Verifica si la información de empresa está completa y maneja el tiempo de visualización del modal
-  useEffect(() => {
-    const businessInfoComplete = isBusinessInfoComplete();
-    const lastShown = localStorage.getItem('lastWelcomeModalShown');
-
-    // Si la información empresarial no está completa y ha pasado el tiempo de espera, muestra el modal
-    if (!businessInfoComplete) {
-      const now = Date.now();
-      if (!lastShown || now - parseInt(lastShown, 10) > MODAL_INTERVAL_MS) {
-        setShowWelcomeModal(true);
-        localStorage.setItem('lastWelcomeModalShown', now.toString()); // Actualiza el tiempo de la última visualización
-      }
-    }
-  }, [isBusinessInfoComplete]);
-
-  // Función para cerrar el modal y navegar a la configuración
-  const goToSettings = () => {
-    setShowWelcomeModal(false);
-    navigate('/settings');
-  };
 
   // Espera a que termine `loadingAuth` antes de mostrar el contenido
   if (loadingAuth) {
@@ -142,7 +115,6 @@ function App() {
           <Route path="/ui/buttons" element={<Buttons />} />
         </Route>
       </Routes>
-      <WelcomeModal isOpen={showWelcomeModal} onClose={() => setShowWelcomeModal(false)} onGoToSettings={goToSettings} />
     </>
   );
 }
