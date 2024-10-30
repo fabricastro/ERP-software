@@ -210,7 +210,6 @@ export const PDFService = {
                 if (sendMail) {
                     const pdfOutput = doc.output('arraybuffer');
                     const buffer = Buffer.from(pdfOutput);
-                    console.log(buffer);
                     resolve(buffer);  
                 } else {
                     // Guardar el PDF

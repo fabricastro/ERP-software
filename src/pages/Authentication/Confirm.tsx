@@ -22,9 +22,7 @@ export const Confirm = () => {
             }
             try {
                 const apiUrl = import.meta.env.VITE_API_URL;
-                console.log(apiUrl);
                 const response = await axios.post(`${apiUrl}/auth/confirm`, { token });
-                console.log(response);
                 const email = response.data.user.email as string;
                 const accessToken = response.data.accessToken as string;
                 await login(email, undefined, accessToken); 
