@@ -8,11 +8,6 @@ interface RegisterParams {
     phone: string;
 }
 
-interface LoginParams {
-    email: string;
-    password: string;
-}
-
 export const useAuth = () => {
     // Registro
     const handleRegister = async ({ name, email, phone }: RegisterParams): Promise<string> => {
@@ -37,14 +32,16 @@ export const useAuth = () => {
         setLoading(false);
     }, []);
 
-    const login = async ({ email, password }: LoginParams) => {
+    const login = async ({ email, password, token }: { email: string; password?: string; token?: string }) => {
         try {
-            const response = await loginService({ email, password });
-            localStorage.setItem('accessToken', response.accessToken); // Save token in localStorage
-            setIsAuthenticated(true); // Update the authenticated state
+            // Si tienes un `token`, usa `token` en lugar de `password`
+            const credentials = token ? { email, token } : { email, password };
+            const response = await loginService(credentials);
+            localStorage.setItem('accessToken', response.accessToken); 
+            setIsAuthenticated(true); 
         } catch (error) {
-            console.error('Error during login:', error);
-            throw new Error('Login failed');
+            console.error('Error durante el inicio de sesión:', error);
+            throw new Error('Fallo en el inicio de sesión');
         }
     };
 
