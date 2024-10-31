@@ -64,7 +64,6 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
 
     const handleSendMail = async () => {
         const pdfUint8Array = await generatePDF(true);
-        console.log(pdfUint8Array);
         if (!pdfUint8Array) {
             console.error("No se pudo generar el PDF");
             return;
@@ -97,7 +96,6 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
             try {
                 if (mode === 'add') {
                     setInvoiceNumber(Number(typeSalesdocs === 'presupuesto' ? settings?.nextBudgetId : settings?.nextBillId));
-                    console.log("modo add", settings?.nextBudgetId);
                 } else if ((mode === 'edit' || mode === 'view') && id) {
                     loadSalesDocData(Number(id));
                 }
@@ -156,7 +154,6 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
             setClientPhone(salesDocData.customer.phone);
             setClientCUIT(salesDocData.customer.cuit);
             setClientEmail(salesDocData.customer.email);
-            console.log(salesDocData);
         } catch (error) {
             console.error("Error al cargar los datos del documento:", error);
         } finally {

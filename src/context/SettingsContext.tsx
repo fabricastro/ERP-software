@@ -98,7 +98,6 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
    const isBusinessInfoComplete = () => {
     const { bussinessName, address, cuit, phone, email } = settings || {};
     const complete = Boolean(bussinessName && address && cuit && phone && email);
-    // console.log("isBusinessInfoComplete:", complete); 
     return complete;
   };
   

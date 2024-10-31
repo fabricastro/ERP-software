@@ -65,18 +65,19 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   return (
 <aside
   ref={sidebar}
-  className={`absolute xl:relative left-0 top-0 z-9999 h-screen w-30 sm:w-40 overflow-y-hidden bg-black duration-300 ease-linear ${
+  className={`absolute xl:relative left-0 top-0 z-9999 h-screen w-30 sm:w-40 overflow-y-hidden 
+  bg-black duration-300 ease-linear ${
     sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-  } lg:translate-x-0`}
+  } xl:translate-x-0`}
 >
   <div className="flex flex-col items-center w-full px-4 py-6">
     {/* Logo principal centrado */}
     <NavLink to="/" className="mb-4 flex justify-center">
-      <img src={FaviconWhiteIcon} alt="Logo" className='w-2/5 mb-10'/>
+      <img src={FaviconWhiteIcon} alt="Logo" className='w-2/5 mb-5'/>
     </NavLink>
     
     {/* Items del menú */}
-    <div className="flex flex-col items-center w-full space-y-3">
+    <div className="flex flex-col items-center w-full space-y-3 overflow-y-auto">
       {menuItems.map(({ to, icon, label }) => (
         <NavLink
           key={to}
@@ -88,7 +89,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           }`}
         >
           {/* Icono centrado */}
-          <div className={`text-3xl ${pathname === to ? 'text-primary' : ''}`}>{icon}</div>
+          <div className={`text-xl sm:text-xl lg:text-xl xl:text-xl 3xl:text-3xl ${pathname === to ? 'text-primary' : ''}`}>{icon}</div>
           {/* Texto debajo del icono */}
           <span className={`text-xs mt-2 ${pathname === to ? 'text-primary' : ''}`}>{label}</span>
         </NavLink>
