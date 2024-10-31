@@ -47,16 +47,16 @@ const Dashboard: React.FC = () => {
           title="Presupuestado" 
           total={new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(amountBudget || 0)} 
           rate="" 
-          children={<FaMoneyBill className='text-2xl text-primary' />} 
+          children={<FaMoneyBill className='text-2xl text-primary dark:text-white' />} 
         />
         <CardDataStats 
           title="Facturado" 
           total={new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(amountBill || 0)} 
           rate="" 
-          children={<RiBillFill className='text-2xl text-primary' />} 
+          children={<RiBillFill className='text-2xl text-primary dark:text-white' />} 
         />
-        <CardDataStats title="Artículos vendidos" total={quantityArticles?.toString()} rate="" children={<FaBoxes className='text-2xl text-primary' />} />
-        <CardDataStats title="Clientes" total={quantityCustomers?.toString()} rate="" children={<FaUsers className='text-2xl text-primary' />} />
+        <CardDataStats title="Artículos vendidos" total={quantityArticles?.toString()} rate="" children={<FaBoxes className='text-2xl text-primary dark:text-white' />} />
+        <CardDataStats title="Clientes" total={quantityCustomers?.toString()} rate="" children={<FaUsers className='text-2xl text-primary dark:text-white' />} />
       </div>
       <div className='mt-5'>
         {chartOneData.budgets.length > 0 && chartOneData.bills.length > 0 && (

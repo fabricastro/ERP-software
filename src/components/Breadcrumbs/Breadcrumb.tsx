@@ -23,7 +23,7 @@ const Breadcrumb = ({ pageName }: BreadcrumbProps) => {
 
   return (
     <div className="mb-6 flex flex-row gap-3 items-center justify-between">
-      <h2 className="text-title-md2 font-semibold text-black dark:text-white">
+      <h2 className="text-[22px] sm:text-title-md2 font-semibold text-black dark:text-white">
         {pageName}
       </h2>
 
