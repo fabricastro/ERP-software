@@ -72,12 +72,12 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
 
         // Detalles del correo
         const to = clientEmail;
-        const subject = "Factura Adjunta";
-        const text = "Adjunto encontrará su factura.";
-        const html = "<p>Adjunto encontrará su factura en formato PDF.</p>";
+        const subject = `${settings?.bussinessName} - ${typeSalesdocs === 'presupuesto' ? 'Presupuesto Adjunto' : 'Factura Adjunta'}`;
+        const text = `Hola ${clientName}, adjunto encontrará su ${typeSalesdocs === 'presupuesto' ? 'presupuesto' : 'factura'}.`;
+        const html = "<p>Adjunto encontrará su documento en formato PDF.</p>";
         const attachments = [
             {
-                filename: "factura.pdf",
+                filename: `${typeSalesdocs === 'presupuesto' ? 'presupuesto' : 'factura'}.pdf`,
                 content: pdfBase64,
                 contentType: "application/pdf",
             },
@@ -259,7 +259,7 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
                     amount: totalConIVA,
                     articles: items
                 });
-                setAlert({ type: 'success', message: 'Factura guardada con éxito' });
+                setAlert({ type: 'success', message: `${typeSalesdocs === 'factura' ? 'Factura guardada' : 'Presupuesto guardado'} con éxito` });
                 setTimeout(() => {
                     if (typeSalesdocs === 'factura')
                         navigate('/bill');
@@ -271,7 +271,7 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
             setLoading(false);
         } catch (error: any) {
             setLoading(false);
-            setAlert({ type: 'error', message: 'Hubo un error al guardar la factura. Por favor, inténtalo de nuevo.' });
+            setAlert({ type: 'error', message: `Hubo un error al guardar ${typeSalesdocs === 'factura' ? 'la factura' : 'el presupuesto'}. Por favor, inténtalo de nuevo.` });
         }
     };
 
