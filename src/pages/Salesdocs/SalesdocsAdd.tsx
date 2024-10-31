@@ -375,7 +375,7 @@ const SalesdocsAdd: React.FC<SalesdocsAddProps> = ({ mode, typeSalesdocs }) => {
                             </ModalComponent>
                             <div className="w-full md:w-[40%]">
                                 <FormInput
-                                    label="Nº de Presupuesto"
+                                    label="Número"
                                     type="text"
                                     id='invoiceNumber'
                                     value={invoiceNumber}
