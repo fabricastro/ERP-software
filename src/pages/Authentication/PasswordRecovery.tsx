@@ -39,23 +39,20 @@ const PasswordRecovery: React.FC = () => {
 
     return (
         <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark h-[100vh] flex items-center justify-center">
-            <div className="flex flex-wrap items-center">
-                <div className="hidden w-full xl:block xl:w-1/2">
-                    <div className="py-17.5 px-26 text-center">
+            {loading ? <Loader /> : (
+                <div className="flex flex-wrap items-center">
+                <div className=" w-full block xl:w-1/2">
+                    <div className="sm:py-17.5 p-10 sm:px-26 text-center">
                         <div className="mb-5.5 flex justify-center">
-                            <img className="hidden dark:block w-[50%]" src={Logo} alt="Logo" />
-                            <img className="dark:hidden w-[50%]" src={LogoDark} alt="Logo" />
+                            <img className="hidden dark:block w-full sm:w-[50%]" src={Logo} alt="Logo" />
+                            <img className="dark:hidden w-full sm:w-[50%]" src={LogoDark} alt="Logo" />
                         </div>
-                        <p className="2xl:px-20">Recupera tu acceso en pocos pasos.</p>
+                        <p className="2xl:px-20 hidden sm:block">Todo en un solo lugar.</p>
+                        </div>
                     </div>
-                </div>
 
-                <div className="w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2">
-                    <div className='w-full p-4 sm:p-12.5 xl:p-17.5'>
-                        {loading ? (
-                            <Loader />
-                        ) : (
-                        <>
+                    <div className="w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2">
+                        <div className='w-full p-8 sm:p-12.5 xl:p-17.5'>
                             <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
                                 Recupera tu Contraseña
                             </h2>
@@ -75,7 +72,7 @@ const PasswordRecovery: React.FC = () => {
                                     }}
                                     required
                                     />
-
+    
                                 <div
                                     className="mb-2 relative"
                                     onMouseEnter={() => !isFormValid && setShowTooltip(true)}
@@ -95,18 +92,17 @@ const PasswordRecovery: React.FC = () => {
                                         </div>
                                     )}
                                 </div>
-
+    
                                 <p className='mt-4 text text-center'>
                                     <Link to="/signin" className="text-primary">
                                         Volver al inicio de sesión
                                     </Link>
                                 </p>
                                 </form>
-                                </>
-                        )}
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 };
